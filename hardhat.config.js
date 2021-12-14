@@ -33,5 +33,6 @@ module.exports = {
 	},
 };
 
-// npx hardhat run scripts/deploy.js --network localhost
 // npx hardhat node
+// npx hardhat run scripts/deploy.js --network localhost
+// npx hardhat run scripts/deploy.js --network rinkeby
