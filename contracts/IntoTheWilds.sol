@@ -14,20 +14,29 @@ contract IntoTheWilds is ERC721Holder {
 
   IEthemerals Merals;
 
-  mapping(uint8 => Land) public landPlots;
-  mapping(uint16 => mapping(uint16 => uint16)) public landClaimPoints;
-  mapping(uint256 => uint16[]) private defenders;
-  mapping(uint256 => uint16[]) private attackers;
-  mapping(uint256 => uint16[]) private looters;
-  mapping(uint256 => uint16[]) private birthers;
+  // ALL LANDSPLOTS
+  mapping (uint256 => Land) public landPlots;
 
-  enum Actions { DEFEND, ATTACK, LOOT, BIRTH, UNSTAKED }
+  // LAND PLOTS => MERALS => LCP
+  mapping (uint256 => mapping(uint16 => uint16)) private landClaimPoints;
+
+  // land PLOTS => ACTION SLOTS => MERALS
+  mapping (uint256 => mapping(uint8 => uint16[])) private slots;
+
+
+
+  uint public value;
+
+  // TOKENID => STAKES
+  mapping (uint256 => Stake) private stakes;
+
+  // ACTIONS 0 - UNSTAKED, 1 - DEFEND, 2 - ATTACK, 3 - LOOT, 4 - BIRTH
 
   struct Stake {
     address owner;
-    uint8 landId;
-    uint88 timestamp;
-    Actions action;
+    uint256 timestamp;
+    uint256 landId;
+    uint8 action;
   }
 
   struct ItemPool {
@@ -97,11 +106,79 @@ contract IntoTheWilds is ERC721Holder {
   }
 
   /*///////////////////////////////////////////////////////////////
+                  PUBLIC FUNCTIONS
+  //////////////////////////////////////////////////////////////*/
+
+  function stake(uint256 _landId, uint256 _tokenId, uint8 _action ) external {
+    require(stakes[_tokenId].owner == address(0), "already staked");
+
+    stakes[_tokenId] = Stake(msg.sender, block.timestamp, _landId, _action);
+    _addToSlot(_landId, _tokenId, _action);
+
+    if(_action == 1) {
+      // DEFEND
+    }
+    if(_action == 2) {
+      // ATTACK
+    }
+    if(_action == 3) {
+      // LOOT
+    }
+    if(_action == 4) {
+      // BIRTH
+    }
+
+  }
+
+  function unstake(uint256 _tokenId) external {
+    Stake memory _stake = stakes[_tokenId];
+
+    _removeFromSlot(_stake.landId, _tokenId, _stake.action);
+    _deleteStake(_tokenId);
+  }
+
+
+  /*///////////////////////////////////////////////////////////////
                   INTERNAL FUNCTIONS
   //////////////////////////////////////////////////////////////*/
+
+  function _addToSlot(uint256 _landId, uint256 _tokenId, uint8 _action) internal {
+    uint16[] storage _actionSlots = slots[_landId][_action];
+    _actionSlots.push(uint16(_tokenId));
+  }
+
+  function _removeFromSlot(uint256 _landId, uint256 _tokenId, uint8 _action) internal {
+    uint16[] memory _slots = slots[_landId][_action];
+    uint16[] memory shiftedActionSlots = new uint16[](_slots.length - 1);
+
+    uint j;
+    for(uint256 i = 0; i < _slots.length; i ++) {
+      if(_slots[i] != _tokenId) {
+        shiftedActionSlots[j] = _slots[i];
+      }
+    }
+
+    slots[_landId][_action] = shiftedActionSlots;
+  }
 
   function _addItemPool(uint8 _cost, uint8 _drop1, uint8 _drop2, uint8 _drop3) internal pure returns (ItemPool memory) {
     return ItemPool({cost: _cost, drop1: _drop1, drop2: _drop2, drop3: _drop3});
   }
+
+  function _deleteStake(uint256 _tokenId) internal {
+    delete stakes[_tokenId];
+  }
+
+  /*///////////////////////////////////////////////////////////////
+                  VIEW FUNCTIONS
+  //////////////////////////////////////////////////////////////*/
+  function getStake(uint256 _tokenId) external view returns (Stake memory) {
+    return stakes[_tokenId];
+  }
+
+  function getSlots(uint256 _landId, uint8 _action) external view returns (uint16[] memory) {
+    return slots[_landId][_action];
+  }
+
 
 }
