@@ -12,7 +12,7 @@ contract IntoTheWilds is ERC721Holder {
 
   address public admin;
 
-  IEthemerals Merals;
+  IEthemerals meralsContract;
 
   // ALL LANDSPLOTS
   mapping (uint256 => Land) public landPlots;
@@ -20,13 +20,12 @@ contract IntoTheWilds is ERC721Holder {
   // LAND PLOTS => MERALS => LCP
   mapping (uint256 => mapping(uint16 => uint16)) private landClaimPoints;
 
+  // ACTIONS 0 - UNSTAKED, 1 - DEFEND, 2 - ATTACK, 3 - LOOT, 4 - BIRTH
   // land PLOTS => ACTION SLOTS => MERALS
   mapping (uint256 => mapping(uint8 => uint16[])) private slots;
 
-  // TOKENID => STAKES
+  // MERALS => STAKES
   mapping (uint256 => Stake) private stakes;
-
-  // ACTIONS 0 - UNSTAKED, 1 - DEFEND, 2 - ATTACK, 3 - LOOT, 4 - BIRTH
 
   struct Stake {
     address owner;
@@ -50,6 +49,7 @@ contract IntoTheWilds is ERC721Holder {
   }
 
   uint8 private maxSlots = 5;
+  uint8 private LCPgainRate = 1; // 1 per second?
 
   uint public value;
 
@@ -60,7 +60,7 @@ contract IntoTheWilds is ERC721Holder {
   constructor(address meralAddress) {
 
     admin = msg.sender;
-    Merals = IEthemerals(meralAddress);
+    meralsContract = IEthemerals(meralAddress);
 
     ItemPool memory loot1 = ItemPool({ cost: 10, drop1: 1, drop2: 2, drop3: 3 });
     ItemPool memory pet1 = ItemPool({ cost: 10, drop1: 1, drop2: 2, drop3: 3 });
@@ -111,6 +111,7 @@ contract IntoTheWilds is ERC721Holder {
     require(stakes[_tokenId].owner == address(0), "already staked");
     require(slots[_landId][_action].length < maxSlots, "full");
 
+    meralsContract.safeTransferFrom(msg.sender, address(this), _tokenId);
     stakes[_tokenId] = Stake(msg.sender, block.timestamp, _landId, _action);
     _addToSlot(_landId, _tokenId, _action);
 
@@ -129,18 +130,32 @@ contract IntoTheWilds is ERC721Holder {
 
   }
 
+
   function unstake(uint256 _tokenId) external {
+    require(stakes[_tokenId].owner == msg.sender || msg.sender == admin, "owner only");
     Stake memory _stake = stakes[_tokenId];
 
     // NO NEED TO CLAIM
     _removeFromSlot(_stake.landId, _tokenId, _stake.action);
+
+
+    if(_stake.action == 1) {
+      // IF UNDEFEND
+      _addLCP(_stake.landId, _tokenId, _stake.timestamp);
+    }
+
     _deleteStake(_tokenId);
+    meralsContract.safeTransferFrom(address(this), _stake.owner, _tokenId);
   }
 
 
   /*///////////////////////////////////////////////////////////////
                   INTERNAL FUNCTIONS
   //////////////////////////////////////////////////////////////*/
+
+  function _addLCP(uint256 _landId, uint256 _tokenId, uint256 timestamp) internal {
+    landClaimPoints[_landId][uint16(_tokenId)] += uint16(block.timestamp - timestamp);
+  }
 
   function _addToSlot(uint256 _landId, uint256 _tokenId, uint8 _action) internal {
     uint16[] storage _actionSlots = slots[_landId][_action];
@@ -179,6 +194,10 @@ contract IntoTheWilds is ERC721Holder {
 
   function getSlots(uint256 _landId, uint8 _action) external view returns (uint16[] memory) {
     return slots[_landId][_action];
+  }
+
+  function getLCP(uint256 _landId, uint256 _tokenId) external view returns (uint16) {
+    return landClaimPoints[_landId][uint16(_tokenId)];
   }
 
 
