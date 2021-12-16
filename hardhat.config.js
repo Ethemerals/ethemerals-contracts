@@ -1,5 +1,8 @@
 require('@nomiclabs/hardhat-waffle');
 require('dotenv').config();
+if (process.env.REPORT_GAS === '1') {
+	require('hardhat-gas-reporter');
+}
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -30,6 +33,11 @@ module.exports = {
 			url: `https://rinkeby.infura.io/v3/${process.env.PROJECTID}`,
 			accounts: [`0x${process.env.PRIV_KEY}`],
 		},
+	},
+	gasReporter: {
+		currency: 'USD',
+		gasPrice: 77,
+		coinmarketcap: process.env.CMKEY,
 	},
 };
 

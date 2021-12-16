@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.3;
 
+import "hardhat/console.sol";
+
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "./IEthemerals.sol";
 
@@ -15,22 +17,23 @@ contract IntoTheWilds is ERC721Holder {
   IEthemerals meralsContract;
 
   // ALL LANDSPLOTS
-  mapping (uint256 => Land) public landPlots;
+  mapping (uint16 => Land) public landPlots;
 
   // LAND PLOTS => MERALS => LCP
-  mapping (uint256 => mapping(uint16 => uint16)) private landClaimPoints;
+  mapping (uint16 => mapping(uint16 => uint256)) private landClaimPoints;
 
   // ACTIONS 0 - UNSTAKED, 1 - DEFEND, 2 - ATTACK, 3 - LOOT, 4 - BIRTH
   // land PLOTS => ACTION SLOTS => MERALS
-  mapping (uint256 => mapping(uint8 => uint16[])) private slots;
+  mapping (uint16 => mapping(uint8 => uint16[])) private slots;
 
   // MERALS => STAKES
-  mapping (uint256 => Stake) private stakes;
+  mapping (uint16 => Stake) private stakes;
 
   struct Stake {
     address owner;
     uint256 timestamp;
-    uint256 landId;
+    uint256 damage;
+    uint16 landId;
     uint8 action;
   }
 
@@ -48,10 +51,14 @@ contract IntoTheWilds is ERC721Holder {
     ItemPool petPool;
   }
 
-  uint8 private maxSlots = 5;
-  uint8 private LCPgainRate = 1; // 1 per second?
+  uint8 public maxSlots = 5; // number of action slots per land
+  uint16 public defBonus = 1800; // lower = more bonus applied - min 1100
+  uint16 public ambientDamageRate = 500; // lower = more damage applied
 
   uint public value;
+
+  // DEFEENDER drainRate equal across all
+  // DEFENDERS earn ELFx / drain ELFx, more defenders, more drain
 
   /*///////////////////////////////////////////////////////////////
                   ADMIN FUNCTIONS
@@ -107,12 +114,18 @@ contract IntoTheWilds is ERC721Holder {
                   PUBLIC FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function stake(uint256 _landId, uint256 _tokenId, uint8 _action ) external {
+  function stake(uint16 _landId, uint16 _tokenId, uint8 _action ) external {
     require(stakes[_tokenId].owner == address(0), "already staked");
+    require(landPlots[_landId].remainingELFx > 0, "not land");
+    require(_action > 0 && _action < 5, "not action");
     require(slots[_landId][_action].length < maxSlots, "full");
 
+    if(_action != 1) {
+      require(slots[_landId][1].length > 0, "need defender");
+    }
+
     meralsContract.safeTransferFrom(msg.sender, address(this), _tokenId);
-    stakes[_tokenId] = Stake(msg.sender, block.timestamp, _landId, _action);
+    stakes[_tokenId] = Stake(msg.sender, block.timestamp, 0, _landId, _action);
     _addToSlot(_landId, _tokenId, _action);
 
     if(_action == 1) {
@@ -131,21 +144,23 @@ contract IntoTheWilds is ERC721Holder {
   }
 
 
-  function unstake(uint256 _tokenId) external {
+  function unstake(uint16 _tokenId) external {
     require(stakes[_tokenId].owner == msg.sender || msg.sender == admin, "owner only");
+    require(block.timestamp - stakes[_tokenId].timestamp >= 3600, "cooldown");
     Stake memory _stake = stakes[_tokenId];
+    meralsContract.safeTransferFrom(address(this), _stake.owner, _tokenId);
 
     // NO NEED TO CLAIM
     _removeFromSlot(_stake.landId, _tokenId, _stake.action);
 
 
     if(_stake.action == 1) {
-      // IF UNDEFEND
-      _addLCP(_stake.landId, _tokenId, _stake.timestamp);
+      uint256 change = block.timestamp - _stake.timestamp;
+      landClaimPoints[_stake.landId][_tokenId] += change;
+      _changeHealth(_tokenId, change, _stake.damage);
     }
 
     _deleteStake(_tokenId);
-    meralsContract.safeTransferFrom(address(this), _stake.owner, _tokenId);
   }
 
 
@@ -153,16 +168,26 @@ contract IntoTheWilds is ERC721Holder {
                   INTERNAL FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function _addLCP(uint256 _landId, uint256 _tokenId, uint256 timestamp) internal {
-    landClaimPoints[_landId][uint16(_tokenId)] += uint16(block.timestamp - timestamp);
+
+  function _changeHealth(uint16 _tokenId, uint256 change, uint256 damage) internal {
+    IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId);
+
+    change = (change - (_meral.def * change / defBonus)) / ambientDamageRate;
+    change += damage;
+
+    if(change > _meral.score) {
+      meralsContract.changeScore(uint256(_tokenId), 1000, false, 0);
+    } else {
+      meralsContract.changeScore(uint256(_tokenId), uint16(change), false, 0);
+    }
   }
 
-  function _addToSlot(uint256 _landId, uint256 _tokenId, uint8 _action) internal {
+  function _addToSlot(uint16 _landId, uint16 _tokenId, uint8 _action) internal {
     uint16[] storage _actionSlots = slots[_landId][_action];
-    _actionSlots.push(uint16(_tokenId));
+    _actionSlots.push(_tokenId);
   }
 
-  function _removeFromSlot(uint256 _landId, uint256 _tokenId, uint8 _action) internal {
+  function _removeFromSlot(uint16 _landId, uint16 _tokenId, uint8 _action) internal {
     uint16[] memory _slots = slots[_landId][_action];
     uint16[] memory shiftedActionSlots = new uint16[](_slots.length - 1);
 
@@ -177,7 +202,7 @@ contract IntoTheWilds is ERC721Holder {
     slots[_landId][_action] = shiftedActionSlots;
   }
 
-  function _deleteStake(uint256 _tokenId) internal {
+  function _deleteStake(uint16 _tokenId) internal {
     delete stakes[_tokenId];
   }
 
@@ -188,17 +213,45 @@ contract IntoTheWilds is ERC721Holder {
   /*///////////////////////////////////////////////////////////////
                   VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
-  function getStake(uint256 _tokenId) external view returns (Stake memory) {
+  function getStake(uint16 _tokenId) external view returns (Stake memory) {
     return stakes[_tokenId];
   }
 
-  function getSlots(uint256 _landId, uint8 _action) external view returns (uint16[] memory) {
+  function getSlots(uint16 _landId, uint8 _action) external view returns (uint16[] memory) {
     return slots[_landId][_action];
   }
 
-  function getLCP(uint256 _landId, uint256 _tokenId) external view returns (uint16) {
-    return landClaimPoints[_landId][uint16(_tokenId)];
+  function getLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {
+    return landClaimPoints[_landId][_tokenId];
   }
 
+  function calculateLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {
+    Stake memory _stake = stakes[_tokenId];
+    if(_stake.timestamp > 0) {
+      return landClaimPoints[_landId][_tokenId] + block.timestamp - _stake.timestamp;
+    } else {
+      return landClaimPoints[_landId][_tokenId];
+    }
+  }
+
+  function calculateHealth(uint16 _tokenId) public view returns (uint16) {
+    Stake memory _stake = stakes[_tokenId];
+    IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId);
+
+    if(_stake.timestamp > 0) {
+      uint256 change = block.timestamp - _stake.timestamp;
+      console.log(change);
+      change = (change - (_meral.def * change / defBonus)) / ambientDamageRate;
+      change += _stake.damage;
+
+      if(change > _meral.score) {
+        return 0;
+      }
+
+      return _meral.score - uint16(change);
+    } else {
+      return _meral.score;
+    }
+  }
 
 }
