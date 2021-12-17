@@ -56,12 +56,12 @@ describe('IntoTheWilds', function () {
 			let remainingELFx = 10000;
 			let emissionRate = 20;
 			let defBonus = 1800;
-			let ambientDamageRate = 500;
-			await wilds.addLand(7, 10, 10, [3, 4, 5], [4, 5, 6], remainingELFx, emissionRate, defBonus, ambientDamageRate);
+			let damageRate = 500;
+			await wilds.addLand(7, 10, 10, [3, 4, 5], [4, 5, 6], remainingELFx, emissionRate, defBonus, damageRate);
 			let land = await wilds.landPlots(7);
 
 			expect(land.defBonus).to.equal(defBonus);
-			expect(land.ambientDamageRate).to.equal(ambientDamageRate);
+			expect(land.damageRate).to.equal(damageRate);
 			expect(land.emissionRate).to.equal(emissionRate);
 			expect(land.remainingELFx).to.equal(remainingELFx);
 		});
@@ -173,10 +173,10 @@ describe('IntoTheWilds', function () {
 				let meral = await merals.getEthemeral(meralId);
 				let land = await wilds.landPlots(landId);
 				let defBonus = land.defBonus;
-				let ambientDamageRate = land.ambientDamageRate;
+				let damageRate = land.damageRate;
 
 				let defenceMod = (meral.def * day) / defBonus;
-				let calculatedDamage = Math.floor((day - defenceMod) / ambientDamageRate);
+				let calculatedDamage = Math.floor((day - defenceMod) / damageRate);
 
 				await network.provider.send('evm_increaseTime', [day]);
 				await network.provider.send('evm_mine');
