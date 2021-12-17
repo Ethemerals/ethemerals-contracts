@@ -54,3 +54,5 @@ const addToAmbientDamage = () => {
 addToAmbientDamage();
 let num = 100;
 console.log(scale(num, 0, 1600, 10, 100));
+
+// bdef + 5 - 5;

@@ -25,12 +25,13 @@ contract IntoTheWilds is ERC721Holder {
   // ACTIONS 0 - UNSTAKED, 1 - DEFEND, 2 - ATTACK, 3 - LOOT, 4 - BIRTH
   // land PLOTS => ACTION SLOTS => MERALS
   mapping (uint16 => mapping(uint8 => uint16[])) private slots;
+// land PLOTS => TIMESTAMP => EVENTS
+  mapping (uint16 => mapping(uint256 => StakeEvent)) private stakeEvents;
 
   // MERALS => STAKES
   mapping (uint16 => Stake) private stakes;
 
-  // TIMESTAMP => EVENTS
-  mapping (uint256 => StakeEvent) private stakeEvents;
+
 
   struct StakeEvent {
     uint16 defBonus;
@@ -41,6 +42,7 @@ contract IntoTheWilds is ERC721Holder {
     address owner;
     uint256[] timestamps;
     uint256 damage;
+    uint256 health;
     uint16 landId;
     uint8 action;
   }
@@ -136,18 +138,30 @@ contract IntoTheWilds is ERC721Holder {
     }
 
     meralsContract.safeTransferFrom(msg.sender, address(this), _tokenId);
-
     _addToSlot(_landId, _tokenId, _action);
 
+    uint256 timestamp = block.timestamp;
+    uint256[] memory _timestamps = new uint256[](1);
+    _timestamps[0] = timestamp;
+
     if(_action == 1) {
+      // ADD DEFENDER BONUS arbitary 100 per each defender
       landPlots[_landId].defBonus -= 100;
-      stakeEvents[block.timestamp] = StakeEvent(landPlots[_landId].defBonus, landPlots[_landId].damageRate);
-      uint256[] storage _timestamps;
-      _timestamps[0] = block.timestamp;
-      stakes[_tokenId] = Stake(msg.sender, _timestamps, 0, _landId, _action);
+
+      // REGISTER EVENT to other defenders
+      for(uint256 i = 0; i < slots[_landId][_action].length; i ++) {
+        stakes[slots[_landId][_action][i]].timestamps.push(timestamp);
+      }
+
+      // CREATE EVENT
+      stakeEvents[_landId][timestamp] = StakeEvent(landPlots[_landId].defBonus, landPlots[_landId].damageRate);
+
+      // FINALLY CREATE STAKE
+      stakes[_tokenId] = Stake({owner: msg.sender, timestamps: _timestamps, damage: 0, health: 0, landId: _landId, action: _action});
     }
+
     if(_action == 2) {
-      _changeAmbientDamage(_tokenId, _landId, true);
+      // _changeAmbientDamage(_tokenId, _landId, true);
       // ATTACK
     }
     if(_action == 3) {
@@ -162,20 +176,36 @@ contract IntoTheWilds is ERC721Holder {
 
   function unstake(uint16 _tokenId) external {
     require(stakes[_tokenId].owner == msg.sender || msg.sender == admin, "admin only");
-    require(block.timestamp - stakes[_tokenId].timestamps >= 86400, "cooldown");
+    require(stakes[_tokenId].owner != address(0), "not staked");
+    require(block.timestamp - stakes[_tokenId].timestamps[0] >= 86400, "cooldown");
     Stake memory _stake = stakes[_tokenId];
     Land storage _land = landPlots[_stake.landId];
     meralsContract.safeTransferFrom(address(this), _stake.owner, _tokenId);
 
     // NO NEED TO CLAIM
-    _removeFromSlot(_stake.landId, _tokenId, _stake.action);
+    uint16 _landId = _stake.landId;
+    uint8 _action = _stake.action;
+    uint256 timestamp = block.timestamp;
 
+    _removeFromSlot(_landId, _tokenId, _action);
 
     if(_stake.action == 1) {
-      uint256 change = block.timestamp - _stake.timestamps;
+      // REMOVE DEFENDER BONUS
+      _land.defBonus += 100;
+
+      // REGISTER EVENT to other defenders
+      for(uint256 i = 0; i < slots[_landId][_action].length; i ++) {
+        stakes[slots[_landId][_action][i]].timestamps.push(timestamp);
+      }
+
+      // CREATE EVENT
+      stakeEvents[_landId][timestamp] = StakeEvent(landPlots[_landId].defBonus, landPlots[_landId].damageRate);
+
+      uint256 change = block.timestamp - _stake.timestamps[0];
       landClaimPoints[_stake.landId][_tokenId] += change;
       _changeHealth(_tokenId, change, _stake.landId, _stake.damage);
-      _land.defBonus += 100;
+
+
     }
 
     _deleteStake(_tokenId);
@@ -247,14 +277,18 @@ contract IntoTheWilds is ERC721Holder {
     return slots[_landId][_action];
   }
 
+  function getStakeEvents(uint16 _landId, uint256 _stakeEvent) external view returns (StakeEvent memory) {
+    return stakeEvents[_landId][_stakeEvent];
+  }
+
   function getLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {
     return landClaimPoints[_landId][_tokenId];
   }
 
   function calculateLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
-    if(_stake.timestamps > 0) {
-      return landClaimPoints[_landId][_tokenId] + block.timestamp - _stake.timestamps;
+    if(_stake.owner != address(0) && _stake.timestamps[0] > 0) {
+      return landClaimPoints[_landId][_tokenId] + block.timestamp - _stake.timestamps[0];
     } else {
       return landClaimPoints[_landId][_tokenId];
     }
@@ -265,8 +299,8 @@ contract IntoTheWilds is ERC721Holder {
     Land memory _land = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId);
 
-    if(_stake.timestamps > 0) {
-      uint256 change = block.timestamp - _stake.timestamps;
+    if(_stake.owner != address(0) && _stake.timestamps[0] > 0) {
+      uint256 change = block.timestamp - _stake.timestamps[0];
       change = (change - (_meral.def * change / _land.defBonus)) / _land.damageRate;
       change += _stake.damage;
 

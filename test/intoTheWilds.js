@@ -87,6 +87,7 @@ describe('IntoTheWilds', function () {
 			await expect(wilds.connect(player2).unstake(11)).to.be.revertedWith('admin only');
 
 			await expect(wilds.connect(player1).unstake(12)).to.be.revertedWith('admin only');
+			await expect(wilds.unstake(1)).to.be.revertedWith('not staked');
 
 			await expect(wilds.addLand(1, 10, 10, [3, 4, 5], [4, 5, 6], 1000, 10, 100, 100)).to.be.revertedWith('already land');
 			await expect(wilds.connect(player1).addLand(12, 10, 10, [3, 4, 5], [4, 5, 6], 1000, 10, 100, 100)).to.be.revertedWith('admin only');
@@ -209,7 +210,7 @@ describe('IntoTheWilds', function () {
 				expect(defBonusStart - defBonusEnd).to.equal(500);
 			});
 
-			it('Should - stake 10 defenders and unstake 10 defenders', async function () {
+			it.only('Should - stake 10 defenders and unstake 10 defenders', async function () {
 				let landId = 1;
 				let land = await wilds.landPlots(landId);
 				let defBonusStart = land.defBonus;
@@ -219,7 +220,31 @@ describe('IntoTheWilds', function () {
 					if (i === 5) {
 						landId = 2;
 					}
+
+					//DEBUG
+					let stake = await wilds.getStake(i);
+					console.log(stake.timestamps, 'timestamps');
+
+					let value = await wilds.getStakeEvents(stake.landId, stake.timestamps[0]);
+					// console.log(value);
+					console.log(value.defBonus, 'defBonus');
+					console.log(value.damageRate, 'damageRate');
 				}
+
+				await network.provider.send('evm_increaseTime', [3600]);
+				await network.provider.send('evm_mine');
+
+				for (let i = 1; i < 11; i++) {
+					//DEBUG
+					let stake = await wilds.getStake(i);
+					console.log(stake.timestamps, 'timestamps');
+
+					let value = await wilds.getStakeEvents(stake.landId, stake.timestamps[stake.timestamps.length - 1]);
+					// console.log(value);
+					console.log(value.defBonus, 'defBonus');
+					console.log(value.damageRate, 'damageRate');
+				}
+
 				await network.provider.send('evm_increaseTime', [day * 4]);
 				await network.provider.send('evm_mine');
 
@@ -227,6 +252,17 @@ describe('IntoTheWilds', function () {
 					await wilds.unstake(i);
 					let meral = await merals.getEthemeral(i);
 					console.log(meral.score, meral.def);
+
+					//DEBUG
+					if (i < 10) {
+						let stake = await wilds.getStake(i + 1);
+						console.log(stake.timestamps, 'timestamps');
+
+						let value = await wilds.getStakeEvents(stake.landId, stake.timestamps[stake.timestamps.length - 1]);
+						// console.log(value);
+						console.log(value.defBonus, 'defBonus');
+						console.log(value.damageRate, 'damageRate');
+					}
 				}
 			});
 		});
