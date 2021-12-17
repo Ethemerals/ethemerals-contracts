@@ -8,6 +8,7 @@ describe('IntoTheWilds', function () {
 	let player1;
 	let player2;
 	let player3;
+	let [min, hour, day, week] = [60, 3600, 86400, 604800];
 
 	beforeEach(async function () {
 		[admin, player1, player2, player3] = await ethers.getSigners();
@@ -50,6 +51,20 @@ describe('IntoTheWilds', function () {
 			let land7 = await wilds.landPlots(7);
 			expect(land7.remainingELFx.toString()).to.equal('0');
 		});
+
+		it('Should add land', async function () {
+			let remainingELFx = 10000;
+			let emissionRate = 20;
+			let defBonus = 1800;
+			let ambientDamageRate = 500;
+			await wilds.addLand(7, 10, 10, [3, 4, 5], [4, 5, 6], remainingELFx, emissionRate, defBonus, ambientDamageRate);
+			let land = await wilds.landPlots(7);
+
+			expect(land.defBonus).to.equal(defBonus);
+			expect(land.ambientDamageRate).to.equal(ambientDamageRate);
+			expect(land.emissionRate).to.equal(emissionRate);
+			expect(land.remainingELFx).to.equal(remainingELFx);
+		});
 	});
 
 	describe('Staking and Unstaking', function () {
@@ -69,16 +84,19 @@ describe('IntoTheWilds', function () {
 			await wilds.connect(player1).stake(1, 11, 1);
 			expect(await merals.ownerOf(11)).to.equal(wilds.address);
 			await expect(wilds.connect(player1).unstake(11)).to.be.revertedWith('cooldown');
-			await expect(wilds.connect(player2).unstake(11)).to.be.revertedWith('owner only');
+			await expect(wilds.connect(player2).unstake(11)).to.be.revertedWith('admin only');
 
-			await expect(wilds.connect(player1).unstake(12)).to.be.revertedWith('owner only');
+			await expect(wilds.connect(player1).unstake(12)).to.be.revertedWith('admin only');
+
+			await expect(wilds.addLand(1, 10, 10, [3, 4, 5], [4, 5, 6], 1000, 10, 100, 100)).to.be.revertedWith('already land');
+			await expect(wilds.connect(player1).addLand(12, 10, 10, [3, 4, 5], [4, 5, 6], 1000, 10, 100, 100)).to.be.revertedWith('admin only');
 		});
 
 		it('Should stake into land1', async function () {
 			await wilds.stake(1, 10, 1);
 			expect(await merals.ownerOf(10)).to.equal(wilds.address);
 
-			await network.provider.send('evm_increaseTime', [3600]);
+			await network.provider.send('evm_increaseTime', [day]);
 			await network.provider.send('evm_mine');
 			await wilds.unstake(10);
 			expect(await merals.ownerOf(10)).to.equal(admin.address);
@@ -86,14 +104,14 @@ describe('IntoTheWilds', function () {
 			await wilds.connect(player1).stake(1, 11, 1);
 			expect(await merals.ownerOf(11)).to.equal(wilds.address);
 
-			await network.provider.send('evm_increaseTime', [3600]);
+			await network.provider.send('evm_increaseTime', [day]);
 			await network.provider.send('evm_mine');
 			await wilds.connect(player1).unstake(11);
 			expect(await merals.ownerOf(11)).to.equal(player1.address);
 
 			// // admin unstake
 			await wilds.connect(player1).stake(1, 20, 1);
-			await network.provider.send('evm_increaseTime', [3600]);
+			await network.provider.send('evm_increaseTime', [day]);
 			await network.provider.send('evm_mine');
 			await wilds.unstake(20);
 			expect(await merals.ownerOf(20)).to.equal(player1.address);
@@ -118,7 +136,7 @@ describe('IntoTheWilds', function () {
 
 		describe('Adding Land Claim Points', function () {
 			it('Should stake as defender and add LCP', async function () {
-				let timeStaked = 3600;
+				let timeStaked = 86401;
 				let timeStaked2 = 2592000;
 
 				await wilds.stake(1, 1, 1);
@@ -145,52 +163,71 @@ describe('IntoTheWilds', function () {
 		});
 
 		describe('Defend and drain HP', function () {
-			it('Should drain HP as defender', async function () {
-				let meralId = 1;
-				let [min, hour, day, week] = [60, 3600, 86400, 604800];
+			it('Should test ambient drain formula', async function () {
+				let meralId = 5;
+				let landId = 1;
 
 				await merals.changeScore(meralId, 1000, true, 0);
-				await wilds.stake(1, meralId, 1);
+				await wilds.stake(landId, meralId, 1);
 
-				let value = await wilds.calculateHealth(meralId);
-				console.log(value, 'starting');
-				value = await merals.getEthemeral(meralId);
-				console.log(value);
+				let meral = await merals.getEthemeral(meralId);
+				let land = await wilds.landPlots(landId);
+				let defBonus = land.defBonus;
+				let ambientDamageRate = land.ambientDamageRate;
 
-				await network.provider.send('evm_increaseTime', [min]);
+				let defenceMod = (meral.def * day) / defBonus;
+				let calculatedDamage = Math.floor((day - defenceMod) / ambientDamageRate);
+
+				await network.provider.send('evm_increaseTime', [day]);
 				await network.provider.send('evm_mine');
-				value = await wilds.calculateHealth(meralId);
-				console.log(value, '1min');
 
-				await network.provider.send('evm_increaseTime', [hour - min]);
-				await network.provider.send('evm_mine');
-				value = await wilds.calculateHealth(meralId);
-				console.log(value, '1hr');
-
-				await network.provider.send('evm_increaseTime', [day - hour - min]);
-				await network.provider.send('evm_mine');
-				value = await wilds.calculateHealth(meralId);
-				console.log(value, '1day');
-
-				await network.provider.send('evm_increaseTime', [week - day - hour - min]);
-				await network.provider.send('evm_mine');
-				value = await wilds.calculateHealth(meralId);
-				console.log(value, '1week');
-				value = await wilds.calculateLCP(1, meralId);
-				console.log(value, 'calculateLCP');
+				let calculatedHealth = await wilds.calculateHealth(meralId);
 
 				await wilds.unstake(meralId);
 
-				value = await wilds.calculateHealth(meralId);
-				console.log(value, 'calculateHealth');
+				let unstakedHealth = await wilds.calculateHealth(meralId);
+				let finalHealth = await merals.getEthemeral(meralId);
 
-				value = await merals.getEthemeral(meralId);
-				console.log(value.score, 'getEthemeral');
+				expect(calculatedHealth).to.equal(unstakedHealth);
+				expect(calculatedHealth).to.equal(finalHealth.score);
+				expect(1000 - calculatedDamage).to.equal(finalHealth.score);
+			});
 
-				value = await wilds.calculateLCP(1, meralId);
-				console.log(value, 'calculateLCP');
-				value = await wilds.getLCP(1, meralId);
-				console.log(value, 'getLCP');
+			it('Should - 100 from defBonus on each defender stake', async function () {
+				let landId = 1;
+				let land = await wilds.landPlots(landId);
+				let defBonusStart = land.defBonus;
+				await wilds.stake(landId, 1, 1);
+				await wilds.stake(landId, 2, 1);
+				await wilds.stake(landId, 3, 1);
+				await wilds.stake(landId, 4, 1);
+				await wilds.stake(landId, 5, 1);
+
+				land = await wilds.landPlots(landId);
+				let defBonusEnd = land.defBonus;
+
+				expect(defBonusStart - defBonusEnd).to.equal(500);
+			});
+
+			it('Should - stake 10 defenders and unstake 10 defenders', async function () {
+				let landId = 1;
+				let land = await wilds.landPlots(landId);
+				let defBonusStart = land.defBonus;
+				for (let i = 1; i < 11; i++) {
+					await merals.changeScore(i, 1000, true, 0);
+					await wilds.stake(landId, i, 1);
+					if (i === 5) {
+						landId = 2;
+					}
+				}
+				await network.provider.send('evm_increaseTime', [day * 4]);
+				await network.provider.send('evm_mine');
+
+				for (let i = 1; i < 11; i++) {
+					await wilds.unstake(i);
+					let meral = await merals.getEthemeral(i);
+					console.log(meral.score, meral.def);
+				}
 			});
 		});
 	});

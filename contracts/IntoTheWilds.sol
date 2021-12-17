@@ -47,13 +47,15 @@ contract IntoTheWilds is ERC721Holder {
   struct Land {
     uint256 remainingELFx;
     uint256 emissionRate; // DEV IMPROVE
+    uint16 defBonus;
+    uint16 ambientDamageRate;
     ItemPool lootPool;
     ItemPool petPool;
   }
 
   uint8 public maxSlots = 5; // number of action slots per land
-  uint16 public defBonus = 1800; // lower = more bonus applied - min 1100
-  uint16 public ambientDamageRate = 500; // lower = more damage applied
+  // uint16 public defBonus = 1800; // lower = more bonus applied - min 1100
+  // uint16 public ambientDamageRate = 500; // lower = more damage applied
 
   uint public value;
 
@@ -72,35 +74,36 @@ contract IntoTheWilds is ERC721Holder {
     ItemPool memory loot1 = ItemPool({ cost: 10, drop1: 1, drop2: 2, drop3: 3 });
     ItemPool memory pet1 = ItemPool({ cost: 10, drop1: 1, drop2: 2, drop3: 3 });
 
-    landPlots[1] = Land({ remainingELFx: 1000, emissionRate: 10, lootPool: loot1, petPool: pet1 });
-    landPlots[2] = Land({ remainingELFx: 1200, emissionRate: 10, lootPool: loot1, petPool: pet1 });
-    landPlots[3] = Land({ remainingELFx: 1400, emissionRate: 10, lootPool: loot1, petPool: pet1 });
-    landPlots[4] = Land({ remainingELFx: 1600, emissionRate: 10, lootPool: loot1, petPool: pet1 });
-    landPlots[5] = Land({ remainingELFx: 1800, emissionRate: 10, lootPool: loot1, petPool: pet1 });
-    landPlots[6] = Land({ remainingELFx: 2000, emissionRate: 10, lootPool: loot1, petPool: pet1 });
+    landPlots[1] = Land({ remainingELFx: 1000, emissionRate: 10, defBonus: 1800, ambientDamageRate: 500, lootPool: loot1, petPool: pet1 });
+    landPlots[2] = Land({ remainingELFx: 1000, emissionRate: 10, defBonus: 1800, ambientDamageRate: 500, lootPool: loot1, petPool: pet1 });
+    landPlots[3] = Land({ remainingELFx: 1000, emissionRate: 10, defBonus: 1800, ambientDamageRate: 500, lootPool: loot1, petPool: pet1 });
+    landPlots[4] = Land({ remainingELFx: 1000, emissionRate: 10, defBonus: 1800, ambientDamageRate: 500, lootPool: loot1, petPool: pet1 });
+    landPlots[5] = Land({ remainingELFx: 1000, emissionRate: 10, defBonus: 1800, ambientDamageRate: 500, lootPool: loot1, petPool: pet1 });
+    landPlots[6] = Land({ remainingELFx: 1000, emissionRate: 10, defBonus: 1800, ambientDamageRate: 500, lootPool: loot1, petPool: pet1 });
 
   }
 
   function addLand(
     uint8 id,
     uint8 lootCost,
-    uint8 lootDrop1,
-    uint8 lootDrop2,
-    uint8 lootDrop3,
     uint8 petCost,
-    uint8 petDrop1,
-    uint8 petDrop2,
-    uint8 petDrop3,
+    uint8[] calldata lootDrops,
+    uint8[] calldata petDrops,
     uint256 _remainingELFx,
-    uint256 _emissionRate) external
+    uint256 _emissionRate,
+    uint16 _defBonus,
+    uint16 _ambientDamageRate) external
   {
     require(msg.sender == admin, "admin only");
+    require(landPlots[id].emissionRate == 0, "already land");
 
     Land memory land = Land({
       remainingELFx: _remainingELFx,
       emissionRate: _emissionRate,
-      lootPool: _addItemPool(lootCost, lootDrop1, lootDrop2, lootDrop3),
-      petPool: _addItemPool(petCost, petDrop1, petDrop2, petDrop3)
+      defBonus: _defBonus,
+      ambientDamageRate: _ambientDamageRate,
+      lootPool: _addItemPool(lootCost, lootDrops),
+      petPool: _addItemPool(petCost, petDrops)
     });
     landPlots[id] = land;
   }
@@ -129,9 +132,10 @@ contract IntoTheWilds is ERC721Holder {
     _addToSlot(_landId, _tokenId, _action);
 
     if(_action == 1) {
-      // DEFEND
+      landPlots[_landId].defBonus -= 100;
     }
     if(_action == 2) {
+      _changeAmbientDamage(_tokenId, _landId, true);
       // ATTACK
     }
     if(_action == 3) {
@@ -145,9 +149,10 @@ contract IntoTheWilds is ERC721Holder {
 
 
   function unstake(uint16 _tokenId) external {
-    require(stakes[_tokenId].owner == msg.sender || msg.sender == admin, "owner only");
-    require(block.timestamp - stakes[_tokenId].timestamp >= 3600, "cooldown");
+    require(stakes[_tokenId].owner == msg.sender || msg.sender == admin, "admin only");
+    require(block.timestamp - stakes[_tokenId].timestamp >= 86400, "cooldown");
     Stake memory _stake = stakes[_tokenId];
+    Land storage _land = landPlots[_stake.landId];
     meralsContract.safeTransferFrom(address(this), _stake.owner, _tokenId);
 
     // NO NEED TO CLAIM
@@ -157,7 +162,8 @@ contract IntoTheWilds is ERC721Holder {
     if(_stake.action == 1) {
       uint256 change = block.timestamp - _stake.timestamp;
       landClaimPoints[_stake.landId][_tokenId] += change;
-      _changeHealth(_tokenId, change, _stake.damage);
+      _changeHealth(_tokenId, change, _stake.landId, _stake.damage);
+      _land.defBonus += 100;
     }
 
     _deleteStake(_tokenId);
@@ -168,11 +174,19 @@ contract IntoTheWilds is ERC721Holder {
                   INTERNAL FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-
-  function _changeHealth(uint16 _tokenId, uint256 change, uint256 damage) internal {
+  function _changeAmbientDamage(uint16 _tokenId, uint16 _landId, bool add) internal {
+    Land storage _land = landPlots[_landId];
     IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId);
 
-    change = (change - (_meral.def * change / defBonus)) / ambientDamageRate;
+    // uint256 change = (change - (_meral.atk * change / _land.defBonus)) / _land.ambientDamageRate;
+    // change += damage;
+  }
+
+  function _changeHealth(uint16 _tokenId, uint256 change, uint16 _landId, uint256 damage) internal {
+    Land memory _land = landPlots[_landId];
+    IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId);
+
+    change = (change - (_meral.def * change / _land.defBonus)) / _land.ambientDamageRate;
     change += damage;
 
     if(change > _meral.score) {
@@ -206,8 +220,8 @@ contract IntoTheWilds is ERC721Holder {
     delete stakes[_tokenId];
   }
 
-  function _addItemPool(uint8 _cost, uint8 _drop1, uint8 _drop2, uint8 _drop3) internal pure returns (ItemPool memory) {
-    return ItemPool({cost: _cost, drop1: _drop1, drop2: _drop2, drop3: _drop3});
+  function _addItemPool(uint8 _cost, uint8[] calldata _drops) internal pure returns (ItemPool memory) {
+    return ItemPool({cost: _cost, drop1: _drops[0], drop2: _drops[1], drop3: _drops[2]});
   }
 
   /*///////////////////////////////////////////////////////////////
@@ -236,12 +250,12 @@ contract IntoTheWilds is ERC721Holder {
 
   function calculateHealth(uint16 _tokenId) public view returns (uint16) {
     Stake memory _stake = stakes[_tokenId];
+    Land memory _land = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId);
 
     if(_stake.timestamp > 0) {
       uint256 change = block.timestamp - _stake.timestamp;
-      console.log(change);
-      change = (change - (_meral.def * change / defBonus)) / ambientDamageRate;
+      change = (change - (_meral.def * change / _land.defBonus)) / _land.ambientDamageRate;
       change += _stake.damage;
 
       if(change > _meral.score) {
