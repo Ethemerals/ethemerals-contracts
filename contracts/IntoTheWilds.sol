@@ -25,12 +25,11 @@ contract IntoTheWilds is ERC721Holder {
   // ACTIONS 0 - UNSTAKED, 1 - DEFEND, 2 - ATTACK, 3 - LOOT, 4 - BIRTH
   // land PLOTS => ACTION SLOTS => MERALS
   mapping (uint16 => mapping(uint8 => uint16[])) private slots;
-// land PLOTS => TIMESTAMP => EVENTS
+  // land PLOTS => TIMESTAMP => EVENTS
   mapping (uint16 => mapping(uint256 => StakeEvent)) private stakeEvents;
 
   // MERALS => STAKES
   mapping (uint16 => Stake) private stakes;
-
 
 
   struct StakeEvent {
@@ -63,16 +62,13 @@ contract IntoTheWilds is ERC721Holder {
     ItemPool petPool;
   }
 
-  uint8 public maxSlots = 5; // number of action slots per land
-  uint8 private extraDefBonus = 120;
-  uint16 private baseDefence = 1800; // lower = more bonus applied - range 1200-1800
-  uint16 private baseDamage = 600; // lower = more damage applied - range 50-600
-
+  uint8 public maxSlots = 5; // number of slots per action per land
+  uint8 private extraDefBonus = 120; // DAILED already
+  uint16 private baseDefence = 2000; // DAILED already, lower = more bonus applied - range 1200-2000
+  uint16 private baseDamage = 600; // DAILED already, lower = more damage applied - range 50-600
 
   uint public value;
 
-  // DEFEENDER drainRate equal across all
-  // DEFENDERS earn ELFx / drain ELFx, more defenders, more drain
 
   /*///////////////////////////////////////////////////////////////
                   ADMIN FUNCTIONS
@@ -140,10 +136,11 @@ contract IntoTheWilds is ERC721Holder {
     }
 
     meralsContract.safeTransferFrom(msg.sender, address(this), _tokenId);
-    _addToSlot(_landId, _tokenId, _action);
-    uint256 timestamp = block.timestamp;
+
     uint256[] memory _timestamps = new uint256[](1);
+    uint256 timestamp = block.timestamp;
     _timestamps[0] = timestamp;
+
 
     if(_action == 1) {
       _defenderChange(_landId, timestamp, true);
@@ -160,10 +157,10 @@ contract IntoTheWilds is ERC721Holder {
       // BIRTH
     }
 
+    _addToSlot(_landId, _tokenId, _action);
     stakes[_tokenId] = Stake({owner: msg.sender, timestamps: _timestamps, damage: 0, health: 0, landId: _landId, action: _action});
 
   }
-
 
   function unstake(uint16 _tokenId) external {
     require(stakes[_tokenId].owner == msg.sender || msg.sender == admin, "admin only");
@@ -173,25 +170,24 @@ contract IntoTheWilds is ERC721Holder {
 
     meralsContract.safeTransferFrom(address(this), _stake.owner, _tokenId);
 
-    // NO NEED TO CLAIM
+    // NO NEED TO CLAIM TODO
     uint16 _landId = _stake.landId;
     uint8 _action = _stake.action;
     uint256 timestamp = block.timestamp;
 
-    _removeFromSlot(_landId, _tokenId, _action);
-
     if(_stake.action == 1) {
       _defenderChange(_landId, timestamp, false);
+      _reduceHealth(_tokenId);
 
-      // REPLAY TIMELINE
+      // ADD LCP
       uint256 change = block.timestamp - _stake.timestamps[0];
       landClaimPoints[_stake.landId][_tokenId] += change;
-      _changeHealth(_tokenId, change, _stake.landId, _stake.damage);
     }
     if(_stake.action == 2) {
       _attackerChange(_landId, _tokenId, timestamp, false);
     }
 
+    _removeFromSlot(_landId, _tokenId, _action);
     _deleteStake(_tokenId);
   }
 
@@ -199,61 +195,66 @@ contract IntoTheWilds is ERC721Holder {
   /*///////////////////////////////////////////////////////////////
                   INTERNAL FUNCTIONS
   //////////////////////////////////////////////////////////////*/
-  // function _scaleRange(uint16 number, uint16 inMin, uint16 inMax, uint16 outMin, uint16 outMax) internal returns (uint16) {
-  //   return ((number - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
-  // }
 
   function _attackerChange(uint16 _landId, uint16 _tokenId, uint256 timestamp, bool staked) internal {
+    IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId); // TODO USE INVENTORY
 
-    IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId);
-    uint256 scaledDamage = (uint256(_meral.atk) * 100) / 2000 + 10;
+    uint256 scaledDamage;
+    if(_meral.atk > 1600) {
+      scaledDamage = 118;
+    } else {
+      scaledDamage = (uint256(_meral.atk) * 58) / 1600 + 60;
+    }
 
+    // ADD or MINUS variable ATK damage to global baseDamage
     if(staked) {
       landPlots[_landId].baseDamage -= uint16(scaledDamage);
     } else {
       landPlots[_landId].baseDamage += uint16(scaledDamage);
     }
-
-    // REGISTER EVENT to all defenders
-    for(uint256 i = 0; i < slots[_landId][1].length; i ++) {
-      stakes[slots[_landId][1][i]].timestamps.push(timestamp);
-    }
-
-    // CREATE EVENT
-    stakeEvents[_landId][timestamp] = StakeEvent(landPlots[_landId].baseDefence, landPlots[_landId].baseDamage);
-
+    _registerEvent(_landId, timestamp);
   }
 
   function _defenderChange(uint16 _landId, uint256 timestamp, bool staked) internal {
-
-    // ADD MINUS DEFENDER BONUS arbitary 120 per each defender
+    // ADD or MINUS CONSTANT to global baseDefence
     if(staked) {
       landPlots[_landId].baseDefence -= extraDefBonus;
     } else {
       landPlots[_landId].baseDefence += extraDefBonus;
     }
+    _registerEvent(_landId, timestamp);
+  }
 
-    // REGISTER EVENT to other defenders
+  function _registerEvent(uint16 _landId, uint256 timestamp) internal {
+    // REGISTER EVENT to ALL defenders
     for(uint256 i = 0; i < slots[_landId][1].length; i ++) {
       stakes[slots[_landId][1][i]].timestamps.push(timestamp);
     }
-
     // CREATE EVENT
     stakeEvents[_landId][timestamp] = StakeEvent(landPlots[_landId].baseDefence, landPlots[_landId].baseDamage);
-
   }
 
-  function _changeHealth(uint16 _tokenId, uint256 change, uint16 _landId, uint256 damage) internal {
-    Land memory _land = landPlots[_landId];
+  function _reduceHealth(uint16 _tokenId) internal {
+    Stake memory _stake = stakes[_tokenId];
     IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId);
+    uint256 damage = _stake.damage;
 
-    change = (change - (_meral.def * change / _land.baseDefence)) / _land.baseDamage;
-    change += damage;
+    // 100% CERTAIN timestamps.length > 1
+    for(uint256 i = 1; i < _stake.timestamps.length; i ++) {
+      StakeEvent memory _event = stakeEvents[_stake.landId][_stake.timestamps[i]];
+      damage += calculateChange(_stake.timestamps[i-1], _stake.timestamps[i], _meral.def, _event.baseDefence, _event.baseDamage);
+    }
 
-    if(change > _meral.score) {
-      meralsContract.changeScore(uint256(_tokenId), 1000, false, 0);
+    if(_stake.health >= damage) {
+      return; // NO CHANGE NO BONUS HEALTH SORRY
+    }
+
+    damage -= _stake.health;
+
+    if(damage > _meral.score) {
+      meralsContract.changeScore(uint256(_tokenId), 1000, false, 0); // DEAD!!
     } else {
-      meralsContract.changeScore(uint256(_tokenId), uint16(change), false, 0);
+      meralsContract.changeScore(uint256(_tokenId), uint16(damage), false, 0);
     }
   }
 
@@ -273,7 +274,6 @@ contract IntoTheWilds is ERC721Holder {
         j++;
       }
     }
-
     slots[_landId][_action] = shiftedActionSlots;
   }
 
@@ -296,24 +296,47 @@ contract IntoTheWilds is ERC721Holder {
     return slots[_landId][_action];
   }
 
-  function getStakeEvents(uint16 _landId, uint256 _stakeEvent) external view returns (StakeEvent memory) {
-    return stakeEvents[_landId][_stakeEvent];
+  function getStakeEvents(uint16 _landId, uint256 _timestamp) external view returns (StakeEvent memory) {
+    return stakeEvents[_landId][_timestamp];
   }
 
   function getLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {
     return landClaimPoints[_landId][_tokenId];
   }
 
-  function getRecord(uint16 _tokenId) external view returns (uint256) {
+  function calculateHealth(uint16 _tokenId) public view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
-    // Land memory _land = landPlots[_stake.landId];
-    // IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId);
+    Land memory _landPlots = landPlots[_stake.landId];
+    IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId); // TODO USE INVENTORY
+    uint256 damage = _stake.damage;
 
-    for(uint256 i = 0; i < _stake.timestamps.length; i ++) {
-      uint16 _baseDefence = stakeEvents[_stake.landId][_stake.timestamps[i]].baseDefence;
-      console.log(_baseDefence, _tokenId);
+    // NOT 100% CERTAIN timestamps.length > 1
+    for(uint256 i = 1; i < _stake.timestamps.length; i ++) {
+      StakeEvent memory _event = stakeEvents[_stake.landId][_stake.timestamps[i]];
+      damage += calculateChange(_stake.timestamps[i-1], _stake.timestamps[i], _meral.def, _event.baseDefence, _event.baseDamage);
+      // NEED TO DO EXTRA BASED ON LAST EVENT TILL NOW
+      if(i+1 == _stake.timestamps.length) {
+        damage += calculateChange(_stake.timestamps[i], block.timestamp, _meral.def, _landPlots.baseDefence, _landPlots.baseDamage);
+      }
     }
-    return 256;
+
+    if(_stake.health >= damage) {
+      return 0;
+    }
+    return damage - _stake.health;
+  }
+
+  function calculateChange(uint256 start, uint256 end, uint16 _meralDef, uint16 _baseDefence, uint16 _baseDamage) public pure returns (uint256) {
+    uint256 change = end - start;
+    uint256 scaledDef;
+
+    if(_meralDef > 1000) {
+      scaledDef = 1000;
+    } else {
+      scaledDef = (uint256(_meralDef) * 600) / 2000 + 400;
+    }
+
+    return (change - (scaledDef * change / _baseDefence)) / _baseDamage;
   }
 
   function calculateLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {
@@ -322,26 +345,6 @@ contract IntoTheWilds is ERC721Holder {
       return landClaimPoints[_landId][_tokenId] + block.timestamp - _stake.timestamps[0];
     } else {
       return landClaimPoints[_landId][_tokenId];
-    }
-  }
-
-  function calculateHealth(uint16 _tokenId) public view returns (uint16) {
-    Stake memory _stake = stakes[_tokenId];
-    Land memory _land = landPlots[_stake.landId];
-    IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId);
-
-    if(_stake.owner != address(0) && _stake.timestamps[0] > 0) {
-      uint256 change = block.timestamp - _stake.timestamps[0];
-      change = (change - (_meral.def * change / _land.baseDefence)) / _land.baseDamage;
-      change += _stake.damage;
-
-      if(change > _meral.score) {
-        return 0;
-      }
-
-      return _meral.score - uint16(change);
-    } else {
-      return _meral.score;
     }
   }
 

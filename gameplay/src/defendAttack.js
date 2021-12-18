@@ -52,9 +52,13 @@ const addToAmbientDamage = () => {
 };
 
 addToAmbientDamage();
-let num = 1800;
-console.log(scale(num, 0, 2000, 10, 110));
-console.log((num * 100) / 2000 + 10);
+let num = 2000;
+console.log(scale(num, 0, 1600, 60, 118));
+console.log((num * 58) / 1600 + 60);
+
+console.log(scale(num, 0, 2000, 400, 1000));
+console.log((num * 600) / 2000 + 400);
+// console.log((num * 1600) / 2000);
 
 // bdef + 5 - 5;
 

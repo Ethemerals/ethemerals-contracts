@@ -164,38 +164,7 @@ describe('IntoTheWilds', function () {
 		});
 
 		describe('Defend and drain HP', function () {
-			it('Should test ambient drain formula', async function () {
-				// FUZZY
-				let meralId = 5;
-				let landId = 1;
-
-				await merals.changeScore(meralId, 1000, true, 0);
-				await wilds.stake(landId, meralId, 1);
-
-				await network.provider.send('evm_increaseTime', [day]);
-				await network.provider.send('evm_mine');
-
-				let meral = await merals.getEthemeral(meralId);
-				let land = await wilds.landPlots(landId);
-				let baseDefence = land.baseDefence;
-				let baseDamage = land.baseDamage;
-
-				let defenceMod = (meral.def * day) / baseDefence;
-				let calculatedDamage = Math.floor((day - defenceMod) / baseDamage);
-
-				let calculatedHealth = await wilds.calculateHealth(meralId);
-
-				await wilds.unstake(meralId);
-
-				let unstakedHealth = await wilds.calculateHealth(meralId);
-				let finalHealth = await merals.getEthemeral(meralId);
-
-				expect(calculatedHealth).to.be.within(unstakedHealth - 5, finalHealth.score + 5);
-				expect(calculatedHealth).to.be.within(finalHealth.score - 5, finalHealth.score + 5);
-				expect(1000 - calculatedDamage).to.be.within(calculatedHealth - 5, calculatedHealth + 5);
-			});
-
-			it.only('Should minus 120 from baseDefence on each defender stake', async function () {
+			it('Should minus 120 from baseDefence on each defender stake', async function () {
 				let landId = 1;
 				let land = await wilds.landPlots(landId);
 				let baseDefenceStart = land.baseDefence;
@@ -207,13 +176,51 @@ describe('IntoTheWilds', function () {
 				let baseDefenceEnd = land.baseDefence;
 
 				expect(baseDefenceStart - baseDefenceEnd).to.equal(600);
+			});
 
-				await network.provider.send('evm_increaseTime', [day * 2]);
-				await network.provider.send('evm_mine');
+			it('Should calculate change over days', async function () {
+				let meralDef = 5000;
+				let baseDefence = 2000;
+				let extraDefBonus = 120;
+				let baseDamage = 600;
+				let atk = 80;
+				let period = day * 1;
+				let totalChange = 0;
+				let change;
 
-				for (let i = 1; i <= 5; i++) {
-					let value = await wilds.getRecord(i);
-				}
+				// 1 defender 0 attackers max
+				change = await wilds.calculateChange(0, period, meralDef, baseDefence - extraDefBonus, baseDamage);
+				totalChange += parseInt(change);
+				console.log(totalChange, '1 vs 0');
+
+				// 1 defender 1 attackers max
+				change = await wilds.calculateChange(0, period, meralDef, baseDefence - extraDefBonus, baseDamage - atk);
+				totalChange += parseInt(change);
+				console.log(totalChange, '1 vs 1');
+
+				// 1 defender 5 attackers max attack bonus
+				totalChange = 0;
+				change = await wilds.calculateChange(0, period, meralDef, baseDefence - extraDefBonus, baseDamage - atk * 5);
+				totalChange += parseInt(change);
+				console.log(totalChange, '1 vs 5');
+
+				// 5 defender 5 attackers max attack bonus
+				totalChange = 0;
+				change = await wilds.calculateChange(0, period, meralDef, baseDefence - extraDefBonus * 5, baseDamage - atk * 5);
+				totalChange += parseInt(change);
+				console.log(totalChange, '5 vs 5');
+
+				// 5 defender 1 attackers max attack bonus
+				totalChange = 0;
+				change = await wilds.calculateChange(0, period, meralDef, baseDefence - extraDefBonus * 5, baseDamage - atk);
+				totalChange += parseInt(change);
+				console.log(totalChange, '5 vs 1');
+
+				// 5 defender 0 attackers max attack bonus
+				totalChange = 0;
+				change = await wilds.calculateChange(0, period, meralDef, baseDefence - extraDefBonus * 5, baseDamage);
+				totalChange += parseInt(change);
+				console.log(totalChange, '5 vs 0');
 			});
 
 			it('Should minus some value from baseDamage on each attacker stake', async function () {
@@ -240,10 +247,49 @@ describe('IntoTheWilds', function () {
 					expect(baseDamage).to.be.lt(land.baseDamage);
 					baseDamage = land.baseDamage;
 				}
+			});
 
-				// let baseDefenceEnd = land.baseDefence;
+			it.only('Should stake and unstake and reduce HP', async function () {
+				let landId = 1;
 
-				// expect(baseDefenceStart - baseDefenceEnd).to.equal(600);
+				for (let i = 1; i < 2; i++) {
+					await merals.changeScore(i, 1000, true, 0);
+					await wilds.stake(landId, i, 1);
+
+					await network.provider.send('evm_increaseTime', [day]);
+					await network.provider.send('evm_mine');
+
+					if (i === 5) {
+						landId = 2;
+					}
+				}
+
+				await network.provider.send('evm_increaseTime', [hour * 1]);
+				await network.provider.send('evm_mine');
+
+				for (let i = 1; i < 2; i++) {
+					let healthChange = await wilds.calculateHealth(i);
+					let lcp = await wilds.calculateLCP(landId, i);
+					if (i === 5) {
+						landId = 2;
+					}
+					console.log(healthChange.toString(), `token id #${i}`, lcp.toString(), 'LCP');
+					await wilds.unstake(i);
+					let meral = await merals.getEthemeral(i);
+					console.log(1000 - meral.score, meral.def, i);
+					// if (meral.score > 1) {
+					// 	expect(meral.score).to.be.equal(1000 - parseInt(healthChange));
+					// }
+				}
+
+				// //DEBUG
+				// let stake = await wilds.getStake(i);
+				// console.log(stake.timestamps, 'timestamps');
+
+				// let value = await wilds.getStakeEvents(stake.landId, stake.timestamps[0]);
+				// // console.log(value);
+				// console.log(value.baseDefence, 'baseDefence');
+				// console.log(value.baseDamage, 'baseDamage');
 			});
 
 			it('Should - stake 10 defenders and unstake 10 defenders', async function () {
