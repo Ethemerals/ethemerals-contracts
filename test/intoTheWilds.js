@@ -55,13 +55,13 @@ describe('IntoTheWilds', function () {
 		it('Should add land', async function () {
 			let remainingELFx = 10000;
 			let emissionRate = 20;
-			let defBonus = 1800;
-			let damageRate = 500;
-			await wilds.addLand(7, 10, 10, [3, 4, 5], [4, 5, 6], remainingELFx, emissionRate, defBonus, damageRate);
+			let baseDefence = 1800;
+			let baseDamage = 500;
+			await wilds.addLand(7, 10, 10, [3, 4, 5], [4, 5, 6], remainingELFx, emissionRate, baseDefence, baseDamage);
 			let land = await wilds.landPlots(7);
 
-			expect(land.defBonus).to.equal(defBonus);
-			expect(land.damageRate).to.equal(damageRate);
+			expect(land.baseDefence).to.equal(baseDefence);
+			expect(land.baseDamage).to.equal(baseDamage);
 			expect(land.emissionRate).to.equal(emissionRate);
 			expect(land.remainingELFx).to.equal(remainingELFx);
 		});
@@ -165,22 +165,23 @@ describe('IntoTheWilds', function () {
 
 		describe('Defend and drain HP', function () {
 			it('Should test ambient drain formula', async function () {
+				// FUZZY
 				let meralId = 5;
 				let landId = 1;
 
 				await merals.changeScore(meralId, 1000, true, 0);
 				await wilds.stake(landId, meralId, 1);
 
-				let meral = await merals.getEthemeral(meralId);
-				let land = await wilds.landPlots(landId);
-				let defBonus = land.defBonus;
-				let damageRate = land.damageRate;
-
-				let defenceMod = (meral.def * day) / defBonus;
-				let calculatedDamage = Math.floor((day - defenceMod) / damageRate);
-
 				await network.provider.send('evm_increaseTime', [day]);
 				await network.provider.send('evm_mine');
+
+				let meral = await merals.getEthemeral(meralId);
+				let land = await wilds.landPlots(landId);
+				let baseDefence = land.baseDefence;
+				let baseDamage = land.baseDamage;
+
+				let defenceMod = (meral.def * day) / baseDefence;
+				let calculatedDamage = Math.floor((day - defenceMod) / baseDamage);
 
 				let calculatedHealth = await wilds.calculateHealth(meralId);
 
@@ -189,31 +190,66 @@ describe('IntoTheWilds', function () {
 				let unstakedHealth = await wilds.calculateHealth(meralId);
 				let finalHealth = await merals.getEthemeral(meralId);
 
-				expect(calculatedHealth).to.equal(unstakedHealth);
-				expect(calculatedHealth).to.equal(finalHealth.score);
-				expect(1000 - calculatedDamage).to.equal(finalHealth.score);
+				expect(calculatedHealth).to.be.within(unstakedHealth - 5, finalHealth.score + 5);
+				expect(calculatedHealth).to.be.within(finalHealth.score - 5, finalHealth.score + 5);
+				expect(1000 - calculatedDamage).to.be.within(calculatedHealth - 5, calculatedHealth + 5);
 			});
 
-			it('Should - 100 from defBonus on each defender stake', async function () {
+			it.only('Should minus 120 from baseDefence on each defender stake', async function () {
 				let landId = 1;
 				let land = await wilds.landPlots(landId);
-				let defBonusStart = land.defBonus;
-				await wilds.stake(landId, 1, 1);
-				await wilds.stake(landId, 2, 1);
-				await wilds.stake(landId, 3, 1);
-				await wilds.stake(landId, 4, 1);
-				await wilds.stake(landId, 5, 1);
+				let baseDefenceStart = land.baseDefence;
+				for (let i = 1; i <= 5; i++) {
+					await wilds.stake(landId, i, 1);
+				}
 
 				land = await wilds.landPlots(landId);
-				let defBonusEnd = land.defBonus;
+				let baseDefenceEnd = land.baseDefence;
 
-				expect(defBonusStart - defBonusEnd).to.equal(500);
+				expect(baseDefenceStart - baseDefenceEnd).to.equal(600);
+
+				await network.provider.send('evm_increaseTime', [day * 2]);
+				await network.provider.send('evm_mine');
+
+				for (let i = 1; i <= 5; i++) {
+					let value = await wilds.getRecord(i);
+				}
 			});
 
-			it.only('Should - stake 10 defenders and unstake 10 defenders', async function () {
+			it('Should minus some value from baseDamage on each attacker stake', async function () {
 				let landId = 1;
 				let land = await wilds.landPlots(landId);
-				let defBonusStart = land.defBonus;
+				let baseDamage = land.baseDamage;
+				await wilds.stake(landId, 10, 1);
+
+				for (let i = 1; i <= 5; i++) {
+					await wilds.stake(landId, i, 2);
+					land = await wilds.landPlots(landId);
+					console.log(land.baseDamage, 'baseDamage');
+					expect(baseDamage).to.be.gt(land.baseDamage);
+					baseDamage = land.baseDamage;
+				}
+
+				await network.provider.send('evm_increaseTime', [day * 2]);
+				await network.provider.send('evm_mine');
+
+				for (let i = 1; i <= 5; i++) {
+					await wilds.unstake(i);
+					land = await wilds.landPlots(landId);
+					console.log(land.baseDamage, 'baseDamage');
+					expect(baseDamage).to.be.lt(land.baseDamage);
+					baseDamage = land.baseDamage;
+				}
+
+				// let baseDefenceEnd = land.baseDefence;
+
+				// expect(baseDefenceStart - baseDefenceEnd).to.equal(600);
+			});
+
+			it('Should - stake 10 defenders and unstake 10 defenders', async function () {
+				let landId = 1;
+				let land = await wilds.landPlots(landId);
+				let baseDefenceStart = land.baseDefence;
 				for (let i = 1; i < 11; i++) {
 					await merals.changeScore(i, 1000, true, 0);
 					await wilds.stake(landId, i, 1);
@@ -227,8 +263,8 @@ describe('IntoTheWilds', function () {
 
 					let value = await wilds.getStakeEvents(stake.landId, stake.timestamps[0]);
 					// console.log(value);
-					console.log(value.defBonus, 'defBonus');
-					console.log(value.damageRate, 'damageRate');
+					console.log(value.baseDefence, 'baseDefence');
+					console.log(value.baseDamage, 'baseDamage');
 				}
 
 				await network.provider.send('evm_increaseTime', [3600]);
@@ -241,8 +277,8 @@ describe('IntoTheWilds', function () {
 
 					let value = await wilds.getStakeEvents(stake.landId, stake.timestamps[stake.timestamps.length - 1]);
 					// console.log(value);
-					console.log(value.defBonus, 'defBonus');
-					console.log(value.damageRate, 'damageRate');
+					console.log(value.baseDefence, 'baseDefence');
+					console.log(value.baseDamage, 'baseDamage');
 				}
 
 				await network.provider.send('evm_increaseTime', [day * 4]);
@@ -260,8 +296,8 @@ describe('IntoTheWilds', function () {
 
 						let value = await wilds.getStakeEvents(stake.landId, stake.timestamps[stake.timestamps.length - 1]);
 						// console.log(value);
-						console.log(value.defBonus, 'defBonus');
-						console.log(value.damageRate, 'damageRate');
+						console.log(value.baseDefence, 'baseDefence');
+						console.log(value.baseDamage, 'baseDamage');
 					}
 				}
 			});

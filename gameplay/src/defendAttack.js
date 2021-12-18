@@ -9,8 +9,8 @@ let stakeLength = 604800; // 7 days
 let damage = 0;
 
 // DAIL IT
-let defBonus = 1800; // lower more bonus applied min 1100
-let ambientDamageRate = 600; // lower more damage applied
+let defBonus = 1200; // lower more bonus applied min 1200 - 1700
+let ambientDamageRate = 600; // lower more damage applied min 50 - 600
 
 const ambientDamage = () => {
 	const change = stakeLength;
@@ -52,7 +52,22 @@ const addToAmbientDamage = () => {
 };
 
 addToAmbientDamage();
-let num = 100;
-console.log(scale(num, 0, 1600, 10, 100));
+let num = 1800;
+console.log(scale(num, 0, 2000, 10, 110));
+console.log((num * 100) / 2000 + 10);
 
 // bdef + 5 - 5;
+
+// one day
+
+// 1 defender 5 attackers max attack
+// final Changes [ 703, 1619, 1296.066 ]
+
+// 5 defender 1 attackers max attack
+// final Changes [ 23, 131, 92.592 ]
+
+// full slots
+// damage [ 107, 1008, 424.44 ]
+
+// 1 on 1
+// [ 70, 161, 129.147 ]
