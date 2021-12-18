@@ -26,6 +26,9 @@ describe('IntoTheWilds', function () {
 		await merals.setPrice(0);
 		await merals.setMaxMeralIndex(1000);
 
+		await network.provider.send('evm_increaseTime', [day]);
+		await network.provider.send('evm_mine');
+
 		await merals.mintMeralsAdmin(player1.address, 10); // ID starts at 11
 		await merals.mintMeralsAdmin(player2.address, 10); // ID starts at 21
 		await merals.mintMeralsAdmin(player3.address, 10); // ID starts at 31
@@ -249,25 +252,27 @@ describe('IntoTheWilds', function () {
 				}
 			});
 
-			it.only('Should stake and unstake and reduce HP', async function () {
+			it('Should stake and unstake and reduce HP', async function () {
 				let landId = 1;
 
-				for (let i = 1; i < 2; i++) {
+				for (let i = 1; i < 11; i++) {
 					await merals.changeScore(i, 1000, true, 0);
 					await wilds.stake(landId, i, 1);
 
-					await network.provider.send('evm_increaseTime', [day]);
+					await network.provider.send('evm_increaseTime', [hour]);
 					await network.provider.send('evm_mine');
+
+					await wilds.connect(player1).stake(landId, i + 10, 2); // ATTACKERS
 
 					if (i === 5) {
 						landId = 2;
 					}
 				}
 
-				await network.provider.send('evm_increaseTime', [hour * 1]);
+				await network.provider.send('evm_increaseTime', [day]);
 				await network.provider.send('evm_mine');
 
-				for (let i = 1; i < 2; i++) {
+				for (let i = 1; i < 11; i++) {
 					let healthChange = await wilds.calculateHealth(i);
 					let lcp = await wilds.calculateLCP(landId, i);
 					if (i === 5) {
@@ -277,19 +282,28 @@ describe('IntoTheWilds', function () {
 					await wilds.unstake(i);
 					let meral = await merals.getEthemeral(i);
 					console.log(1000 - meral.score, meral.def, i);
-					// if (meral.score > 1) {
-					// 	expect(meral.score).to.be.equal(1000 - parseInt(healthChange));
-					// }
+
+					expect(meral.score).to.be.equal(1000 - parseInt(healthChange));
 				}
+			});
 
-				// //DEBUG
-				// let stake = await wilds.getStake(i);
-				// console.log(stake.timestamps, 'timestamps');
+			it.only('Should stake and unstake single', async function () {
+				let landId = 1;
 
-				// let value = await wilds.getStakeEvents(stake.landId, stake.timestamps[0]);
-				// // console.log(value);
-				// console.log(value.baseDefence, 'baseDefence');
-				// console.log(value.baseDamage, 'baseDamage');
+				await merals.changeScore(1, 1000, true, 0);
+				await wilds.stake(landId, 1, 1);
+
+				await network.provider.send('evm_increaseTime', [day]);
+				await network.provider.send('evm_mine');
+
+				let healthChange = await wilds.calculateHealth(1);
+				let lcp = await wilds.calculateLCP(landId, 1);
+				console.log(healthChange.toString(), `token id #${1}`, lcp.toString(), 'LCP');
+				await wilds.unstake(1);
+				let meral = await merals.getEthemeral(1);
+				console.log(1000 - meral.score, meral.def, 1);
+
+				expect(meral.score).to.be.equal(1000 - parseInt(healthChange));
 			});
 
 			it('Should - stake 10 defenders and unstake 10 defenders', async function () {

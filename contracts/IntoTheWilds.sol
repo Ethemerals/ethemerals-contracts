@@ -139,7 +139,6 @@ contract IntoTheWilds is ERC721Holder {
 
     uint256[] memory _timestamps = new uint256[](1);
     uint256 timestamp = block.timestamp;
-    _timestamps[0] = timestamp;
 
 
     if(_action == 1) {
@@ -157,8 +156,11 @@ contract IntoTheWilds is ERC721Holder {
       // BIRTH
     }
 
+    _timestamps[0] = timestamp;
     _addToSlot(_landId, _tokenId, _action);
     stakes[_tokenId] = Stake({owner: msg.sender, timestamps: _timestamps, damage: 0, health: 0, landId: _landId, action: _action});
+
+
 
   }
 
@@ -241,7 +243,7 @@ contract IntoTheWilds is ERC721Holder {
 
     // 100% CERTAIN timestamps.length > 1
     for(uint256 i = 1; i < _stake.timestamps.length; i ++) {
-      StakeEvent memory _event = stakeEvents[_stake.landId][_stake.timestamps[i]];
+      StakeEvent memory _event = stakeEvents[_stake.landId][_stake.timestamps[i-1]];
       damage += calculateChange(_stake.timestamps[i-1], _stake.timestamps[i], _meral.def, _event.baseDefence, _event.baseDamage);
     }
 
@@ -307,23 +309,31 @@ contract IntoTheWilds is ERC721Holder {
   function calculateHealth(uint16 _tokenId) public view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
-    IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId); // TODO USE INVENTORY
+    IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId);
     uint256 damage = _stake.damage;
 
-    // NOT 100% CERTAIN timestamps.length > 1
+    // 100% CERTAIN timestamps.length > 1
     for(uint256 i = 1; i < _stake.timestamps.length; i ++) {
-      StakeEvent memory _event = stakeEvents[_stake.landId][_stake.timestamps[i]];
+      StakeEvent memory _event = stakeEvents[_stake.landId][_stake.timestamps[i-1]];
       damage += calculateChange(_stake.timestamps[i-1], _stake.timestamps[i], _meral.def, _event.baseDefence, _event.baseDamage);
-      // NEED TO DO EXTRA BASED ON LAST EVENT TILL NOW
-      if(i+1 == _stake.timestamps.length) {
-        damage += calculateChange(_stake.timestamps[i], block.timestamp, _meral.def, _landPlots.baseDefence, _landPlots.baseDamage);
-      }
     }
+
+    // EXTRA NOW PING
+    damage += calculateChange(_stake.timestamps[_stake.timestamps.length - 1], block.timestamp, _meral.def, _landPlots.baseDefence, _landPlots.baseDamage);
+
 
     if(_stake.health >= damage) {
       return 0;
     }
-    return damage - _stake.health;
+
+    damage -= _stake.health;
+
+    if(damage > _meral.score) {
+      return 1000;
+    } else {
+      return damage;
+    }
+
   }
 
   function calculateChange(uint256 start, uint256 end, uint16 _meralDef, uint16 _baseDefence, uint16 _baseDamage) public pure returns (uint256) {
