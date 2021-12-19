@@ -259,7 +259,7 @@ describe('IntoTheWilds', function () {
 					await merals.changeScore(i, 1000, true, 0);
 					await wilds.stake(landId, i, 1);
 
-					await network.provider.send('evm_increaseTime', [hour * 12]);
+					await network.provider.send('evm_increaseTime', [hour * 6]);
 					await network.provider.send('evm_mine');
 
 					await wilds.connect(player1).stake(landId, i + 10, 2); // ATTACKERS
@@ -269,12 +269,11 @@ describe('IntoTheWilds', function () {
 					}
 				}
 
-				await network.provider.send('evm_increaseTime', [day]);
+				await network.provider.send('evm_increaseTime', [day * 2]);
 				await network.provider.send('evm_mine');
 
 				// for (let i = 1; i < 11; i++) {
 				// 	let healthChange = await wilds.calculateHealth(i);
-				// 	// console.log(healthChange);
 				// 	let lcp = await wilds.calculateLCP(landId, i);
 				// 	if (i === 5) {
 				// 		landId = 2;
@@ -286,6 +285,7 @@ describe('IntoTheWilds', function () {
 
 				// 	expect(meral.score).to.be.equal(1000 - parseInt(healthChange));
 				// }
+
 				function shuffle(array) {
 					return array.sort(() => Math.random() - 0.5);
 				}
@@ -295,7 +295,6 @@ describe('IntoTheWilds', function () {
 
 				for (let i = 1; i < 10; i++) {
 					let healthChange = await wilds.calculateHealth(defId[i]);
-					// console.log(healthChange);
 
 					console.log(healthChange.toString(), `token id #${defId[i]}`);
 					await wilds.unstake(defId[i]);
