@@ -321,7 +321,6 @@ contract IntoTheWilds is ERC721Holder {
     // EXTRA NOW PING
     damage += calculateChange(_stake.timestamps[_stake.timestamps.length - 1], block.timestamp, _meral.def, _landPlots.baseDefence, _landPlots.baseDamage);
 
-
     if(_stake.health >= damage) {
       return 0;
     }
@@ -333,7 +332,6 @@ contract IntoTheWilds is ERC721Holder {
     } else {
       return damage;
     }
-
   }
 
   function calculateChange(uint256 start, uint256 end, uint16 _meralDef, uint16 _baseDefence, uint16 _baseDamage) public pure returns (uint256) {

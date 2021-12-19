@@ -15,9 +15,11 @@ const hre = require('hardhat');
 // 	console.log('ethemerals deployed to:', ethemerals.address);
 // }
 
+const EthemeralsAddress_4 = '0xcdb47e685819638668ff736d1a2ae32b68e76ba5';
+
 async function main() {
 	const IntoTheWilds = await hre.ethers.getContractFactory('IntoTheWilds');
-	const intoTheWilds = await IntoTheWilds.deploy('0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ADDRESS
+	const intoTheWilds = await IntoTheWilds.deploy(EthemeralsAddress_4);
 
 	await intoTheWilds.deployed();
 
