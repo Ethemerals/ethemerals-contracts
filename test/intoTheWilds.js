@@ -79,8 +79,6 @@ describe('IntoTheWilds', function () {
 
 			await expect(wilds.stake(7, 6, 1)).to.be.revertedWith('not land');
 
-			await expect(wilds.stake(2, 6, 5)).to.be.revertedWith('not action');
-			await expect(wilds.stake(2, 6, 0)).to.be.revertedWith('not action');
 			await expect(wilds.stake(2, 6, 2)).to.be.revertedWith('need defender');
 			await expect(wilds.stake(2, 6, 4)).to.be.revertedWith('not raidable');
 			await wilds.stake(1, 6, 2); // allow
@@ -111,8 +109,8 @@ describe('IntoTheWilds', function () {
 			await network.provider.send('evm_increaseTime', [day]);
 			await network.provider.send('evm_mine');
 
-			// DEFENDERS ARE FREE
 			await wilds.unstake(6);
+			// DEFENDERS ARE FREE
 			await wilds.unstake(1);
 		});
 
@@ -458,6 +456,8 @@ describe('IntoTheWilds', function () {
 							break;
 						}
 					}
+
+					await expect(wilds.stake(landId, 1, 1)).to.be.revertedWith('no reinforcements');
 
 					remainingHealth = await wilds.calculateHealth(2);
 					while (remainingHealth > 1) {

@@ -15,6 +15,8 @@ contract IntoTheWilds is ERC721Holder {
   address public admin;
 
   IEthemerals meralsContract;
+  enum Action {UNSTAKED, DEFEND, LOOT, BIRTH, ATTACK}
+  enum RaidStatus {CLOSED, RAIDABLE, RAIDING, COOLDOWN}
 
   // ALL LANDSPLOTS
   mapping (uint16 => Land) public landPlots;
@@ -24,7 +26,7 @@ contract IntoTheWilds is ERC721Holder {
 
   // ACTIONS 0 - UNSTAKED, 1 - DEFEND, 2 - LOOT, 3 - BIRTH, 4 - ATTACK,
   // land PLOTS => ACTION SLOTS => MERALS
-  mapping (uint16 => mapping(uint8 => uint16[])) private slots;
+  mapping (uint16 => mapping(Action => uint16[])) private slots;
   // land PLOTS => TIMESTAMP => EVENTS
   // mapping (uint16 => mapping(uint256 => StakeEvent)) private stakeEvents;
 
@@ -47,7 +49,7 @@ contract IntoTheWilds is ERC721Holder {
     uint16 damage;
     uint16 health;
     uint16 landId;
-    uint8 action;
+    Action action;
   }
 
   struct ItemPool {
@@ -62,7 +64,7 @@ contract IntoTheWilds is ERC721Holder {
     uint256 emissionRate; // DEV IMPROVE
     uint16 baseDefence;
     uint16 baseDamage;
-    uint8 raidStatus; // 0 - default, 1 - raidable, 2 - currently raiding
+    uint8 raidStatus; // 0 - default, 1 - raidable, 2 - currently raiding 3 - cooldown?
     ItemPool lootPool;
     ItemPool petPool;
   }
@@ -126,54 +128,27 @@ contract IntoTheWilds is ERC721Holder {
   /*///////////////////////////////////////////////////////////////
                   PUBLIC FUNCTIONS
   //////////////////////////////////////////////////////////////*/
-  function stake(uint16 _landId, uint16 _tokenId, uint8 _action ) external {
+  function stake(uint16 _landId, uint16 _tokenId, Action _action ) external {
     require(stakes[_tokenId].owner == address(0), "already staked");
     require(landPlots[_landId].remainingELFx > 0, "not land");
-    require(_action > 0 && _action < 5, "not action");
     require(slots[_landId][_action].length < 5, "full");
 
-    if(_action == 2 || _action == 3) {
-      require(slots[_landId][1].length > 0, "need defender");
-    }
-    if(_action == 4) {
-      require(landPlots[_landId].raidStatus > 0, "not raidable");
-    }
-    if(_action == 1) {
+    if(_action == Action.DEFEND) {
       require(landPlots[_landId].raidStatus < 2, "no reinforcements");
+      _defend(_landId, _tokenId, _action);
     }
-
-    meralsContract.safeTransferFrom(msg.sender, address(this), _tokenId);
-    uint256 timestamp = block.timestamp;
-
-    // ADD TO ACTION SLOTS
-    slots[_landId][_action].push(_tokenId);
-
-    if(_action == 1) {
-      _defenderChange(_landId, timestamp, true);
-
-      // SET RAIDSTATUS
-      if(slots[_landId][1].length == 5) {
-        landPlots[_landId].raidStatus = 1;
-      }
+    if(_action == Action.LOOT) {
+      require(slots[_landId][Action.DEFEND].length > 0, "need defender");
+      // TODO
     }
-
-    if(_action == 2) {
-      // LOOT
+    if(_action == Action.BIRTH) {
+      require(slots[_landId][Action.DEFEND].length > 0, "need defender");
+      // TODO
     }
-
-    if(_action == 3) {
-      // BIRTH
+    if(_action == Action.ATTACK) {
+      require(landPlots[_landId].raidStatus > 0, "not raidable");
+      _attack(_landId, _tokenId, _action);
     }
-    if(_action == 4) {
-      // SET RAIDSTATUS
-      if(slots[_landId][4].length == 1) {
-        landPlots[_landId].raidStatus = 2;
-      }
-      _attackerChange(_landId, _tokenId, timestamp, true);
-    }
-
-    // ADD STAKES
-    stakes[_tokenId] = Stake({owner: msg.sender, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, landId: _landId, action: _action});
   }
 
   function unstake(uint16 _tokenId) external {
@@ -181,50 +156,20 @@ contract IntoTheWilds is ERC721Holder {
     require(_stake.owner == msg.sender || msg.sender == admin, "admin only");
     require(_stake.owner != address(0), "not staked");
     require(block.timestamp - stakeEvents[_stake.landId][_stake.entryPointer].timestamp >= 86400, "cooldown");
-    if(_stake.action == 1) {
+
+    if(_stake.action == Action.DEFEND) {
       require(landPlots[_stake.landId].raidStatus < 2, 'in a raid');
+      _undefend(_stake, _tokenId);
     }
-
-    meralsContract.safeTransferFrom(address(this), _stake.owner, _tokenId);
-
-    // NO NEED TO CLAIM TODO
-    uint256 timestamp = block.timestamp;
-
-    if(_stake.action == 1) {
-      _defenderChange(_stake.landId, timestamp, false);
-      _reduceHealth(_tokenId);
-
-      // ADD LCP
-      uint256 change = timestamp - stakeEvents[_stake.landId][_stake.entryPointer].timestamp;
-      landClaimPoints[_stake.landId][_tokenId] += change;
-    }
-    if(_stake.action == 2) {
+    if(_stake.action == Action.LOOT) {
       // LOOT
     }
-    if(_stake.action == 3) {
+    if(_stake.action == Action.BIRTH) {
       // BIRTH
     }
-    if(_stake.action == 4) {
-      _attackerChange(_stake.landId, _tokenId, timestamp, false);
-    }
-
-    _removeFromSlot(_stake.landId, _tokenId, _stake.action);
-    _deleteStake(_tokenId);
-
-    if(_stake.action == 1) {
-      if(slots[_stake.landId][1].length == 0) {
-        // TODO if last defender
-        _noDefenders(_stake.landId);
-      }
-      // SET RAIDSTATUS
-      if(slots[_stake.landId][1].length == 4) {
-        landPlots[_stake.landId].raidStatus = 0;
-      }
-    }
-
-    // SET RAIDSTATUS
-    if(_stake.action == 4 && slots[_stake.landId][4].length == 0) {
-      landPlots[_stake.landId].raidStatus = 0;
+    if(_stake.action == Action.ATTACK) {
+      require(landPlots[_stake.landId].raidStatus < 2, 'in a raid');
+      _unattack(_stake, _tokenId);
     }
 
   }
@@ -232,9 +177,10 @@ contract IntoTheWilds is ERC721Holder {
   function deathKiss(uint16 _tokenId, uint16 _deathId) external {
     require(_tokenId != _deathId, 'cannot kiss yourself');
     Stake memory _stake = stakes[_tokenId];
-    require(_stake.action == 1, "not staked");
+    require(_stake.action == Action.DEFEND, "not staked");
     IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId);
     uint256 damage = calculateHealth(_tokenId);
+
     if(_meral.score > damage) { // safe
       if(stakes[_deathId].owner == msg.sender && stakes[_deathId].landId == _stake.landId) {
         require(_meral.score - damage <= 50, 'not dead');
@@ -253,7 +199,7 @@ contract IntoTheWilds is ERC721Holder {
     _removeFromSlot(_stake.landId, _tokenId, _stake.action);
     _deleteStake(_tokenId);
 
-    if(slots[_stake.landId][1].length == 0) {
+    if(slots[_stake.landId][Action.DEFEND].length == 0) {
       // TODO if RAIDENDED
       _noDefenders(_stake.landId);
       landPlots[_stake.landId].raidStatus = 0;
@@ -267,6 +213,72 @@ contract IntoTheWilds is ERC721Holder {
   /*///////////////////////////////////////////////////////////////
                   INTERNAL FUNCTIONS
   //////////////////////////////////////////////////////////////*/
+  function _defend(uint16 _landId, uint16 _tokenId, Action _action ) internal {
+    meralsContract.safeTransferFrom(msg.sender, address(this), _tokenId);
+    uint256 timestamp = block.timestamp;
+
+    // ADD TO ACTION SLOTS
+    slots[_landId][_action].push(_tokenId);
+    _defenderChange(_landId, timestamp, true);
+
+    // SET RAIDSTATUS
+    if(slots[_landId][Action.DEFEND].length == 5) {
+      landPlots[_landId].raidStatus = 1;
+    }
+
+    stakes[_tokenId] = Stake({owner: msg.sender, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, landId: _landId, action: _action});
+  }
+
+  function _undefend(Stake memory _stake, uint16 _tokenId) internal {
+    meralsContract.safeTransferFrom(address(this), _stake.owner, _tokenId);
+    // NEED TO CLAIM? TODO
+    uint256 timestamp = block.timestamp;
+    _defenderChange(_stake.landId, timestamp, false);
+    _reduceHealth(_tokenId);
+
+    // ADD LCP
+    uint256 change = timestamp - stakeEvents[_stake.landId][_stake.entryPointer].timestamp;
+    landClaimPoints[_stake.landId][_tokenId] += change;
+
+    _removeFromSlot(_stake.landId, _tokenId, _stake.action);
+    _deleteStake(_tokenId);
+
+    if(slots[_stake.landId][Action.DEFEND].length == 0) {
+      // TODO if last defender
+      _noDefenders(_stake.landId);
+    }
+    // SET RAIDSTATUS
+    if(slots[_stake.landId][Action.DEFEND].length == 4) {
+      landPlots[_stake.landId].raidStatus = 0;
+    }
+  }
+
+  function _attack(uint16 _landId, uint16 _tokenId, Action _action ) internal {
+    meralsContract.safeTransferFrom(msg.sender, address(this), _tokenId);
+    uint256 timestamp = block.timestamp;
+
+    // ADD TO ACTION SLOTS
+    slots[_landId][_action].push(_tokenId);
+    _attackerChange(_landId, _tokenId, timestamp, true);
+    // SET RAIDSTATUS
+    if(slots[_landId][Action.ATTACK].length == 1) {
+      landPlots[_landId].raidStatus = 2;
+    }
+
+    stakes[_tokenId] = Stake({owner: msg.sender, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, landId: _landId, action: _action});
+  }
+
+  function _unattack(Stake memory _stake, uint16 _tokenId) internal {
+    meralsContract.safeTransferFrom(address(this), _stake.owner, _tokenId);
+    uint256 timestamp = block.timestamp;
+    _attackerChange(_stake.landId, _tokenId, timestamp, false);
+    _removeFromSlot(_stake.landId, _tokenId, _stake.action);
+    _deleteStake(_tokenId);
+
+    if(slots[_stake.landId][Action.ATTACK].length == 0) {
+      landPlots[_stake.landId].raidStatus = 0; // TODO RAID ENDED
+    }
+  }
 
   function _attackerChange(uint16 _landId, uint16 _tokenId, uint256 timestamp, bool staked) internal {
     IEthemerals.Meral memory _meral = meralsContract.getEthemeral(_tokenId); // TODO USE INVENTORY
@@ -327,7 +339,7 @@ contract IntoTheWilds is ERC721Holder {
     }
   }
 
-  function _removeFromSlot(uint16 _landId, uint16 _tokenId, uint8 _action) internal {
+  function _removeFromSlot(uint16 _landId, uint16 _tokenId, Action _action) internal {
     uint16[] memory _slots = slots[_landId][_action];
     uint16[] memory shiftedActionSlots = new uint16[](_slots.length - 1);
 
@@ -343,6 +355,11 @@ contract IntoTheWilds is ERC721Holder {
 
   function _noDefenders(uint16 _landId) internal {
     delete stakeEvents[_landId];
+
+    // RAID ENDED?
+    if(landPlots[_landId].raidStatus == 2) {
+
+    }
 
     // deleteStake
     // reset slots
@@ -413,7 +430,7 @@ contract IntoTheWilds is ERC721Holder {
     return stakes[_tokenId];
   }
 
-  function getSlots(uint16 _landId, uint8 _action) external view returns (uint16[] memory) {
+  function getSlots(uint16 _landId, Action _action) external view returns (uint16[] memory) {
     return slots[_landId][_action];
   }
 
