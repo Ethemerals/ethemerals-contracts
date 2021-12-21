@@ -86,9 +86,9 @@ describe('IntoTheWilds', function () {
 			await wilds.connect(player1).stake(1, 11, 1);
 			expect(await merals.ownerOf(11)).to.equal(wilds.address);
 			await expect(wilds.connect(player1).unstake(11)).to.be.revertedWith('cooldown');
-			await expect(wilds.connect(player2).unstake(11)).to.be.revertedWith('admin only');
+			await expect(wilds.connect(player2).unstake(11)).to.be.revertedWith('owner only');
 
-			await expect(wilds.connect(player1).unstake(12)).to.be.revertedWith('admin only');
+			await expect(wilds.connect(player1).unstake(12)).to.be.revertedWith('owner only');
 			await expect(wilds.unstake(1)).to.be.revertedWith('not staked');
 
 			await expect(wilds.addLand(1, 10, 10, [3, 4, 5], [4, 5, 6], 1000, 10, 100, 100)).to.be.revertedWith('already land');
@@ -181,14 +181,16 @@ describe('IntoTheWilds', function () {
 			land = await wilds.landPlots(1);
 			expect(land.raidStatus).to.equal(2);
 
-			await network.provider.send('evm_increaseTime', [day]);
+			await network.provider.send('evm_increaseTime', [day * 10]);
 			await network.provider.send('evm_mine');
 
-			await wilds.unstake(6);
 			land = await wilds.landPlots(1);
 			expect(land.raidStatus).to.equal(2);
 
-			await wilds.unstake(7);
+			for (let i = 1; i <= 5; i++) {
+				await wilds.deathKiss(i, 6);
+			}
+
 			land = await wilds.landPlots(1);
 			expect(land.raidStatus).to.equal(0);
 		});
@@ -222,7 +224,7 @@ describe('IntoTheWilds', function () {
 		});
 
 		describe('Defend and drain HP', function () {
-			it.only('Should calculate change over days', async function () {
+			it('Should calculate change over days', async function () {
 				let meralDef = 5000;
 				let baseDefence = 2000;
 				let extraDefBonus = 120;
@@ -297,17 +299,6 @@ describe('IntoTheWilds', function () {
 					land = await wilds.landPlots(landId);
 					console.log(land.baseDamage, 'baseDamage');
 					expect(baseDamage).to.be.gt(land.baseDamage);
-					baseDamage = land.baseDamage;
-				}
-
-				await network.provider.send('evm_increaseTime', [day * 2]);
-				await network.provider.send('evm_mine');
-
-				for (let i = 1; i <= 5; i++) {
-					await wilds.unstake(i);
-					land = await wilds.landPlots(landId);
-					console.log(land.baseDamage, 'baseDamage');
-					expect(baseDamage).to.be.lt(land.baseDamage);
 					baseDamage = land.baseDamage;
 				}
 			});
@@ -446,9 +437,9 @@ describe('IntoTheWilds', function () {
 
 						if (remainingHealth < 50) {
 							console.log(remainingHealth);
-							await expect(wilds.connect(player1).deathKiss(1, 1)).to.be.revertedWith('cannot kiss yourself');
+							await expect(wilds.connect(player1).deathKiss(1, 1)).to.be.revertedWith('no kiss yourself');
 							await expect(wilds.connect(player2).deathKiss(1, 21)).to.be.revertedWith('not really dead');
-							await expect(wilds.connect(player2).deathKiss(25, 21)).to.be.revertedWith('not staked');
+							await expect(wilds.connect(player2).deathKiss(25, 21)).to.be.revertedWith('not raiding');
 							await wilds.connect(player1).deathKiss(1, 11);
 							let defenderSlots = await wilds.getSlots(1, 1);
 
@@ -512,10 +503,14 @@ describe('IntoTheWilds', function () {
 
 					for (let i = 11; i <= 15; i++) {
 						let value = await wilds.calculateLCP(1, i);
-						console.log(value);
+						console.log(value.toString());
 						value = await wilds.calculateDamage(i);
-						console.log(value);
+						console.log(value.toString());
 					}
+				});
+
+				it('Should allow death kiss defenders and swap to defenders', async function () {
+					console.log('hjere');
 				});
 			});
 		});
