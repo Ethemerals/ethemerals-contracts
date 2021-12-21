@@ -59,6 +59,7 @@ contract IntoTheWilds is ERC721Holder {
   struct Land {
     uint256 remainingELFx;
     uint256 emissionRate; // DEV IMPROVE
+    uint256 lastRaid;
     uint16 initBaseDamage;
     uint16 baseDefence;
     uint16 baseDamage;
@@ -92,12 +93,14 @@ contract IntoTheWilds is ERC721Holder {
     ItemPool memory loot1 = ItemPool({ cost: 10, drop1: 1, drop2: 2, drop3: 3 });
     ItemPool memory pet1 = ItemPool({ cost: 10, drop1: 1, drop2: 2, drop3: 3 });
 
-    landPlots[1] = Land({ remainingELFx: 1000, emissionRate: 10, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
-    landPlots[2] = Land({ remainingELFx: 1000, emissionRate: 10, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
-    landPlots[3] = Land({ remainingELFx: 1000, emissionRate: 10, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
-    landPlots[4] = Land({ remainingELFx: 1000, emissionRate: 10, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
-    landPlots[5] = Land({ remainingELFx: 1000, emissionRate: 10, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
-    landPlots[6] = Land({ remainingELFx: 1000, emissionRate: 10, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
+    uint256 timestamp = block.timestamp;
+
+    landPlots[1] = Land({ remainingELFx: 1000, emissionRate: 10, lastRaid: timestamp, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
+    landPlots[2] = Land({ remainingELFx: 1000, emissionRate: 10, lastRaid: timestamp, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
+    landPlots[3] = Land({ remainingELFx: 1000, emissionRate: 10, lastRaid: timestamp, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
+    landPlots[4] = Land({ remainingELFx: 1000, emissionRate: 10, lastRaid: timestamp, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
+    landPlots[5] = Land({ remainingELFx: 1000, emissionRate: 10, lastRaid: timestamp, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
+    landPlots[6] = Land({ remainingELFx: 1000, emissionRate: 10, lastRaid: timestamp, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
 
   }
 
@@ -118,6 +121,7 @@ contract IntoTheWilds is ERC721Holder {
     Land memory land = Land({
       remainingELFx: _remainingELFx,
       emissionRate: _emissionRate,
+      lastRaid: block.timestamp,
       initBaseDamage: _baseDamage,
       baseDefence: _baseDefence,
       baseDamage: _baseDamage,
@@ -229,6 +233,27 @@ contract IntoTheWilds is ERC721Holder {
 
     // TODO GET REWARD
 
+  }
+
+  function swapDefenders(uint16 _tokenId, uint16 _swapperId) external {
+    Stake memory _stake = stakes[_tokenId];
+    require(landPlots[_stake.landId].lastRaid - block.timestamp < 86400, 'too late');
+    require(_stake.owner == msg.sender, 'owner only');
+    require(_stake.action == Action.DEFEND, 'not defending');
+
+    meralsContract.safeTransferFrom(msg.sender, address(this), _swapperId);
+    meralsContract.safeTransferFrom(address(this), msg.sender, _tokenId);
+
+    stakes[_swapperId] = Stake({owner: msg.sender, entryPointer: _stake.entryPointer, damage: _stake.damage, health: _stake.health, landId: _stake.landId, action: _stake.action});
+    uint16[] storage _slots = slots[_stake.landId][_stake.action];
+
+    for(uint256 i = 0; i < _slots.length; i ++) {
+      if(_slots[i] == _tokenId) {
+        _slots[i] == _swapperId;
+      }
+    }
+
+    delete stakes[_tokenId];
   }
 
 
@@ -441,31 +466,31 @@ contract IntoTheWilds is ERC721Holder {
                   EXTERNAL VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function getStake(uint16 _tokenId) external view returns (Stake memory) {
-    return stakes[_tokenId];
-  }
+  // function getStake(uint16 _tokenId) external view returns (Stake memory) {
+  //   return stakes[_tokenId];
+  // }
 
-  function getSlots(uint16 _landId, Action _action) external view returns (uint16[] memory) {
-    return slots[_landId][_action];
-  }
+  // function getSlots(uint16 _landId, Action _action) external view returns (uint16[] memory) {
+  //   return slots[_landId][_action];
+  // }
 
-  function getStakeEvent(uint16 _landId, uint256 _index) external view returns (StakeEvent memory) {
-    return stakeEvents[_landId][_index];
-  }
+  // function getStakeEvent(uint16 _landId, uint256 _index) external view returns (StakeEvent memory) {
+  //   return stakeEvents[_landId][_index];
+  // }
 
-  function getLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {
-    return landClaimPoints[_landId][_tokenId];
-  }
+  // function getLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {
+  //   return landClaimPoints[_landId][_tokenId];
+  // }
 
-  function calculateLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {
-    Stake memory _stake = stakes[_tokenId];
-    StakeEvent memory _stakeEvents = stakeEvents[_landId][_stake.entryPointer];
-    if(_stake.owner != address(0)) {
+  // function calculateLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {
+  //   Stake memory _stake = stakes[_tokenId];
+  //   StakeEvent memory _stakeEvents = stakeEvents[_landId][_stake.entryPointer];
+  //   if(_stake.owner != address(0)) {
 
-      return landClaimPoints[_landId][_tokenId] + block.timestamp - _stakeEvents.timestamp;
-    } else {
-      return landClaimPoints[_landId][_tokenId];
-    }
-  }
+  //     return landClaimPoints[_landId][_tokenId] + block.timestamp - _stakeEvents.timestamp;
+  //   } else {
+  //     return landClaimPoints[_landId][_tokenId];
+  //   }
+  // }
 
 }

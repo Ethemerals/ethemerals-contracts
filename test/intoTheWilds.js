@@ -509,8 +509,15 @@ describe('IntoTheWilds', function () {
 					}
 				});
 
-				it('Should allow death kiss defenders and swap to defenders', async function () {
-					console.log('hjere');
+				it.only('Should allow death kiss defenders and swap to defenders', async function () {
+					let landId = 1;
+					for (let i = 1; i <= 5; i++) {
+						await merals.changeScore(i, 1000, true, 0);
+						await wilds.stake(landId, i, 1);
+
+						await network.provider.send('evm_increaseTime', [hour]);
+						await network.provider.send('evm_mine');
+					}
 				});
 			});
 		});
