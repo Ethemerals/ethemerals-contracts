@@ -110,8 +110,10 @@ describe('IntoTheWilds', function () {
 			await network.provider.send('evm_mine');
 
 			await wilds.unstake(6);
+
+			//TODO
 			// DEFENDERS ARE FREE
-			await wilds.unstake(1);
+			// await wilds.unstake(1);
 		});
 
 		it('Should stake into land1', async function () {
@@ -220,11 +222,11 @@ describe('IntoTheWilds', function () {
 		});
 
 		describe('Defend and drain HP', function () {
-			it('Should calculate change over days', async function () {
+			it.only('Should calculate change over days', async function () {
 				let meralDef = 5000;
 				let baseDefence = 2000;
 				let extraDefBonus = 120;
-				let baseDamage = 600;
+				let baseDamage = 2000;
 				let atk = 80;
 				let period = day * 1;
 				let totalChange = 0;
@@ -331,7 +333,7 @@ describe('IntoTheWilds', function () {
 				await network.provider.send('evm_mine');
 
 				// for (let i = 1; i < 11; i++) {
-				// 	let healthChange = await wilds.calculateHealth(i);
+				// 	let healthChange = await wilds.calculateDamage(i);
 				// 	let lcp = await wilds.calculateLCP(landId, i);
 				// 	if (i === 5) {
 				// 		landId = 2;
@@ -352,7 +354,7 @@ describe('IntoTheWilds', function () {
 				let atkId = shuffle([11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
 
 				for (let i = 0; i < 10; i++) {
-					let healthChange = await wilds.calculateHealth(defId[i]);
+					let healthChange = await wilds.calculateDamage(defId[i]);
 
 					console.log(healthChange.toString(), `token id #${defId[i]}`);
 					await wilds.unstake(defId[i]);
@@ -381,7 +383,7 @@ describe('IntoTheWilds', function () {
 				await network.provider.send('evm_mine');
 
 				for (let i = 0; i < 10; i++) {
-					let healthChange = await wilds.calculateHealth(defId[i]);
+					let healthChange = await wilds.calculateDamage(defId[i]);
 
 					console.log(healthChange.toString(), `token id #${defId[i]}`);
 					await wilds.unstake(defId[i]);
@@ -401,7 +403,7 @@ describe('IntoTheWilds', function () {
 				await network.provider.send('evm_increaseTime', [day]);
 				await network.provider.send('evm_mine');
 
-				let healthChange = await wilds.calculateHealth(1);
+				let healthChange = await wilds.calculateDamage(1);
 				let lcp = await wilds.calculateLCP(landId, 1);
 				console.log(healthChange.toString(), `token id #${1}`, lcp.toString(), 'LCP');
 				await wilds.unstake(1);
@@ -412,7 +414,7 @@ describe('IntoTheWilds', function () {
 			});
 
 			describe('GO RAIDING!', function () {
-				it('Should allow death kiss defenders', async function () {
+				it('Should allow death kiss defenders and swap to defenders', async function () {
 					let landId = 1;
 
 					for (let i = 1; i <= 5; i++) {
@@ -434,12 +436,12 @@ describe('IntoTheWilds', function () {
 					await network.provider.send('evm_increaseTime', [day * 2]);
 					await network.provider.send('evm_mine');
 
-					let remainingHealth = await wilds.calculateHealth(1);
+					let remainingHealth = await wilds.calculateDamage(1);
 
 					while (remainingHealth > 1) {
 						await network.provider.send('evm_increaseTime', [hour]);
 						await network.provider.send('evm_mine');
-						let value = await wilds.calculateHealth(1);
+						let value = await wilds.calculateDamage(1);
 						remainingHealth = 1000 - value;
 
 						if (remainingHealth < 50) {
@@ -459,11 +461,11 @@ describe('IntoTheWilds', function () {
 
 					await expect(wilds.stake(landId, 1, 1)).to.be.revertedWith('no reinforcements');
 
-					remainingHealth = await wilds.calculateHealth(2);
+					remainingHealth = await wilds.calculateDamage(2);
 					while (remainingHealth > 1) {
 						await network.provider.send('evm_increaseTime', [hour]);
 						await network.provider.send('evm_mine');
-						let value = await wilds.calculateHealth(2);
+						let value = await wilds.calculateDamage(2);
 						remainingHealth = 1000 - value;
 
 						if (remainingHealth < 25) {
@@ -475,6 +477,44 @@ describe('IntoTheWilds', function () {
 							expect(remainingHealth).to.equal(defender.score);
 							break;
 						}
+					}
+
+					await network.provider.send('evm_increaseTime', [day]);
+					await network.provider.send('evm_mine');
+
+					// SWAP DEFENDERS
+					await wilds.connect(player2).deathKiss(3, 21);
+					await wilds.connect(player2).deathKiss(4, 21);
+					let defenderSlots = await wilds.getSlots(1, 1);
+					expect(defenderSlots.length).to.equal(1);
+					let attackerSlots = await wilds.getSlots(1, 4);
+					expect(attackerSlots.length).to.equal(5);
+					// last defender
+					await wilds.connect(player2).deathKiss(5, 21);
+					attackerSlots = await wilds.getSlots(1, 4);
+					expect(attackerSlots.length).to.equal(0);
+					defenderSlots = await wilds.getSlots(1, 1);
+					expect(defenderSlots.length).to.equal(5);
+
+					for (let i = 1; i <= 5; i++) {
+						let value = await wilds.getStake(i);
+						expect(value.action).to.equal(0);
+						expect(await merals.ownerOf(i)).to.equal(admin.address);
+					}
+
+					for (let i = 11; i <= 15; i++) {
+						let value = await wilds.getStake(i);
+						expect(value.action).to.equal(1);
+					}
+
+					await network.provider.send('evm_increaseTime', [day * 3]);
+					await network.provider.send('evm_mine');
+
+					for (let i = 11; i <= 15; i++) {
+						let value = await wilds.calculateLCP(1, i);
+						console.log(value);
+						value = await wilds.calculateDamage(i);
+						console.log(value);
 					}
 				});
 			});
