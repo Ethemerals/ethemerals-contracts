@@ -18,12 +18,12 @@ const hre = require('hardhat');
 const EthemeralsAddress_4 = '0xcdb47e685819638668ff736d1a2ae32b68e76ba5';
 
 async function main() {
-	const IntoTheWilds = await hre.ethers.getContractFactory('IntoTheWilds');
-	const intoTheWilds = await IntoTheWilds.deploy(EthemeralsAddress_4);
+	const Wilds = await hre.ethers.getContractFactory('Wilds');
+	const wilds = await Wilds.deploy(EthemeralsAddress_4);
 
-	await intoTheWilds.deployed();
+	await wilds.deployed();
 
-	console.log('wilds deployed to:', intoTheWilds.address);
+	console.log('wilds deployed to:', wilds.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

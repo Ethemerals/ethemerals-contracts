@@ -1,4 +1,5 @@
 require('@nomiclabs/hardhat-waffle');
+require('@nomiclabs/hardhat-ethers');
 require('dotenv').config();
 if (process.env.REPORT_GAS === '1') {
 	require('hardhat-gas-reporter');

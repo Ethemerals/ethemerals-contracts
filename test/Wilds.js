@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const { ethers } = require('hardhat');
 
-describe('IntoTheWilds', function () {
+describe('Wilds', function () {
 	let merals;
 	let wilds;
 	let admin;
@@ -17,8 +17,13 @@ describe('IntoTheWilds', function () {
 		merals = await Ethemerals.deploy('https://api.ethemerals.com/api/', '0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ADDRESS
 		await merals.deployed();
 
-		const IntoTheWilds = await ethers.getContractFactory('IntoTheWilds');
-		wilds = await IntoTheWilds.deploy(merals.address);
+		const WildStaking = await ethers.getContractFactory('WildStaking');
+		wildStaking = await WildStaking.deploy();
+		await wildStaking.deployed();
+
+		const Wilds = await ethers.getContractFactory('Wilds');
+
+		wilds = await Wilds.deploy(merals.address, wildStaking.address);
 		await wilds.deployed();
 
 		// mint merals
@@ -72,16 +77,16 @@ describe('IntoTheWilds', function () {
 
 	describe('Staking and Unstaking', function () {
 		it('Should try to stake and unstake but revert', async function () {
-			await expect(wilds.stake(1, 11, 1)).to.be.revertedWith('ERC721: transfer of token that is not own');
+			await expect(wilds.stake(1, 11, 1)).to.be.revertedWith('owner only');
 
 			await wilds.stake(1, 5, 1);
-			await expect(wilds.stake(1, 5, 1)).to.be.revertedWith('already staked');
+			await expect(wilds.stake(1, 5, 1)).to.be.revertedWith('owner only');
 
 			await expect(wilds.stake(7, 6, 1)).to.be.revertedWith('not land');
 
 			await expect(wilds.stake(2, 6, 2)).to.be.revertedWith('need defender');
 			await expect(wilds.stake(2, 6, 4)).to.be.revertedWith('not raidable');
-			await wilds.stake(1, 6, 2); // allow
+			// await wilds.stake(1, 6, 2); // allow TODO
 
 			await wilds.connect(player1).stake(1, 11, 1);
 			expect(await merals.ownerOf(11)).to.equal(wilds.address);
@@ -108,12 +113,6 @@ describe('IntoTheWilds', function () {
 
 			await network.provider.send('evm_increaseTime', [day]);
 			await network.provider.send('evm_mine');
-
-			await wilds.unstake(6);
-
-			//TODO
-			// DEFENDERS ARE FREE
-			// await wilds.unstake(1);
 		});
 
 		it('Should stake into land1', async function () {
@@ -196,6 +195,33 @@ describe('IntoTheWilds', function () {
 		});
 
 		describe('Adding Land Claim Points', function () {
+			it('Should stake as defender and add LCP', async function () {
+				let timeStaked = 86401;
+				let timeStaked2 = 2592000;
+
+				await wilds.stake(1, 1, 1);
+
+				await network.provider.send('evm_increaseTime', [timeStaked]);
+
+				await wilds.unstake(1);
+				let lcp = await wilds.getLCP(1, 1);
+				expect(lcp).to.be.within(timeStaked - 1, timeStaked + 1);
+
+				await wilds.stake(1, 1, 1); // +1 second
+
+				await network.provider.send('evm_increaseTime', [timeStaked2]);
+				await wilds.unstake(1);
+				lcp = await wilds.getLCP(1, 1);
+				expect(lcp).to.be.within(timeStaked + timeStaked2 - 1, timeStaked + timeStaked2 + 1);
+
+				await wilds.stake(1, 2, 1);
+
+				await network.provider.send('evm_increaseTime', [timeStaked2]);
+				await wilds.unstake(2);
+				lcp = await wilds.getLCP(1, 1);
+				expect(lcp).to.be.within(timeStaked + timeStaked2 - 1, timeStaked + timeStaked2 + 1); // NOT ADD MORE FOR ID1
+			});
+
 			it('Should stake as defender and add LCP', async function () {
 				let timeStaked = 86401;
 				let timeStaked2 = 2592000;
@@ -313,7 +339,7 @@ describe('IntoTheWilds', function () {
 					await network.provider.send('evm_increaseTime', [hour * 6]);
 					await network.provider.send('evm_mine');
 
-					await wilds.connect(player1).stake(landId, i + 10, 2); // ATTACKERS
+					// await wilds.connect(player1).stake(landId, i + 10, 4); // ATTACKERS
 
 					if (i === 5) {
 						landId = 2;
@@ -437,9 +463,9 @@ describe('IntoTheWilds', function () {
 
 						if (remainingHealth < 50) {
 							console.log(remainingHealth);
-							await expect(wilds.connect(player1).deathKiss(1, 1)).to.be.revertedWith('no kiss yourself');
-							await expect(wilds.connect(player2).deathKiss(1, 21)).to.be.revertedWith('not really dead');
-							await expect(wilds.connect(player2).deathKiss(25, 21)).to.be.revertedWith('not raiding');
+							await expect(wilds.connect(player1).deathKiss(1, 1)).to.be.revertedWith('need success');
+							await expect(wilds.connect(player2).deathKiss(1, 21)).to.be.revertedWith('need success');
+							await expect(wilds.connect(player2).deathKiss(25, 21)).to.be.revertedWith('need success');
 							await wilds.connect(player1).deathKiss(1, 11);
 							let defenderSlots = await wilds.getSlots(1, 1);
 
@@ -509,8 +535,9 @@ describe('IntoTheWilds', function () {
 					}
 				});
 
-				it.only('Should allow death kiss defenders and swap to defenders', async function () {
+				it('Should allow new defenders to swap with another token', async function () {
 					let landId = 1;
+
 					for (let i = 1; i <= 5; i++) {
 						await merals.changeScore(i, 1000, true, 0);
 						await wilds.stake(landId, i, 1);
@@ -518,6 +545,41 @@ describe('IntoTheWilds', function () {
 						await network.provider.send('evm_increaseTime', [hour]);
 						await network.provider.send('evm_mine');
 					}
+
+					for (let i = 11; i <= 15; i++) {
+						await merals.changeScore(i, 1000, true, 0);
+						await wilds.connect(player1).stake(landId, i, 4);
+
+						await network.provider.send('evm_increaseTime', [hour]);
+						await network.provider.send('evm_mine');
+					}
+
+					await network.provider.send('evm_increaseTime', [day * 10]);
+					await network.provider.send('evm_mine');
+
+					for (let i = 1; i <= 5; i++) {
+						await wilds.connect(player1).deathKiss(i, 21);
+					}
+
+					await network.provider.send('evm_increaseTime', [hour]);
+					await network.provider.send('evm_mine');
+
+					await expect(wilds.connect(admin).swapDefenders(11, 5)).to.be.revertedWith('need success');
+
+					for (let i = 11; i <= 12; i++) {
+						await wilds.connect(player1).swapDefenders(i, i + 5);
+
+						expect(await merals.ownerOf(i)).to.equal(player1.address);
+						expect(await merals.ownerOf(i + 5)).to.equal(wilds.address);
+						value = await wilds.getStake(i);
+						expect(value.action).to.equal(0);
+						value = await wilds.getStake(i + 5);
+						expect(value.action).to.equal(1);
+					}
+
+					await network.provider.send('evm_increaseTime', [day]);
+					await network.provider.send('evm_mine');
+					await expect(wilds.connect(player1).swapDefenders(15, 20)).to.be.revertedWith('need success');
 				});
 			});
 		});
