@@ -18,4 +18,9 @@ contract WildsCalculate {
     return (change - (scaledDef * change / _baseDefence)) / _baseDamage;
   }
 
+  function scaleSafe(uint256 num, uint256 inMax, uint256 outMin, uint256 outMax) internal pure returns(uint256) {
+    uint256 scaled = (num * (outMax - outMin)) / inMax + outMin;
+    return scaled > outMax ? outMax : scaled;
+  }
+
 }

@@ -41,6 +41,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
 
   struct Stake {
     address owner;
+    uint256 lastAction;
     uint16 entryPointer;
     uint16 damage;
     uint16 health;
@@ -275,7 +276,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
                   PUBLIC VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function calculateDamage(uint16 _tokenId) public view returns (uint256) {
+  function calculateDamage(uint16 _tokenId) external view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
@@ -289,19 +290,19 @@ contract Wilds is ERC721Holder, WildsCalculate {
 
     // FOR VIEW NEED EXTRA NOW PING
     damage += calculateChange(stakeEvents[_stake.landId][stakeEvents[_stake.landId].length-1].timestamp, block.timestamp, _meral.def, _landPlots.baseDefence, _landPlots.baseDamage);
-
-    if(_stake.health >= damage) {
-      return 0;
-    }
-
-    damage -= _stake.health;
-
-    if(damage > _meral.score) {
-      return _meral.score;
-    } else {
-      return damage;
-    }
+    damage = _stake.health >= damage ? 0 : damage - _stake.health;
+    return damage > _meral.score ? _meral.score : damage;
   }
+
+  function calculateStamina(uint16 _tokenId) external view returns(uint16) {
+    Stake memory _stake = stakes[_tokenId];
+    IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
+
+    uint256 change = block.timestamp - _stake.lastAction;
+    uint256 scaledSpeed = scaleSafe(_meral.spd, 1600, 2, 10);
+    return uint16(change / 3600 * scaledSpeed);
+  }
+
 
   /*///////////////////////////////////////////////////////////////
                   EXTERNAL VIEW FUNCTIONS

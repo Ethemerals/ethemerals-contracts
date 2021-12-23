@@ -2,9 +2,11 @@
 pragma solidity ^0.8.3;
 
 import "hardhat/console.sol";
+import "./WildsCalculate.sol";
 import "./IEthemerals.sol";
 
-contract WildsActions {
+
+contract WildsActions is WildsCalculate{
   /*///////////////////////////////////////////////////////////////
                   STORAGE
   //////////////////////////////////////////////////////////////*/
@@ -37,6 +39,7 @@ contract WildsActions {
 
   struct Stake {
     address owner;
+    uint256 lastAction;
     uint16 entryPointer;
     uint16 damage;
     uint16 health;
@@ -68,7 +71,10 @@ contract WildsActions {
 
   IEthemerals merals;
 
-  // struct RaidAction
+  // struct RaidActionType {
+  //   health:
+
+  // }
 
 
 // ATTACKER ACTIONS 1min cooldown
@@ -90,21 +96,44 @@ contract WildsActions {
 
 
   function raidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType) external {
-    Stake storage toStake = stakes[toTokenId];
-    toStake.health = 100;
 
-    // if(actionType == 1) {
-
-    // }
-
-
-
+    if(actionType == 1) {
+      _attack(toTokenId, fromTokenId);
+    }
 
 
   }
 
-  function doAction(uint8 actionType) private {
+  function _attack(uint16 toTokenId, uint16 fromTokenId) internal {
+    uint16 staminaCost = 30;
+    Stake storage toStake = stakes[toTokenId];
+    Stake storage fromStake = stakes[fromTokenId];
 
+    uint16 staminaGain = calculateStamina(fromTokenId);
+    fromStake.stamina = staminaGain > fromStake.stamina ? 0 : fromStake.stamina - staminaGain;
+    console.log(fromStake.stamina, 'innerise staminer');
+    require(fromStake.stamina + staminaCost <= 100, 'no stamina');
+
+    IEthemerals.Meral memory toMeral = merals.getEthemeral(toTokenId);
+    IEthemerals.Meral memory fromMeral = merals.getEthemeral(fromTokenId);
+
+    fromStake.stamina += staminaCost;
+
+    uint256 scaledDamage = scaleSafe(fromMeral.atk, 1600, 20, 100);
+    uint256 scaledDefence = scaleSafe(toMeral.def, 1600, 0, 60);
+    uint256 defendedDamage = scaledDefence > scaledDamage ? 0 : scaledDamage - scaledDefence;
+
+    toStake.damage += uint16(defendedDamage);
+    fromStake.lastAction = block.timestamp;
+  }
+
+  function calculateStamina(uint16 _tokenId) public view returns(uint16) {
+    Stake memory _stake = stakes[_tokenId];
+    IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
+
+    uint256 change = block.timestamp - _stake.lastAction;
+    uint256 scaledSpeed = scaleSafe(_meral.spd, 1600, 2, 10);
+    return uint16(change / 3600 * scaledSpeed);
   }
 
 

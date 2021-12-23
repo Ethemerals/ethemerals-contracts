@@ -39,6 +39,7 @@ contract WildsStaking is WildsCalculate {
 
   struct Stake {
     address owner;
+    uint256 lastAction;
     uint16 entryPointer;
     uint16 damage;
     uint16 health;
@@ -85,7 +86,7 @@ contract WildsStaking is WildsCalculate {
       landPlots[_landId].raidStatus = RaidStatus.RAIDABLE;
     }
 
-    stakes[_tokenId] = Stake({owner: msg.sender, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.DEFEND});
+    stakes[_tokenId] = Stake({owner: msg.sender, lastAction: block.timestamp, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.DEFEND});
   }
 
   function attack(uint16 _landId, uint16 _tokenId) external {
@@ -99,7 +100,7 @@ contract WildsStaking is WildsCalculate {
       landPlots[_landId].raidStatus = RaidStatus.RAIDING;
     }
 
-    stakes[_tokenId] = Stake({owner: msg.sender, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.ATTACK});
+    stakes[_tokenId] = Stake({owner: msg.sender, lastAction: block.timestamp, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.ATTACK});
   }
 
   function undefend(uint16 _landId, uint16 _tokenId, uint16 _entryPointer) external {
@@ -163,8 +164,8 @@ contract WildsStaking is WildsCalculate {
     require(block.timestamp - landPlots[_stake.landId].lastRaid < 86400, 'too late');
     require(_stake.owner == msg.sender, 'owner only');
 
-    stakes[_tokenId].owner = msg.sender;
-    stakes[_swapperId] = stakes[_tokenId];
+    _stake.owner = msg.sender;
+    stakes[_swapperId] = _stake;
     uint16[] storage _slots = slots[_stake.landId][_stake.stakeAction];
 
     for(uint256 i = 0; i < _slots.length; i ++) {
@@ -276,7 +277,7 @@ contract WildsStaking is WildsCalculate {
                   INTERNAL VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function calculateDamage(uint16 _tokenId) public view returns (uint256) {
+    function calculateDamage(uint16 _tokenId) internal view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
@@ -290,18 +291,8 @@ contract WildsStaking is WildsCalculate {
 
     // FOR VIEW NEED EXTRA NOW PING
     damage += calculateChange(stakeEvents[_stake.landId][stakeEvents[_stake.landId].length-1].timestamp, block.timestamp, _meral.def, _landPlots.baseDefence, _landPlots.baseDamage);
-
-    if(_stake.health >= damage) {
-      return 0;
-    }
-
-    damage -= _stake.health;
-
-    if(damage > _meral.score) {
-      return _meral.score;
-    } else {
-      return damage;
-    }
+    damage = _stake.health >= damage ? 0 : damage - _stake.health;
+    return damage > _meral.score ? _meral.score : damage;
   }
 
 }

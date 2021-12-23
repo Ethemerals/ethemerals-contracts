@@ -618,6 +618,71 @@ describe('Wilds', function () {
 					// await expect(wilds.connect(player1).swapDefenders(15, 20)).to.be.revertedWith('need success');
 					// await wilds.raidAction
 				});
+
+				it.only('Should allow raidActions', async function () {
+					let landId = 1;
+
+					// RAID1
+					for (let i = 1; i <= 5; i++) {
+						await merals.changeScore(i, 1000, true, 0);
+						await wilds.stake(landId, i, 1);
+						await network.provider.send('evm_increaseTime', [hour]);
+						await network.provider.send('evm_mine');
+					}
+
+					for (let i = 11; i <= 15; i++) {
+						await wilds.connect(player1).stake(landId, i, 4);
+						await network.provider.send('evm_increaseTime', [hour]);
+						await network.provider.send('evm_mine');
+					}
+
+					// single attack
+					let defender = 2;
+					let attacker = 11;
+					let damage = 0;
+					let count = 0;
+					while (damage < 1000) {
+						count++;
+						let preAttacker = await wilds.getStake(attacker);
+						let stamina = await wilds.calculateStamina(attacker);
+						console.log('calcStamina', stamina);
+						if (stamina < 100 - 30) {
+							let preStake = await wilds.getStake(defender);
+							await wilds.connect(player1).raidAction(defender, attacker, 1);
+							let postStake = await wilds.getStake(defender);
+							let postAttacker = await wilds.getStake(attacker);
+							expect(preStake.damage).to.be.lt(postStake.damage);
+
+							console.log('stake.damage', postStake.damage);
+							console.log('stamina', postAttacker.stamina);
+							damage = await wilds.calculateDamage(defender);
+							console.log('calculate damage', damage.toString());
+						}
+						await network.provider.send('evm_increaseTime', [hour * 4]);
+						await network.provider.send('evm_mine');
+					}
+
+					console.log(count);
+
+					// for (let i = 1; i <= 5; i++) {
+					// 	let attackerStake = await wilds.getStake(attacker);
+					// 	if (attackerStake.stamina < 100 - 30) {
+					// 		await wilds.connect(player1).raidAction(defender, attacker, 1);
+
+					// 		let stake = await wilds.getStake(defender);
+					// 		console.log('stake.damage', stake.damage);
+					// 		let damage = await wilds.calculateDamage(defender);
+					// 		console.log('calculate damage', damage.toString());
+					// 	}
+					// 	await network.provider.send('evm_increaseTime', [hour * 12]);
+					// 	await network.provider.send('evm_mine');
+					// }
+
+					// await wilds.raidAction(1, 1, 1);
+
+					// await expect(wilds.connect(player1).swapDefenders(15, 20)).to.be.revertedWith('need success');
+					// await wilds.raidAction
+				});
 			});
 		});
 	});

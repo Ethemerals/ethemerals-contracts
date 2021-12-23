@@ -30,4 +30,8 @@ function minMaxAvg(arr) {
 	return [min, max, sum / arr.length];
 }
 
-module.exports = { Merals, minMaxAvg };
+function getRandomInt(max) {
+	return Math.floor(Math.random() * max);
+}
+
+module.exports = { Merals, minMaxAvg, getRandomInt };
