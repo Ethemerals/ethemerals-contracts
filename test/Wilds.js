@@ -17,13 +17,17 @@ describe('Wilds', function () {
 		merals = await Ethemerals.deploy('https://api.ethemerals.com/api/', '0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ADDRESS
 		await merals.deployed();
 
-		const WildStaking = await ethers.getContractFactory('WildStaking');
-		wildStaking = await WildStaking.deploy();
-		await wildStaking.deployed();
+		const WildsStaking = await ethers.getContractFactory('WildsStaking');
+		wildsStaking = await WildsStaking.deploy();
+		await wildsStaking.deployed();
+
+		const WildsActions = await ethers.getContractFactory('WildsActions');
+		wildsActions = await WildsActions.deploy();
+		await wildsStaking.deployed();
 
 		const Wilds = await ethers.getContractFactory('Wilds');
 
-		wilds = await Wilds.deploy(merals.address, wildStaking.address);
+		wilds = await Wilds.deploy(merals.address, wildsStaking.address, wildsActions.address);
 		await wilds.deployed();
 
 		// mint merals
@@ -515,13 +519,13 @@ describe('Wilds', function () {
 
 					for (let i = 1; i <= 5; i++) {
 						let value = await wilds.getStake(i);
-						expect(value.action).to.equal(0);
+						expect(value.stakeAction).to.equal(0);
 						expect(await merals.ownerOf(i)).to.equal(admin.address);
 					}
 
 					for (let i = 11; i <= 15; i++) {
 						let value = await wilds.getStake(i);
-						expect(value.action).to.equal(1);
+						expect(value.stakeAction).to.equal(1);
 					}
 
 					await network.provider.send('evm_increaseTime', [day * 3]);
@@ -572,14 +576,47 @@ describe('Wilds', function () {
 						expect(await merals.ownerOf(i)).to.equal(player1.address);
 						expect(await merals.ownerOf(i + 5)).to.equal(wilds.address);
 						value = await wilds.getStake(i);
-						expect(value.action).to.equal(0);
+						expect(value.stakeAction).to.equal(0);
 						value = await wilds.getStake(i + 5);
-						expect(value.action).to.equal(1);
+						expect(value.stakeAction).to.equal(1);
 					}
 
 					await network.provider.send('evm_increaseTime', [day]);
 					await network.provider.send('evm_mine');
 					await expect(wilds.connect(player1).swapDefenders(15, 20)).to.be.revertedWith('need success');
+				});
+
+				it('Should not allow raidActions', async function () {
+					let landId = 1;
+
+					// RAID1
+					for (let i = 1; i <= 5; i++) {
+						await wilds.stake(landId, i, 1);
+						await network.provider.send('evm_increaseTime', [hour]);
+						await network.provider.send('evm_mine');
+					}
+
+					for (let i = 11; i <= 15; i++) {
+						await wilds.connect(player1).stake(landId, i, 4);
+						await network.provider.send('evm_increaseTime', [hour]);
+						await network.provider.send('evm_mine');
+					}
+
+					// LAND2
+					for (let i = 6; i <= 10; i++) {
+						await wilds.stake(landId + 1, i, 1);
+						await network.provider.send('evm_increaseTime', [hour]);
+						await network.provider.send('evm_mine');
+					}
+
+					await expect(wilds.raidAction(11, 12, 1)).to.be.revertedWith('defender only');
+					await expect(wilds.raidAction(1, 12, 1)).to.be.revertedWith('owner only');
+					await expect(wilds.connect(player1).raidAction(6, 15, 1)).to.be.revertedWith('raid group only');
+
+					await wilds.raidAction(1, 1, 1);
+
+					// await expect(wilds.connect(player1).swapDefenders(15, 20)).to.be.revertedWith('need success');
+					// await wilds.raidAction
 				});
 			});
 		});

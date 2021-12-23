@@ -2,19 +2,15 @@
 pragma solidity ^0.8.3;
 
 import "hardhat/console.sol";
+import "./WildsCalculate.sol";
 import "./IEthemerals.sol";
 
 
-contract WildStaking {
-
+contract WildsStaking is WildsCalculate {
   /*///////////////////////////////////////////////////////////////
                   STORAGE
   //////////////////////////////////////////////////////////////*/
-
-  address public admin;
-
-  IEthemerals merals;
-  enum Action {UNSTAKED, DEFEND, LOOT, BIRTH, ATTACK}
+  enum StakeAction {UNSTAKED, DEFEND, LOOT, BIRTH, ATTACK}
   enum RaidStatus {DEFAULT, RAIDABLE, RAIDING}
 
   // ALL LANDSPLOTS
@@ -25,8 +21,8 @@ contract WildStaking {
   // LAND PLOTS => MERALS => LCP
   mapping (uint16 => mapping(uint16 => uint256)) private landClaimPoints;
 
-  // land PLOTS => ACTION SLOTS => MERALS
-  mapping (uint16 => mapping(Action => uint16[])) private slots;
+  // land PLOTS => StakeAction Slots => MERALS
+  mapping (uint16 => mapping(StakeAction => uint16[])) private slots;
 
   // land PLOTS => StakeEvents
   mapping (uint16 => StakeEvent[]) public stakeEvents;
@@ -46,8 +42,9 @@ contract WildStaking {
     uint16 entryPointer;
     uint16 damage;
     uint16 health;
+    uint16 stamina;
     uint16 landId;
-    Action action;
+    StakeAction stakeAction;
   }
 
   struct ItemPool {
@@ -61,6 +58,7 @@ contract WildStaking {
     uint256 remainingELFx;
     uint256 emissionRate; // DEV IMPROVE
     uint256 lastRaid;
+    uint16 initBaseDefence;
     uint16 initBaseDamage;
     uint16 baseDefence;
     uint16 baseDamage;
@@ -69,36 +67,42 @@ contract WildStaking {
     ItemPool petPool;
   }
 
-  function defend(uint16 _landId, uint16 _tokenId) public {
+  IEthemerals merals;
+
+  /*///////////////////////////////////////////////////////////////
+                  EXTERNAL FUNCTIONS
+  //////////////////////////////////////////////////////////////*/
+
+  function defend(uint16 _landId, uint16 _tokenId) external {
     uint256 timestamp = block.timestamp;
 
     // ADD TO ACTION SLOTS
-    slots[_landId][Action.DEFEND].push(_tokenId);
+    slots[_landId][StakeAction.DEFEND].push(_tokenId);
     _defenderChange(_landId, timestamp, true);
 
     // SET RAIDSTATUS
-    if(slots[_landId][Action.DEFEND].length == 5) {
+    if(slots[_landId][StakeAction.DEFEND].length == 5) {
       landPlots[_landId].raidStatus = RaidStatus.RAIDABLE;
     }
 
-    stakes[_tokenId] = Stake({owner: msg.sender, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, landId: _landId, action: Action.DEFEND});
+    stakes[_tokenId] = Stake({owner: msg.sender, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.DEFEND});
   }
 
-  function attack(uint16 _landId, uint16 _tokenId) public {
+  function attack(uint16 _landId, uint16 _tokenId) external {
     uint256 timestamp = block.timestamp;
 
     // ADD TO ACTION SLOTS
-    slots[_landId][Action.ATTACK].push(_tokenId);
+    slots[_landId][StakeAction.ATTACK].push(_tokenId);
     _attackerChange(_landId, _tokenId, timestamp, true);
     // SET RAIDSTATUS
-    if(slots[_landId][Action.ATTACK].length == 1) {
+    if(slots[_landId][StakeAction.ATTACK].length == 1) {
       landPlots[_landId].raidStatus = RaidStatus.RAIDING;
     }
 
-    stakes[_tokenId] = Stake({owner: msg.sender, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, landId: _landId, action: Action.ATTACK});
+    stakes[_tokenId] = Stake({owner: msg.sender, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.ATTACK});
   }
 
-  function undefend(uint16 _landId, uint16 _tokenId, uint16 _entryPointer) public {
+  function undefend(uint16 _landId, uint16 _tokenId, uint16 _entryPointer) external {
     // TODO NEED TO CLAIM?
     uint256 timestamp = block.timestamp;
     _defenderChange(_landId, timestamp, false);
@@ -108,23 +112,23 @@ contract WildStaking {
     uint256 change = timestamp - stakeEvents[_landId][_entryPointer].timestamp;
     landClaimPoints[_landId][_tokenId] += change;
 
-    _removeFromSlot(_landId, _tokenId, Action.DEFEND);
+    _removeFromSlot(_landId, _tokenId, StakeAction.DEFEND);
     delete stakes[_tokenId];
 
-    if(slots[_landId][Action.DEFEND].length == 0) {
+    if(slots[_landId][StakeAction.DEFEND].length == 0) {
       delete stakeEvents[_landId];
       // TODO What about the looters and birthers?
     }
     // SET RAIDSTATUS
-    if(slots[_landId][Action.DEFEND].length == 4) {
+    if(slots[_landId][StakeAction.DEFEND].length == 4) {
       landPlots[_landId].raidStatus = RaidStatus.DEFAULT;
     }
   }
 
-  function deathKiss(uint16 _tokenId, uint16 _deathId) public {
+  function deathKiss(uint16 _tokenId, uint16 _deathId) external {
     require(_tokenId != _deathId, 'no kiss yourself');
     Stake memory _stake = stakes[_tokenId];
-    require(landPlots[_stake.landId].raidStatus == RaidStatus.RAIDING && _stake.action == Action.DEFEND, "not raiding");
+    require(landPlots[_stake.landId].raidStatus == RaidStatus.RAIDING && _stake.stakeAction == StakeAction.DEFEND, "not raiding");
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
     uint256 damage = calculateDamage(_tokenId);
 
@@ -143,10 +147,10 @@ contract WildStaking {
     uint256 change = timestamp - stakeEvents[_stake.landId][_stake.entryPointer].timestamp;
     landClaimPoints[_stake.landId][_tokenId] += change;
 
-    _removeFromSlot(_stake.landId, _tokenId, _stake.action);
+    _removeFromSlot(_stake.landId, _tokenId, _stake.stakeAction);
     delete stakes[_tokenId];
 
-    if(slots[_stake.landId][Action.DEFEND].length == 0) {
+    if(slots[_stake.landId][StakeAction.DEFEND].length == 0) {
       _endRaid(_stake.landId);
     }
 
@@ -154,13 +158,14 @@ contract WildStaking {
 
   }
 
-  function swapDefenders(uint16 _tokenId, uint16 _swapperId) public {
+  function swapDefenders(uint16 _tokenId, uint16 _swapperId) external {
     Stake memory _stake = stakes[_tokenId];
     require(block.timestamp - landPlots[_stake.landId].lastRaid < 86400, 'too late');
     require(_stake.owner == msg.sender, 'owner only');
 
-    stakes[_swapperId] = Stake({owner: msg.sender, entryPointer: _stake.entryPointer, damage: _stake.damage, health: _stake.health, landId: _stake.landId, action: _stake.action});
-    uint16[] storage _slots = slots[_stake.landId][_stake.action];
+    stakes[_tokenId].owner = msg.sender;
+    stakes[_swapperId] = stakes[_tokenId];
+    uint16[] storage _slots = slots[_stake.landId][_stake.stakeAction];
 
     for(uint256 i = 0; i < _slots.length; i ++) {
       if(_slots[i] == _tokenId) {
@@ -203,8 +208,8 @@ contract WildStaking {
     _registerEvent(_landId, timestamp);
   }
 
-  function _removeFromSlot(uint16 _landId, uint16 _tokenId, Action _action) private {
-    uint16[] storage _slots = slots[_landId][_action];
+  function _removeFromSlot(uint16 _landId, uint16 _tokenId, StakeAction _stakeAction) private {
+    uint16[] storage _slots = slots[_landId][_stakeAction];
 
     for(uint16 i = 0; i < _slots.length; i ++) {
       if(_slots[i] == _tokenId) {
@@ -251,18 +256,18 @@ contract WildStaking {
 
     // NEW DEFENDERS
     uint256 timestamp = block.timestamp;
-    landPlots[_landId].baseDefence -= extraDefBonus * uint16(slots[_landId][Action.ATTACK].length);
+    landPlots[_landId].baseDefence = landPlots[_landId].initBaseDefence;
     landPlots[_landId].baseDamage = landPlots[_landId].initBaseDamage;
     landPlots[_landId].lastRaid = timestamp;
     _registerEvent(_landId, timestamp);
 
-    for(uint256 i = 0; i < slots[_landId][Action.ATTACK].length; i ++) {
-      stakes[slots[_landId][Action.ATTACK][i]].action = Action.DEFEND;
-      stakes[slots[_landId][Action.ATTACK][i]].entryPointer = 0;
+    for(uint256 i = 0; i < slots[_landId][StakeAction.ATTACK].length; i ++) {
+      stakes[slots[_landId][StakeAction.ATTACK][i]].stakeAction = StakeAction.DEFEND;
+      stakes[slots[_landId][StakeAction.ATTACK][i]].entryPointer = 0;
     }
 
-    slots[_landId][Action.DEFEND] = slots[_landId][Action.ATTACK];
-    delete slots[_landId][Action.ATTACK];
+    slots[_landId][StakeAction.DEFEND] = slots[_landId][StakeAction.ATTACK];
+    delete slots[_landId][StakeAction.ATTACK];
     landPlots[_landId].raidStatus = RaidStatus.DEFAULT;
 
   }
@@ -271,7 +276,7 @@ contract WildStaking {
                   INTERNAL VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function calculateDamage(uint16 _tokenId) internal view returns (uint256) {
+  function calculateDamage(uint16 _tokenId) public view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
@@ -293,23 +298,10 @@ contract WildStaking {
     damage -= _stake.health;
 
     if(damage > _meral.score) {
-      return 1000;
+      return _meral.score;
     } else {
       return damage;
     }
-  }
-
-  function calculateChange(uint256 start, uint256 end, uint16 _meralDef, uint16 _baseDefence, uint16 _baseDamage) internal pure returns (uint256) {
-    uint256 change = end - start;
-    uint256 scaledDef;
-
-    if(_meralDef > 1000) {
-      scaledDef = 1000;
-    } else {
-      scaledDef = (uint256(_meralDef) * 600) / 2000 + 400;
-    }
-
-    return (change - (scaledDef * change / _baseDefence)) / _baseDamage;
   }
 
 }

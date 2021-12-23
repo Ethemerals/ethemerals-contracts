@@ -4,20 +4,15 @@ pragma solidity ^0.8.3;
 import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import "./WildsCalculate.sol";
 import "./IEthemerals.sol";
 
 
-contract Wilds is ERC721Holder {
-
-
+contract Wilds is ERC721Holder, WildsCalculate {
   /*///////////////////////////////////////////////////////////////
                   STORAGE
   //////////////////////////////////////////////////////////////*/
-
-  address public admin;
-
-  IEthemerals merals;
-  enum Action {UNSTAKED, DEFEND, LOOT, BIRTH, ATTACK}
+  enum StakeAction {UNSTAKED, DEFEND, LOOT, BIRTH, ATTACK}
   enum RaidStatus {DEFAULT, RAIDABLE, RAIDING}
 
   // ALL LANDSPLOTS
@@ -28,8 +23,8 @@ contract Wilds is ERC721Holder {
   // LAND PLOTS => MERALS => LCP
   mapping (uint16 => mapping(uint16 => uint256)) private landClaimPoints;
 
-  // land PLOTS => ACTION SLOTS => MERALS
-  mapping (uint16 => mapping(Action => uint16[])) private slots;
+  // land PLOTS => StakeAction Slots => MERALS
+  mapping (uint16 => mapping(StakeAction => uint16[])) private slots;
 
   // land PLOTS => StakeEvents
   mapping (uint16 => StakeEvent[]) public stakeEvents;
@@ -49,8 +44,9 @@ contract Wilds is ERC721Holder {
     uint16 entryPointer;
     uint16 damage;
     uint16 health;
+    uint16 stamina;
     uint16 landId;
-    Action action;
+    StakeAction stakeAction;
   }
 
   struct ItemPool {
@@ -64,6 +60,7 @@ contract Wilds is ERC721Holder {
     uint256 remainingELFx;
     uint256 emissionRate; // DEV IMPROVE
     uint256 lastRaid;
+    uint16 initBaseDefence;
     uint16 initBaseDamage;
     uint16 baseDefence;
     uint16 baseDamage;
@@ -72,7 +69,12 @@ contract Wilds is ERC721Holder {
     ItemPool petPool;
   }
 
+
+  IEthemerals merals;
+  address public admin;
+  address private staking;
   address private actions;
+
 
 
   uint public value;
@@ -82,16 +84,16 @@ contract Wilds is ERC721Holder {
   // TODO stamina
   // TODO experience gain (ELF)
   // TODO looters and birthers,
-  // TODO swap defenders,
 
   /*///////////////////////////////////////////////////////////////
                   ADMIN FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  constructor(address meralAddress, address _actions) {
+  constructor(address meralAddress, address _staking, address _actions) {
 
     admin = msg.sender;
     merals = IEthemerals(meralAddress);
+    staking = _staking;
     actions = _actions;
 
     ItemPool memory loot1 = ItemPool({ cost: 10, drop1: 1, drop2: 2, drop3: 3 });
@@ -100,7 +102,7 @@ contract Wilds is ERC721Holder {
     uint256 timestamp = block.timestamp;
 
     for(uint16 i = 1; i < 7; i ++) {
-      landPlots[i] = Land({ remainingELFx: 1000, emissionRate: 10, lastRaid: timestamp, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
+      landPlots[i] = Land({ remainingELFx: 1000, emissionRate: 10, lastRaid: timestamp, initBaseDefence: baseDefence, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
     }
 
   }
@@ -123,6 +125,7 @@ contract Wilds is ERC721Holder {
       remainingELFx: _remainingELFx,
       emissionRate: _emissionRate,
       lastRaid: block.timestamp,
+      initBaseDefence: _baseDefence,
       initBaseDamage: _baseDamage,
       baseDefence: _baseDefence,
       baseDamage: _baseDamage,
@@ -145,7 +148,7 @@ contract Wilds is ERC721Holder {
   * Can only attack if RAIDABLE
   * Once Attacked plot = RAIDING
   */
-  function stake(uint16 _landId, uint16 _tokenId, Action _action) external {
+  function stake(uint16 _landId, uint16 _tokenId, StakeAction _action) external {
     require(merals.ownerOf(_tokenId) == msg.sender, "owner only");
     require(landPlots[_landId].remainingELFx > 0, "not land");
     require(slots[_landId][_action].length < 5, "full");
@@ -153,20 +156,20 @@ contract Wilds is ERC721Holder {
     bool success;
     bytes memory data;
 
-    if(_action == Action.DEFEND) {
+    if(_action == StakeAction.DEFEND) {
       require(landPlots[_landId].raidStatus != RaidStatus.RAIDING, "no reinforcements");
-      (success, data) = actions.delegatecall(abi.encodeWithSignature("defend(uint16,uint16)", _landId, _tokenId));
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("defend(uint16,uint16)", _landId, _tokenId));
     }
-    if(_action == Action.ATTACK) {
+    if(_action == StakeAction.ATTACK) {
       require(landPlots[_landId].raidStatus != RaidStatus.DEFAULT, "not raidable");
-      (success, data) = actions.delegatecall(abi.encodeWithSignature("attack(uint16,uint16)", _landId, _tokenId));
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("attack(uint16,uint16)", _landId, _tokenId));
     }
-    if(_action == Action.LOOT) {
-      require(slots[_landId][Action.DEFEND].length > 0, "need defender");
+    if(_action == StakeAction.LOOT) {
+      require(slots[_landId][StakeAction.DEFEND].length > 0, "need defender");
       // TODO
     }
-    if(_action == Action.BIRTH) {
-      require(slots[_landId][Action.DEFEND].length > 0, "need defender");
+    if(_action == StakeAction.BIRTH) {
+      require(slots[_landId][StakeAction.DEFEND].length > 0, "need defender");
       // TODO
     }
 
@@ -189,15 +192,15 @@ contract Wilds is ERC721Holder {
     bool success;
     bytes memory data;
 
-    if(_stake.action == Action.DEFEND) {
+    if(_stake.stakeAction == StakeAction.DEFEND) {
       require(landPlots[_stake.landId].raidStatus != RaidStatus.RAIDING, 'in a raid');
-      (success, data) = actions.delegatecall(abi.encodeWithSignature("undefend(uint16,uint16,uint16)", _stake.landId, _tokenId, _stake.entryPointer));
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("undefend(uint16,uint16,uint16)", _stake.landId, _tokenId, _stake.entryPointer));
     }
-    if(_stake.action == Action.LOOT) {
+    if(_stake.stakeAction == StakeAction.LOOT) {
       // LOOT
       // TODO
     }
-    if(_stake.action == Action.BIRTH) {
+    if(_stake.stakeAction == StakeAction.BIRTH) {
       // BIRTH
       // TODO
     }
@@ -216,8 +219,8 @@ contract Wilds is ERC721Holder {
     bytes memory data;
     address owner = stakes[_tokenId].owner;
 
-    if(stakes[_tokenId].action == Action.DEFEND) {
-      (success, data) = actions.delegatecall(abi.encodeWithSignature("deathKiss(uint16,uint16)", _tokenId, _deathId));
+    if(stakes[_tokenId].stakeAction == StakeAction.DEFEND) {
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("deathKiss(uint16,uint16)", _tokenId, _deathId));
     }
 
     require(success, "need success");
@@ -229,16 +232,33 @@ contract Wilds is ERC721Holder {
   * Allows successful raiders to switch out their attackers / defenders
   */
   function swapDefenders(uint16 _tokenId, uint16 _swapperId) external {
-    // require(_stake.action == Action.DEFEND, 'not defending'); // TODO NEED TO TEST
+    // require(_stake.action == StakeAction.DEFEND, 'not defending'); // TODO NEED TO TEST
 
     bool success;
     bytes memory data;
-    (success, data) = actions.delegatecall(abi.encodeWithSignature("swapDefenders(uint16,uint16)", _tokenId, _swapperId));
+    (success, data) = staking.delegatecall(abi.encodeWithSignature("swapDefenders(uint16,uint16)", _tokenId, _swapperId));
 
     require(success, "need success");
     merals.safeTransferFrom(msg.sender, address(this), _swapperId);
     merals.safeTransferFrom(address(this), msg.sender, _tokenId);
   }
+
+  /**
+  * @dev Raid action allows Merals to attack / defend / heal
+  * Parse the action in Actions contract
+  */
+  function raidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType) external {
+    require(stakes[toTokenId].stakeAction == StakeAction.DEFEND, "defender only");
+    require(stakes[fromTokenId].owner == msg.sender, "owner only");
+    require(stakes[fromTokenId].landId == stakes[toTokenId].landId, "raid group only");
+
+    bool success;
+    bytes memory data;
+    (success, data) = actions.delegatecall(abi.encodeWithSignature("raidAction(uint16,uint16,uint8)", toTokenId, fromTokenId, actionType));
+
+    require(success, "need success");
+  }
+
 
 
 
@@ -277,25 +297,11 @@ contract Wilds is ERC721Holder {
     damage -= _stake.health;
 
     if(damage > _meral.score) {
-      return 1000;
+      return _meral.score;
     } else {
       return damage;
     }
   }
-
-  function calculateChange(uint256 start, uint256 end, uint16 _meralDef, uint16 _baseDefence, uint16 _baseDamage) public pure returns (uint256) {
-    uint256 change = end - start;
-    uint256 scaledDef;
-
-    if(_meralDef > 1000) {
-      scaledDef = 1000;
-    } else {
-      scaledDef = (uint256(_meralDef) * 600) / 2000 + 400;
-    }
-
-    return (change - (scaledDef * change / _baseDefence)) / _baseDamage;
-  }
-
 
   /*///////////////////////////////////////////////////////////////
                   EXTERNAL VIEW FUNCTIONS
@@ -305,7 +311,7 @@ contract Wilds is ERC721Holder {
     return stakes[_tokenId];
   }
 
-  function getSlots(uint16 _landId, Action _action) external view returns (uint16[] memory) {
+  function getSlots(uint16 _landId, StakeAction _action) external view returns (uint16[] memory) {
     return slots[_landId][_action];
   }
 
