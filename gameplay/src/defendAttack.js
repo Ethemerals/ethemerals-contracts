@@ -132,6 +132,41 @@ console.log(scale(num, 0, 1600, 60, 118));
 console.log((num * 58) / 1600 + 60);
 console.log(safeScale(num, 1600, 60, 118));
 
+const scaledAttack = () => {
+	const modifiedAttack = [];
+	const atk = [];
+
+	merals.forEach((meral) => {
+		const meralAtk = meral.atk;
+		const scaledAtk = safeScale(meralAtk, 1600, 50, 150);
+
+		atk.push(parseInt(meralAtk));
+		modifiedAttack.push(parseInt(scaledAtk));
+	});
+
+	console.log('atk', minMaxAvg(atk));
+	console.log('modifiedAttack', minMaxAvg(modifiedAttack));
+};
+
+scaledAttack();
+
+const scaledDefence = () => {
+	const modifiedDefence = [];
+	const def = [];
+
+	merals.forEach((meral) => {
+		const meralDef = meral.def;
+		const scaledDef = safeScale(meralDef, 1600, 80, 160);
+
+		def.push(parseInt(meralDef));
+		modifiedDefence.push(parseInt(scaledDef));
+	});
+
+	console.log('def', minMaxAvg(def));
+	console.log('modifiedDefence', minMaxAvg(modifiedDefence));
+};
+
+scaledDefence();
 // console.log((num * 1600) / 2000);
 
 // bdef + 5 - 5;

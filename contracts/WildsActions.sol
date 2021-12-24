@@ -27,15 +27,14 @@ contract WildsActions is WildsCalculate {
   // land PLOTS => StakeEvents
   mapping (uint16 => StakeEvent[]) public stakeEvents;
 
-  uint8[] public staminaCosts = [30,60,50,100];
-  uint8 private extraDefBonus = 120; // DAILED already
-  uint16 private baseDefence = 2000; // DAILED already, lower = more bonus applied - range 1200-2000
-  uint16 private baseDamage = 600; // DAILED already, lower = more damage applied - range 50-600
+  // [attack, attackAll, heal, healAll, magicAttack, speedAttack, enrage, concentrate]
+  uint8[] public staminaCosts = [24,60,40,88,36,36,42,42];
+  uint8 private extraDefBonus = 140; // DAILED already
+  uint16 private baseDefence = 2800; //
 
   struct StakeEvent {
     uint256 timestamp;
     uint16 baseDefence;
-    uint16 baseDamage;
   }
 
   struct Stake {
@@ -61,9 +60,7 @@ contract WildsActions is WildsCalculate {
     uint256 emissionRate; // DEV IMPROVE
     uint256 lastRaid;
     uint16 initBaseDefence;
-    uint16 initBaseDamage;
     uint16 baseDefence;
-    uint16 baseDamage;
     RaidStatus raidStatus; // 0 - default, 1 - raidable, 2 - currently raiding
     ItemPool lootPool;
     ItemPool petPool;
@@ -84,26 +81,19 @@ contract WildsActions is WildsCalculate {
 
 
 // ATTACKER ACTIONS 1min cooldown
-// attack - all classes - single target attack 20 points
-// arcane - all mages - single high damage target attack 20 points
-// aoe - berserker, summoner, dark knight, druid - damage to all - 40 points
-// backstab - all rogues - single target attack higher crit chance - 20 points
-// focus - all rogues and mages - increase damage stats - 80 points
-// enrage - berserker, summoner - increase constant damage to all defenders by 10% - 60 points
+
 
 // DEFENDERS ACTIONS 1min cooldown
 // block - all warriors - reduce incoming attack by 50%, 12hr cd
 // defend - knight, paladin - take damage for another, 12hr cd
 // dodge - all rogues - 50% chance to ignore all next damage, 12hr cd
-// meditate - monk, cleric - increase defence stat by 20%
-// concentration aura - paladin, knight, dark knight, monk - increase defence bonus to all by 10% 48hr cd
-// healing wave - paladin, cleric, druid - heals all defenders, 24hr cd
-// single heal - druid, cleric, monk, 8hr cd
+
 
 
   function raidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType) external {
     // TODO restrict by class
     // TODO restrict to avoid infinite staking
+    // [attack, attackAll, heal, healAll, magicAttack, speedAttack, enrage, concentrate]
 
     uint16 maxStamina = 100; // TODO get from inventory
     uint16 staminaCost = staminaCosts[actionType]; // HARDCODED
@@ -120,20 +110,31 @@ contract WildsActions is WildsCalculate {
 
 
     if(actionType == 0) {
-      // single attack
-      toStake.damage += uint16(calculateStatDamage(fromMeral.atk, toMeral.def));
+      toStake.damage += uint16(calculateDefendedDamage(fromMeral.atk, toMeral.def));
     }
     if(actionType == 1) {
       _attackAll(fromStake, fromMeral.atk);
     }
     if(actionType == 2) {
       // single heal
-      // ATTACKERS CANNOT HEAL
-      toStake.health += uint16(calculateLightMagicDamage(fromMeral.def, toMeral.spd));
+      // TODO ATTACKERS CANNOT HEAL
+      toStake.health += uint16(calculateLightMagicDamage(fromMeral.def, fromMeral.spd));
     }
     if(actionType == 3) {
-      // ATTACKERS CANNOT HEAL
+      // TODO ATTACKERS CANNOT HEAL
       _healAll(fromStake, fromMeral.def, fromMeral.spd);
+    }
+    if(actionType == 4) {
+      toStake.damage += uint16(calculateDarkMagicDamage(fromMeral.atk, fromMeral.def));
+    }
+    if(actionType == 5) {
+      toStake.damage += uint16(calculateSpdDamage(fromMeral.atk, toMeral.def, fromMeral.spd));
+    }
+    if(actionType == 6) {
+      _enrage(fromTokenId);
+    }
+    if(actionType == 7) {
+      _concentration(fromTokenId);
     }
 
   }
@@ -144,7 +145,7 @@ contract WildsActions is WildsCalculate {
     for(uint16 i = 0; i < defenders.length; i ++) {
       Stake storage toStake = stakes[defenders[i]];
       IEthemerals.Meral memory toMeral = merals.getEthemeral(defenders[i]);
-      toStake.damage += uint16(calculateStatDamage(atk, toMeral.def));
+      toStake.damage += uint16(calculateDefendedDamage(atk, toMeral.def));
     }
   }
 
@@ -157,9 +158,18 @@ contract WildsActions is WildsCalculate {
     }
   }
 
-  function _concentration(uint16 fromTokenId, uint8 actionType) internal {
-
+  function _enrage(uint16 fromTokenId) internal {
+    Land storage _land = landPlots[stakes[fromTokenId].landId];
+    uint16 _baseDefence = _land.baseDefence - 400;
+    _land.baseDefence = _baseDefence < 1000 ? 1000 : _baseDefence;
   }
+
+  function _concentration(uint16 fromTokenId) internal {
+    Land storage _land = landPlots[stakes[fromTokenId].landId];
+    uint16 _baseDefence = _land.baseDefence + 400;
+    _land.baseDefence = _baseDefence > 4000 ? 4000 : _baseDefence;
+  }
+
 
   function calculateStamina(uint16 _tokenId) internal view returns(uint16) {
     Stake memory _stake = stakes[_tokenId];

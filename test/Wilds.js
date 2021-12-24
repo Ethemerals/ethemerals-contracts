@@ -68,12 +68,10 @@ describe('Wilds', function () {
 			let remainingELFx = 10000;
 			let emissionRate = 20;
 			let baseDefence = 1800;
-			let baseDamage = 500;
-			await wilds.addLand(7, 10, 10, [3, 4, 5], [4, 5, 6], remainingELFx, emissionRate, baseDefence, baseDamage);
+			await wilds.addLand(7, 10, 10, [3, 4, 5], [4, 5, 6], remainingELFx, emissionRate, baseDefence);
 			let land = await wilds.landPlots(7);
 
 			expect(land.baseDefence).to.equal(baseDefence);
-			expect(land.baseDamage).to.equal(baseDamage);
 			expect(land.emissionRate).to.equal(emissionRate);
 			expect(land.remainingELFx).to.equal(remainingELFx);
 		});
@@ -100,8 +98,8 @@ describe('Wilds', function () {
 			await expect(wilds.connect(player1).unstake(12)).to.be.revertedWith('owner only');
 			await expect(wilds.unstake(1)).to.be.revertedWith('not staked');
 
-			await expect(wilds.addLand(1, 10, 10, [3, 4, 5], [4, 5, 6], 1000, 10, 100, 100)).to.be.revertedWith('already land');
-			await expect(wilds.connect(player1).addLand(12, 10, 10, [3, 4, 5], [4, 5, 6], 1000, 10, 100, 100)).to.be.revertedWith('admin only');
+			await expect(wilds.addLand(1, 10, 10, [3, 4, 5], [4, 5, 6], 1000, 10, 100)).to.be.revertedWith('already land');
+			await expect(wilds.connect(player1).addLand(12, 10, 10, [3, 4, 5], [4, 5, 6], 1000, 10, 100)).to.be.revertedWith('admin only');
 		});
 
 		it('Should lock defenders in', async function () {
@@ -255,51 +253,59 @@ describe('Wilds', function () {
 
 		describe('Defend and drain HP', function () {
 			it('Should calculate change over days', async function () {
-				let meralDef = 5000;
-				let baseDefence = 2000;
-				let extraDefBonus = 120;
-				let baseDamage = 2000;
-				let atk = 80;
+				let meralDef = 800;
+				let extraDefBonus = 140;
+				let initBaseDefence = 2800;
+				let atk = 100;
 				let period = day * 1;
 				let totalChange = 0;
 				let change;
+				let baseDefence;
 
 				// 1 defender 0 attackers max
-				change = await wilds.calculateChange(0, period, meralDef, baseDefence - extraDefBonus, baseDamage);
+
+				baseDefence = initBaseDefence + extraDefBonus;
+				change = await wilds.calculateChange(0, period, meralDef, baseDefence);
 				totalChange += parseInt(change);
 				console.log(totalChange, '1 vs 0');
 
 				// 1 defender 1 attackers max
-				change = await wilds.calculateChange(0, period, meralDef, baseDefence - extraDefBonus, baseDamage - atk);
+				baseDefence = initBaseDefence + extraDefBonus - atk;
+				totalChange = 0;
+				change = await wilds.calculateChange(0, period, meralDef, baseDefence);
 				totalChange += parseInt(change);
 				console.log(totalChange, '1 vs 1');
 
 				// 1 defender 5 attackers max attack bonus
+				baseDefence = initBaseDefence + extraDefBonus - atk * 5;
 				totalChange = 0;
-				change = await wilds.calculateChange(0, period, meralDef, baseDefence - extraDefBonus, baseDamage - atk * 5);
+				change = await wilds.calculateChange(0, period, meralDef, baseDefence);
 				totalChange += parseInt(change);
 				console.log(totalChange, '1 vs 5');
 
 				// 5 defender 5 attackers max attack bonus
+				baseDefence = initBaseDefence + extraDefBonus * 5 - atk * 5;
 				totalChange = 0;
-				change = await wilds.calculateChange(0, period, meralDef, baseDefence - extraDefBonus * 5, baseDamage - atk * 5);
+				change = await wilds.calculateChange(0, period, meralDef, baseDefence);
 				totalChange += parseInt(change);
 				console.log(totalChange, '5 vs 5');
 
 				// 5 defender 1 attackers max attack bonus
+				baseDefence = initBaseDefence + extraDefBonus * 5 - atk;
 				totalChange = 0;
-				change = await wilds.calculateChange(0, period, meralDef, baseDefence - extraDefBonus * 5, baseDamage - atk);
+				change = await wilds.calculateChange(0, period, meralDef, baseDefence);
 				totalChange += parseInt(change);
 				console.log(totalChange, '5 vs 1');
 
 				// 5 defender 0 attackers max attack bonus
+				baseDefence = initBaseDefence + extraDefBonus * 5;
 				totalChange = 0;
-				change = await wilds.calculateChange(0, period, meralDef, baseDefence - extraDefBonus * 5, baseDamage);
+				change = await wilds.calculateChange(0, period, meralDef, baseDefence);
 				totalChange += parseInt(change);
 				console.log(totalChange, '5 vs 0');
 			});
 
-			it('Should minus 120 from baseDefence on each defender stake', async function () {
+			it('Should add 140 from baseDefence on each defender stake', async function () {
 				let landId = 1;
 				let land = await wilds.landPlots(landId);
 				let baseDefenceStart = land.baseDefence;
@@ -310,15 +316,19 @@ describe('Wilds', function () {
 				land = await wilds.landPlots(landId);
 				let baseDefenceEnd = land.baseDefence;
 
-				expect(baseDefenceStart - baseDefenceEnd).to.equal(600);
+				expect(baseDefenceEnd - baseDefenceStart).to.equal(700);
 			});
 
-			it('Should minus some value from baseDamage on each attacker stake', async function () {
+			it('Should minus some value from baseDefence on each attacker stake', async function () {
 				let landId = 1;
 				let land = await wilds.landPlots(landId);
-				let baseDamage = land.baseDamage;
+				let baseDefence = land.baseDefence;
 				for (let i = 11; i <= 15; i++) {
 					await wilds.connect(player1).stake(landId, i, 1);
+					land = await wilds.landPlots(landId);
+					console.log(land.baseDefence, 'baseDefence');
+					expect(baseDefence).to.be.lt(land.baseDefence);
+					baseDefence = land.baseDefence;
 				}
 
 				land = await wilds.landPlots(landId);
@@ -327,9 +337,9 @@ describe('Wilds', function () {
 				for (let i = 1; i <= 5; i++) {
 					await wilds.stake(landId, i, 4);
 					land = await wilds.landPlots(landId);
-					console.log(land.baseDamage, 'baseDamage');
-					expect(baseDamage).to.be.gt(land.baseDamage);
-					baseDamage = land.baseDamage;
+					console.log(land.baseDefence, 'baseDefence');
+					expect(baseDefence).to.be.gt(land.baseDefence);
+					baseDefence = land.baseDefence;
 				}
 			});
 
@@ -484,7 +494,6 @@ describe('Wilds', function () {
 						if (remainingHealth < 50) {
 							console.log(remainingHealth);
 							await expect(wilds.connect(player1).deathKiss(1, 1)).to.be.revertedWith('need success');
-							await expect(wilds.connect(player2).deathKiss(1, 21)).to.be.revertedWith('need success');
 							await expect(wilds.connect(player2).deathKiss(25, 21)).to.be.revertedWith('need success');
 							await wilds.connect(player1).deathKiss(1, 11);
 							let defenderSlots = await wilds.getSlots(1, 1);
@@ -715,10 +724,23 @@ describe('Wilds', function () {
 
 					for (let i = 1; i < 20; i++) {
 						let meral = await merals.getEthemeral(i);
+						let meral2 = await merals.getEthemeral(i + 10);
+						let defDamage = await wilds.calculateDefendedDamage(meral.atk, meral2.def);
 						let lightMagic = await wilds.calculateLightMagicDamage(meral.def, meral.spd);
 						let darkMagic = await wilds.calculateDarkMagicDamage(meral.atk, meral.def);
-						console.log(`${meral.atk} atk, ${meral.def} def, ${meral.spd} spd, ${lightMagic} LM, ${darkMagic} DM`);
+						let spdDamage = await wilds.calculateSpdDamage(meral.atk, meral2.def, meral.spd);
+						console.log(`${meral.atk} atk, ${meral.def} def, ${meral.spd} spd, ${lightMagic} LM, ${darkMagic} DM, ${spdDamage} SD, ${defDamage} DD`);
 					}
+				});
+
+				it('Should not allow actions if dead', async function () {
+					await makeRaid();
+					await network.provider.send('evm_increaseTime', [day * 4]);
+					await network.provider.send('evm_mine');
+
+					let value = await wilds.calculateDamage(1);
+					console.log(value);
+					await expect(wilds.raidAction(1, 1, 7)).to.be.revertedWith('alive only');
 				});
 
 				it('Should heal in raidActions', async function () {
@@ -788,6 +810,96 @@ describe('Wilds', function () {
 
 					let postHealStamina = await wilds.getStake(healer);
 					expect(postHealStamina.stamina).to.equal(staminaCost);
+				});
+
+				it('Should allow magic attack', async function () {
+					await makeRaid();
+					//attack all
+					let raidAction = 4;
+					let staminaCost = await wilds.staminaCosts(raidAction);
+					let defender = 5;
+					let attacker = 11;
+
+					let attackerStake = await wilds.getStake(attacker);
+					expect(attackerStake.stamina).to.equal(0);
+
+					let value = await wilds.getStake(1);
+					expect(value.damage).to.equal(0);
+
+					await wilds.connect(player1).raidAction(defender, attacker, raidAction);
+					attackerStake = await wilds.getStake(attacker);
+					expect(attackerStake.stamina).to.equal(staminaCost);
+
+					value = await wilds.getStake(defender);
+					console.log(value.damage, 'magic attack');
+				});
+
+				it('Should allow speed attack', async function () {
+					await makeRaid();
+					//attack all
+					let raidAction = 5;
+					let staminaCost = await wilds.staminaCosts(raidAction);
+					let defender = 5;
+					let attacker = 11;
+
+					let attackerStake = await wilds.getStake(attacker);
+					expect(attackerStake.stamina).to.equal(0);
+
+					let value = await wilds.getStake(1);
+					expect(value.damage).to.equal(0);
+
+					await wilds.connect(player1).raidAction(defender, attacker, raidAction);
+					attackerStake = await wilds.getStake(attacker);
+					expect(attackerStake.stamina).to.equal(staminaCost);
+
+					value = await wilds.getStake(defender);
+					console.log(value.damage, 'speed attack');
+				});
+
+				it('Should allow concentration action', async function () {
+					await makeRaid();
+					//attack all
+					let raidAction = 7;
+					let staminaCost = await wilds.staminaCosts(raidAction);
+					let defender = 5;
+					let attacker = 11;
+
+					let defenderStake = await wilds.getStake(defender);
+					expect(defenderStake.stamina).to.equal(0);
+
+					let preLand = await wilds.landPlots(1);
+					console.log(preLand.baseDefence, 'baseDefence');
+
+					await wilds.raidAction(defender, defender, raidAction);
+					defenderStake = await wilds.getStake(defender);
+					expect(defenderStake.stamina).to.equal(staminaCost);
+
+					let postLand = await wilds.landPlots(1);
+					console.log(postLand.baseDefence, 'baseDefence');
+					expect(postLand.baseDefence).to.be.gt(preLand.baseDefence);
+				});
+
+				it('Should allow enrage action', async function () {
+					await makeRaid();
+					//attack all
+					let raidAction = 6;
+					let staminaCost = await wilds.staminaCosts(raidAction);
+					let defender = 5;
+					let attacker = 11;
+
+					let stake = await wilds.getStake(attacker);
+					expect(stake.stamina).to.equal(0);
+
+					let preLand = await wilds.landPlots(1);
+					console.log(preLand.baseDefence, 'baseDefence');
+
+					await wilds.connect(player1).raidAction(defender, attacker, raidAction);
+					stake = await wilds.getStake(attacker);
+					expect(stake.stamina).to.equal(staminaCost);
+
+					let postLand = await wilds.landPlots(1);
+					console.log(postLand.baseDefence, 'baseDefence');
+					expect(postLand.baseDefence).to.be.lt(preLand.baseDefence);
 				});
 			});
 		});

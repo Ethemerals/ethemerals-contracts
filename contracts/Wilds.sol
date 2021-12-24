@@ -29,15 +29,14 @@ contract Wilds is ERC721Holder, WildsCalculate {
   // land PLOTS => StakeEvents
   mapping (uint16 => StakeEvent[]) public stakeEvents;
 
-  uint8[] public staminaCosts = [30,60,40,100];
-  uint8 private extraDefBonus = 120; // DAILED already
-  uint16 private baseDefence = 2000; // DAILED already, lower = more bonus applied - range 1200-2000
-  uint16 private baseDamage = 600; // DAILED already, lower = more damage applied - range 50-600
+  // [attack, attackAll, heal, healAll, magicAttack, speedAttack, enrage, concentrate]
+  uint8[] public staminaCosts = [30,60,40,90,40,40,50,50];
+  uint8 private extraDefBonus = 140; // DAILED already
+  uint16 private baseDefence = 2800; //
 
   struct StakeEvent {
     uint256 timestamp;
     uint16 baseDefence;
-    uint16 baseDamage;
   }
 
   struct Stake {
@@ -63,9 +62,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
     uint256 emissionRate; // DEV IMPROVE
     uint256 lastRaid;
     uint16 initBaseDefence;
-    uint16 initBaseDamage;
     uint16 baseDefence;
-    uint16 baseDamage;
     RaidStatus raidStatus; // 0 - default, 1 - raidable, 2 - currently raiding
     ItemPool lootPool;
     ItemPool petPool;
@@ -76,9 +73,6 @@ contract Wilds is ERC721Holder, WildsCalculate {
   address private staking;
   address private actions;
 
-
-
-  uint public value;
 
   // TODO no defenders, dmg, apply inventory external damage function
   // TODO claim rewards, death kiss rewards, honey pot rewards
@@ -103,7 +97,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
     uint256 timestamp = block.timestamp;
 
     for(uint16 i = 1; i < 7; i ++) {
-      landPlots[i] = Land({ remainingELFx: 1000, emissionRate: 10, lastRaid: timestamp, initBaseDefence: baseDefence, initBaseDamage: baseDamage, baseDefence: baseDefence, baseDamage: baseDamage, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
+      landPlots[i] = Land({ remainingELFx: 1000, emissionRate: 10, lastRaid: timestamp, initBaseDefence: baseDefence, baseDefence: baseDefence, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
     }
 
   }
@@ -116,8 +110,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
     uint8[] calldata petDrops,
     uint256 _remainingELFx,
     uint256 _emissionRate,
-    uint16 _baseDefence,
-    uint16 _baseDamage) external
+    uint16 _baseDefence) external
   {
     require(msg.sender == admin, "admin only");
     require(landPlots[id].emissionRate == 0, "already land");
@@ -127,9 +120,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
       emissionRate: _emissionRate,
       lastRaid: block.timestamp,
       initBaseDefence: _baseDefence,
-      initBaseDamage: _baseDamage,
       baseDefence: _baseDefence,
-      baseDamage: _baseDamage,
       lootPool: _addItemPool(lootCost, lootDrops),
       petPool: _addItemPool(petCost, petDrops),
       raidStatus: RaidStatus.DEFAULT
@@ -257,6 +248,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
     require(stakes[toTokenId].stakeAction == StakeAction.DEFEND, "defender only");
     require(stakes[fromTokenId].owner == msg.sender, "owner only");
     require(stakes[fromTokenId].landId == stakes[toTokenId].landId, "raid group only");
+    require(uint16(calculateDamage(fromTokenId)) < merals.getEthemeral(fromTokenId).score, "alive only");
 
     bool success;
     bytes memory data;
@@ -264,8 +256,6 @@ contract Wilds is ERC721Holder, WildsCalculate {
 
     require(success, "need success");
   }
-
-
 
 
   /*///////////////////////////////////////////////////////////////
@@ -281,20 +271,22 @@ contract Wilds is ERC721Holder, WildsCalculate {
                   PUBLIC VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function calculateDamage(uint16 _tokenId) external view returns (uint256) {
+  function calculateDamage(uint16 _tokenId) public view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
     uint256 damage = _stake.damage;
 
     // FAST FORWARD TO ENTRY POINT
-    for(uint256 i = _stake.entryPointer; i < stakeEvents[_stake.landId].length - 1; i ++) {
-      StakeEvent memory _event = stakeEvents[_stake.landId][i];
-      damage += calculateChange(_event.timestamp, stakeEvents[_stake.landId][i+1].timestamp, _meral.def, _event.baseDefence, _event.baseDamage);
+    if(_stake.stakeAction == StakeAction.DEFEND) {
+      for(uint256 i = _stake.entryPointer; i < stakeEvents[_stake.landId].length - 1; i ++) {
+        StakeEvent memory _event = stakeEvents[_stake.landId][i];
+        damage += calculateChange(_event.timestamp, stakeEvents[_stake.landId][i+1].timestamp, _meral.def, _event.baseDefence);
+      }
+      // FOR VIEW NEED EXTRA NOW PING
+      damage += calculateChange(stakeEvents[_stake.landId][stakeEvents[_stake.landId].length-1].timestamp, block.timestamp, _meral.def, _landPlots.baseDefence);
     }
 
-    // FOR VIEW NEED EXTRA NOW PING
-    damage += calculateChange(stakeEvents[_stake.landId][stakeEvents[_stake.landId].length-1].timestamp, block.timestamp, _meral.def, _landPlots.baseDefence, _landPlots.baseDamage);
     damage = _stake.health >= damage ? 0 : damage - _stake.health;
     return damage > _meral.score ? _meral.score : damage;
   }
