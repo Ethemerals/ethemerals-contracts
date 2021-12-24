@@ -17,17 +17,15 @@ contract WildsStaking is WildsCalculate {
   mapping (uint16 => Land) public landPlots;
   // MERALS => STAKES
   mapping (uint16 => Stake) public stakes;
-
   // LAND PLOTS => MERALS => LCP
   mapping (uint16 => mapping(uint16 => uint256)) private landClaimPoints;
-
   // land PLOTS => StakeAction Slots => MERALS
   mapping (uint16 => mapping(StakeAction => uint16[])) private slots;
-
   // land PLOTS => StakeEvents
   mapping (uint16 => StakeEvent[]) public stakeEvents;
 
-  uint8[] public staminaCosts = [30,60,40,100];
+  // [attack, attackAll, heal, healAll, magicAttack, speedAttack, enrage, concentrate]
+  uint8[] public staminaCosts = [30,60,40,90,40,40,50,50];
   uint8 private extraDefBonus = 140; // DAILED already
   uint16 private baseDefence = 2800; //
 
@@ -67,8 +65,10 @@ contract WildsStaking is WildsCalculate {
 
   IEthemerals merals;
   address public admin;
-  address private staking;
-  address private actions;
+  address public adminActions;
+  address public staking;
+  address public actions;
+  bool public paused;
 
 
   /*///////////////////////////////////////////////////////////////
@@ -108,14 +108,13 @@ contract WildsStaking is WildsCalculate {
     // TODO NEED TO CLAIM?
     uint256 timestamp = block.timestamp;
     _defenderChange(_landId, timestamp, false);
-    _reduceHealth(_tokenId);
+    _reduceDefenderHealth(_tokenId);
 
     // ADD LCP
     uint256 change = timestamp - stakeEvents[_landId][_entryPointer].timestamp;
     landClaimPoints[_landId][_tokenId] += change;
 
-    _removeFromSlot(_landId, _tokenId, StakeAction.DEFEND);
-    delete stakes[_tokenId];
+    _unstake(_landId, _tokenId, StakeAction.DEFEND);
 
     if(slots[_landId][StakeAction.DEFEND].length == 0) {
       delete stakeEvents[_landId];
@@ -132,7 +131,7 @@ contract WildsStaking is WildsCalculate {
     Stake memory _stake = stakes[_tokenId];
     require(landPlots[_stake.landId].raidStatus == RaidStatus.RAIDING && _stake.stakeAction == StakeAction.DEFEND, "not raiding");
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
-    uint256 damage = calculateDamage(_tokenId);
+    uint256 damage = calculateDefenderDamage(_tokenId);
 
     if(_meral.score > damage) { // safe
       if(stakes[_deathId].owner == msg.sender && stakes[_deathId].landId == _stake.landId) {
@@ -144,13 +143,12 @@ contract WildsStaking is WildsCalculate {
 
     uint256 timestamp = block.timestamp;
     _defenderChange(_stake.landId, timestamp, false);
-    _reduceHealth(_tokenId);
+    _reduceDefenderHealth(_tokenId);
     // ADD LCP
     uint256 change = timestamp - stakeEvents[_stake.landId][_stake.entryPointer].timestamp;
     landClaimPoints[_stake.landId][_tokenId] += change;
 
-    _removeFromSlot(_stake.landId, _tokenId, _stake.stakeAction);
-    delete stakes[_tokenId];
+    _unstake(_stake.landId, _tokenId, _stake.stakeAction);
 
     if(slots[_stake.landId][StakeAction.DEFEND].length == 0) {
       _endRaid(_stake.landId);
@@ -203,7 +201,7 @@ contract WildsStaking is WildsCalculate {
     _registerEvent(_landId, timestamp);
   }
 
-  function _removeFromSlot(uint16 _landId, uint16 _tokenId, StakeAction _stakeAction) private {
+  function _unstake(uint16 _landId, uint16 _tokenId, StakeAction _stakeAction) private {
     uint16[] storage _slots = slots[_landId][_stakeAction];
 
     for(uint16 i = 0; i < _slots.length; i ++) {
@@ -213,6 +211,11 @@ contract WildsStaking is WildsCalculate {
         break;
       }
     }
+
+    delete stakes[_tokenId];
+    // ELF REWARDS
+
+
   }
 
   function _registerEvent(uint16 _landId, uint256 timestamp) private {
@@ -221,7 +224,7 @@ contract WildsStaking is WildsCalculate {
     stakeEvents[_landId].push(_stakeEvent);
   }
 
-  function _reduceHealth(uint16 _tokenId) private {
+  function _reduceDefenderHealth(uint16 _tokenId) private {
     Stake memory _stake = stakes[_tokenId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
     uint256 damage = _stake.damage;
@@ -265,7 +268,7 @@ contract WildsStaking is WildsCalculate {
                   INTERNAL VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function calculateDamage(uint16 _tokenId) internal view returns (uint256) {
+  function calculateDefenderDamage(uint16 _tokenId) internal view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);

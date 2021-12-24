@@ -2,11 +2,11 @@
 pragma solidity ^0.8.3;
 
 import "hardhat/console.sol";
-import "./WildsCalculate.sol";
-import "./IEthemerals.sol";
+import "../WildsCalculate.sol";
+import "../IEthemerals.sol";
 
 
-contract WildsActions is WildsCalculate {
+contract WildsActionsV2 is WildsCalculate {
   /*///////////////////////////////////////////////////////////////
                   STORAGE
   //////////////////////////////////////////////////////////////*/
@@ -65,7 +65,6 @@ contract WildsActions is WildsCalculate {
 
   IEthemerals merals;
   address public admin;
-  address public adminActions;
   address public staking;
   address public actions;
   bool public paused;
@@ -90,11 +89,6 @@ contract WildsActions is WildsCalculate {
 
 
   function raidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType) external {
-    require(paused == false, 'paused');
-    require(stakes[toTokenId].stakeAction == StakeAction.DEFEND, "defender only");
-    require(stakes[fromTokenId].owner == msg.sender, "owner only");
-    require(stakes[fromTokenId].landId == stakes[toTokenId].landId, "raid group only");
-    require(uint16(calculateDefenderDamage(fromTokenId)) < merals.getEthemeral(fromTokenId).score, "alive only");
     // TODO restrict by class
     // TODO restrict to avoid infinite staking
     // [attack, attackAll, heal, healAll, magicAttack, speedAttack, enrage, concentrate]
@@ -114,15 +108,16 @@ contract WildsActions is WildsCalculate {
 
 
     if(actionType == 0) {
-      toStake.damage += uint16(calculateDefendedDamage(fromMeral.atk, toMeral.def));
+      // single heal
+      // TODO ATTACKERS CANNOT HEAL
+      toStake.health += uint16(calculateLightMagicDamage(fromMeral.def, fromMeral.spd));
     }
     if(actionType == 1) {
       _attackAll(fromStake, fromMeral.atk);
     }
     if(actionType == 2) {
-      // single heal
-      // TODO ATTACKERS CANNOT HEAL
-      toStake.health += uint16(calculateLightMagicDamage(fromMeral.def, fromMeral.spd));
+      // TEST SWAP ACTION
+      toStake.damage += uint16(calculateDefendedDamage(fromMeral.atk, toMeral.def));
     }
     if(actionType == 3) {
       // TODO ATTACKERS CANNOT HEAL
@@ -143,7 +138,7 @@ contract WildsActions is WildsCalculate {
 
   }
 
-  function _attackAll(Stake storage fromStake, uint16 atk) private {
+  function _attackAll(Stake storage fromStake, uint16 atk) internal {
     uint16[] memory defenders = slots[fromStake.landId][StakeAction.DEFEND];
 
     for(uint16 i = 0; i < defenders.length; i ++) {
@@ -153,7 +148,7 @@ contract WildsActions is WildsCalculate {
     }
   }
 
-  function _healAll(Stake storage fromStake, uint16 def, uint16 spd) private {
+  function _healAll(Stake storage fromStake, uint16 def, uint16 spd) internal {
     uint16[] memory defenders = slots[fromStake.landId][StakeAction.DEFEND];
 
     for(uint16 i = 0; i < defenders.length; i ++) {
@@ -162,44 +157,20 @@ contract WildsActions is WildsCalculate {
     }
   }
 
-  function _enrage(uint16 fromTokenId) private {
+  function _enrage(uint16 fromTokenId) internal {
     Land storage _land = landPlots[stakes[fromTokenId].landId];
     uint16 _baseDefence = _land.baseDefence - 400;
     _land.baseDefence = _baseDefence < 1000 ? 1000 : _baseDefence;
   }
 
-  function _concentration(uint16 fromTokenId) private {
+  function _concentration(uint16 fromTokenId) internal {
     Land storage _land = landPlots[stakes[fromTokenId].landId];
     uint16 _baseDefence = _land.baseDefence + 400;
     _land.baseDefence = _baseDefence > 4000 ? 4000 : _baseDefence;
   }
 
 
-  /*///////////////////////////////////////////////////////////////
-                  PRIVATE VIEW FUNCTIONS
-  //////////////////////////////////////////////////////////////*/
-
-  function calculateDefenderDamage(uint16 _tokenId) private view returns (uint256) {
-    Stake memory _stake = stakes[_tokenId];
-    Land memory _landPlots = landPlots[_stake.landId];
-    IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
-    uint256 damage = _stake.damage;
-
-    // FAST FORWARD TO ENTRY POINT
-    if(_stake.stakeAction == StakeAction.DEFEND) {
-      for(uint256 i = _stake.entryPointer; i < stakeEvents[_stake.landId].length - 1; i ++) {
-        StakeEvent memory _event = stakeEvents[_stake.landId][i];
-        damage += calculateChange(_event.timestamp, stakeEvents[_stake.landId][i+1].timestamp, _meral.def, _event.baseDefence);
-      }
-      // FOR VIEW NEED EXTRA NOW PING
-      damage += calculateChange(stakeEvents[_stake.landId][stakeEvents[_stake.landId].length-1].timestamp, block.timestamp, _meral.def, _landPlots.baseDefence);
-    }
-
-    damage = _stake.health >= damage ? 0 : damage - _stake.health;
-    return damage > _meral.score ? _meral.score : damage;
-  }
-
-  function calculateStamina(uint16 _tokenId) private view returns(uint16) {
+  function calculateStamina(uint16 _tokenId) internal view returns(uint16) {
     Stake memory _stake = stakes[_tokenId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
 
