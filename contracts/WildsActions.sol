@@ -6,7 +6,7 @@ import "./WildsCalculate.sol";
 import "./IEthemerals.sol";
 
 
-contract WildsActions is WildsCalculate{
+contract WildsActions is WildsCalculate {
   /*///////////////////////////////////////////////////////////////
                   STORAGE
   //////////////////////////////////////////////////////////////*/
@@ -27,6 +27,7 @@ contract WildsActions is WildsCalculate{
   // land PLOTS => StakeEvents
   mapping (uint16 => StakeEvent[]) public stakeEvents;
 
+  uint8[] public staminaCosts = [30,60,50,100];
   uint8 private extraDefBonus = 120; // DAILED already
   uint16 private baseDefence = 2000; // DAILED already, lower = more bonus applied - range 1200-2000
   uint16 private baseDamage = 600; // DAILED already, lower = more damage applied - range 50-600
@@ -68,8 +69,13 @@ contract WildsActions is WildsCalculate{
     ItemPool petPool;
   }
 
-
   IEthemerals merals;
+  address public admin;
+  address private staking;
+  address private actions;
+
+
+
 
   // struct RaidActionType {
   //   health:
@@ -96,45 +102,76 @@ contract WildsActions is WildsCalculate{
 
 
   function raidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType) external {
+    // TODO restrict by class
+    // TODO restrict to avoid infinite staking
 
-    if(actionType == 1) {
-      _attack(toTokenId, fromTokenId);
-    }
+    uint16 maxStamina = 100; // TODO get from inventory
+    uint16 staminaCost = staminaCosts[actionType]; // HARDCODED
+    uint16 stamina = calculateStamina(fromTokenId);
+    require(stamina + staminaCost <= maxStamina, 'need stamina');
 
-
-  }
-
-  function _attack(uint16 toTokenId, uint16 fromTokenId) internal {
-    uint16 staminaCost = 30;
     Stake storage toStake = stakes[toTokenId];
     Stake storage fromStake = stakes[fromTokenId];
-
-    uint16 staminaGain = calculateStamina(fromTokenId);
-    fromStake.stamina = staminaGain > fromStake.stamina ? 0 : fromStake.stamina - staminaGain;
-    console.log(fromStake.stamina, 'innerise staminer');
-    require(fromStake.stamina + staminaCost <= 100, 'no stamina');
-
     IEthemerals.Meral memory toMeral = merals.getEthemeral(toTokenId);
     IEthemerals.Meral memory fromMeral = merals.getEthemeral(fromTokenId);
 
-    fromStake.stamina += staminaCost;
-
-    uint256 scaledDamage = scaleSafe(fromMeral.atk, 1600, 20, 100);
-    uint256 scaledDefence = scaleSafe(toMeral.def, 1600, 0, 60);
-    uint256 defendedDamage = scaledDefence > scaledDamage ? 0 : scaledDamage - scaledDefence;
-
-    toStake.damage += uint16(defendedDamage);
+    fromStake.stamina = stamina + staminaCost;
     fromStake.lastAction = block.timestamp;
+
+
+    if(actionType == 0) {
+      // single attack
+      toStake.damage += uint16(calculateStatDamage(fromMeral.atk, toMeral.def));
+    }
+    if(actionType == 1) {
+      _attackAll(fromStake, fromMeral.atk);
+    }
+    if(actionType == 2) {
+      // single heal
+      // ATTACKERS CANNOT HEAL
+      toStake.health += uint16(calculateLightMagicDamage(fromMeral.def, toMeral.spd));
+    }
+    if(actionType == 3) {
+      // ATTACKERS CANNOT HEAL
+      _healAll(fromStake, fromMeral.def, fromMeral.spd);
+    }
+
   }
 
-  function calculateStamina(uint16 _tokenId) public view returns(uint16) {
+  function _attackAll(Stake storage fromStake, uint16 atk) internal {
+    uint16[] memory defenders = slots[fromStake.landId][StakeAction.DEFEND];
+
+    for(uint16 i = 0; i < defenders.length; i ++) {
+      Stake storage toStake = stakes[defenders[i]];
+      IEthemerals.Meral memory toMeral = merals.getEthemeral(defenders[i]);
+      toStake.damage += uint16(calculateStatDamage(atk, toMeral.def));
+    }
+  }
+
+  function _healAll(Stake storage fromStake, uint16 def, uint16 spd) internal {
+    uint16[] memory defenders = slots[fromStake.landId][StakeAction.DEFEND];
+
+    for(uint16 i = 0; i < defenders.length; i ++) {
+      Stake storage toStake = stakes[defenders[i]];
+      toStake.health += uint16(calculateLightMagicDamage(def, spd));
+    }
+  }
+
+  function _concentration(uint16 fromTokenId, uint8 actionType) internal {
+
+  }
+
+  function calculateStamina(uint16 _tokenId) internal view returns(uint16) {
     Stake memory _stake = stakes[_tokenId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
 
     uint256 change = block.timestamp - _stake.lastAction;
-    uint256 scaledSpeed = scaleSafe(_meral.spd, 1600, 2, 10);
-    return uint16(change / 3600 * scaledSpeed);
+    uint256 scaledSpeed = safeScale(_meral.spd, 1600, 2, 10);
+    uint256 gain = change / 3600 * scaledSpeed;
+
+    return uint16(gain > _stake.stamina ? 0 : _stake.stamina - gain);
   }
+
 
 
 }

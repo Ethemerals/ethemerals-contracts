@@ -27,6 +27,7 @@ contract WildsStaking is WildsCalculate {
   // land PLOTS => StakeEvents
   mapping (uint16 => StakeEvent[]) public stakeEvents;
 
+  uint8[] public staminaCosts = [30,60,50,100];
   uint8 private extraDefBonus = 120; // DAILED already
   uint16 private baseDefence = 2000; // DAILED already, lower = more bonus applied - range 1200-2000
   uint16 private baseDamage = 600; // DAILED already, lower = more damage applied - range 50-600
@@ -69,6 +70,10 @@ contract WildsStaking is WildsCalculate {
   }
 
   IEthemerals merals;
+  address public admin;
+  address private staking;
+  address private actions;
+
 
   /*///////////////////////////////////////////////////////////////
                   EXTERNAL FUNCTIONS
@@ -193,12 +198,7 @@ contract WildsStaking is WildsCalculate {
   function _attackerChange(uint16 _landId, uint16 _tokenId, uint256 timestamp, bool staked) private {
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId); // TODO USE INVENTORY
 
-    uint256 scaledDamage;
-    if(_meral.atk > 1600) {
-      scaledDamage = 118;
-    } else {
-      scaledDamage = (uint256(_meral.atk) * 58) / 1600 + 60;
-    }
+    uint256 scaledDamage = safeScale(_meral.atk, 1600, 60, 118);
 
     // ADD or MINUS variable ATK damage to global baseDamage
     if(staked) {
@@ -277,7 +277,7 @@ contract WildsStaking is WildsCalculate {
                   INTERNAL VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-    function calculateDamage(uint16 _tokenId) internal view returns (uint256) {
+  function calculateDamage(uint16 _tokenId) internal view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);

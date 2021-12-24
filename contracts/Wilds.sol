@@ -29,6 +29,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
   // land PLOTS => StakeEvents
   mapping (uint16 => StakeEvent[]) public stakeEvents;
 
+  uint8[] public staminaCosts = [30,60,40,100];
   uint8 private extraDefBonus = 120; // DAILED already
   uint16 private baseDefence = 2000; // DAILED already, lower = more bonus applied - range 1200-2000
   uint16 private baseDamage = 600; // DAILED already, lower = more damage applied - range 50-600
@@ -69,7 +70,6 @@ contract Wilds is ERC721Holder, WildsCalculate {
     ItemPool lootPool;
     ItemPool petPool;
   }
-
 
   IEthemerals merals;
   address public admin;
@@ -135,6 +135,11 @@ contract Wilds is ERC721Holder, WildsCalculate {
       raidStatus: RaidStatus.DEFAULT
     });
     landPlots[id] = land;
+  }
+
+  function setStaminas(uint8[] calldata _staminaCosts) external {
+    require(msg.sender == admin, "admin only");
+    staminaCosts = _staminaCosts;
   }
 
   /*///////////////////////////////////////////////////////////////
@@ -299,8 +304,10 @@ contract Wilds is ERC721Holder, WildsCalculate {
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
 
     uint256 change = block.timestamp - _stake.lastAction;
-    uint256 scaledSpeed = scaleSafe(_meral.spd, 1600, 2, 10);
-    return uint16(change / 3600 * scaledSpeed);
+    uint256 scaledSpeed = safeScale(_meral.spd, 1600, 2, 10);
+    uint256 gain = change / 3600 * scaledSpeed;
+
+    return uint16(gain > _stake.stamina ? 0 : _stake.stamina - gain);
   }
 
 

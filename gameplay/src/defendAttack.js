@@ -38,7 +38,7 @@ function scale(number, inMin, inMax, outMin, outMax) {
 	// return ((number - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
 }
 
-function scaleSafe(number, inMax, outMin, outMax) {
+function safeScale(number, inMax, outMin, outMax) {
 	let scaled = (number * (outMax - outMin)) / inMax + outMin;
 	return scaled > outMax ? outMax : scaled;
 }
@@ -77,8 +77,8 @@ const singleAttack = () => {
 		let randomDefender = merals[getRandomInt(merals.length)];
 		let meralAtk = meral.atk * 1.5;
 		let meralDef = randomDefender.def * 1.5;
-		let scaledDamage = scaleSafe(meralAtk, 2000, 20, 80); // num, inMax, outMin, outMax
-		let scaledDefence = scaleSafe(meralDef, 2000, 0, 40);
+		let scaledDamage = safeScale(meralAtk, 2000, 20, 80); // num, inMax, outMin, outMax
+		let scaledDefence = safeScale(meralDef, 2000, 0, 40);
 
 		console.log(`meralAtk: ${meralAtk}/ meralDef: ${meralDef} for ${scaledDamage - scaledDefence} hp`);
 
@@ -104,7 +104,7 @@ const staminaChange = () => {
 
 	merals.forEach((meral) => {
 		const meralSpd = meral.spd;
-		const scaledSpeed = scaleSafe(meralSpd, 1600, 2, 10);
+		const scaledSpeed = safeScale(meralSpd, 1600, 2, 10);
 		const finalChange = (change / 3600) * scaledSpeed;
 
 		// console.log('finalChange', meralSpd, finalChange);
@@ -120,6 +120,17 @@ const staminaChange = () => {
 };
 
 staminaChange();
+
+num = 1000;
+// defence
+console.log(scale(num, 0, 2000, 400, 1000));
+console.log((num * 600) / 2000 + 400);
+console.log(safeScale(num, 2000, 400, 1000));
+
+// attack;
+console.log(scale(num, 0, 1600, 60, 118));
+console.log((num * 58) / 1600 + 60);
+console.log(safeScale(num, 1600, 60, 118));
 
 // console.log((num * 1600) / 2000);
 
