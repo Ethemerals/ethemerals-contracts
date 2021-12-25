@@ -73,10 +73,10 @@ contract Wilds is ERC721Holder, WildsCalculate {
   bool public paused;
 
 
-  // TODO no defenders, apply inventory
+  // TODO apply inventory
   // TODO claim rewards, death kiss rewards, honey pot rewards
-  // TODO experience gain (ELF)
   // TODO looters and birthers,
+  // TODO require health
 
   /*///////////////////////////////////////////////////////////////
                   ADMIN FUNCTIONS
@@ -171,7 +171,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
   /**
   * @dev Send meral to the wilds
   * Requires at least 1 Defender before any other action
-  * Max 5 per action total 20 max slots
+  * Max 5 per action total 20 max slots per land plot
   * If 5 Defenders, plot = RAIDABLE
   * Can only attack if RAIDABLE
   * Once Attacked plot = RAIDING
@@ -224,7 +224,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
 
     if(_stake.stakeAction == StakeAction.DEFEND) {
       require(landPlots[_stake.landId].raidStatus != RaidStatus.RAIDING, 'in a raid');
-      (success, data) = staking.delegatecall(abi.encodeWithSignature("undefend(uint16,uint16,uint16)", _stake.landId, _tokenId, _stake.entryPointer));
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("undefend(uint16,uint16)", _stake.landId, _tokenId));
     }
     if(_stake.stakeAction == StakeAction.LOOT) {
       (success, data) = staking.delegatecall(abi.encodeWithSignature("unloot(uint16,uint16)", _stake.landId, _tokenId));
@@ -238,8 +238,8 @@ contract Wilds is ERC721Holder, WildsCalculate {
   }
 
   /**
-  * @dev Kick out defender
-  * The only way to unstake a Defender, any Meral can do the kiss
+  * @dev Kick out merals with low health
+  * The only way to unstake a Defender once raiding, any Meral can do the kiss
   * Once all Defenders are out, Attackers switch to defenders
   */
   function deathKiss(uint16 _tokenId, uint16 _deathId) external {
@@ -247,10 +247,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
     bool success;
     bytes memory data;
     address owner = stakes[_tokenId].owner;
-
-    if(stakes[_tokenId].stakeAction == StakeAction.DEFEND) {
-      (success, data) = staking.delegatecall(abi.encodeWithSignature("deathKiss(uint16,uint16)", _tokenId, _deathId));
-    }
+    (success, data) = staking.delegatecall(abi.encodeWithSignature("deathKiss(uint16,uint16)", _tokenId, _deathId));
 
     require(success, "need success");
     merals.safeTransferFrom(address(this), owner, _tokenId);
@@ -261,7 +258,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
   * Allows successful raiders to switch out their attackers / defenders
   */
   function swapDefenders(uint16 _tokenId, uint16 _swapperId) external {
-    // require(_stake.action == StakeAction.DEFEND, 'not defending'); // TODO NEED TO TEST
+    require(paused == false, 'paused');
     bool success;
     bytes memory data;
     (success, data) = staking.delegatecall(abi.encodeWithSignature("swapDefenders(uint16,uint16)", _tokenId, _swapperId));
@@ -276,6 +273,8 @@ contract Wilds is ERC721Holder, WildsCalculate {
   * Parse the action in Actions contract
   */
   function raidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType) external {
+    // TODO only attackers and defenders
+    require(paused == false, 'paused');
     bool success;
     bytes memory data;
     (success, data) = actions.delegatecall(abi.encodeWithSignature("raidAction(uint16,uint16,uint8)", toTokenId, fromTokenId, actionType));
@@ -296,7 +295,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
                   PUBLIC VIEW FUNCTIONS DUPLICATES
   //////////////////////////////////////////////////////////////*/
 
-  function calculateDefenderDamage(uint16 _tokenId) external view returns (uint256) {
+  function calculateDamage(uint16 _tokenId) external view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
@@ -310,6 +309,16 @@ contract Wilds is ERC721Holder, WildsCalculate {
       }
       // FOR VIEW NEED EXTRA NOW PING
       damage += calculateChange(stakeEvents[_stake.landId][stakeEvents[_stake.landId].length-1].timestamp, block.timestamp, _meral.def, _landPlots.baseDefence);
+    }
+
+    // FAST FORWARD TO ENTRY POINT
+    if(_stake.stakeAction == StakeAction.BIRTH) {
+      for(uint256 i = _stake.entryPointer; i < stakeEvents[_stake.landId].length - 1; i ++) {
+        StakeEvent memory _event = stakeEvents[_stake.landId][i];
+        damage += calculateChange(_event.timestamp, stakeEvents[_stake.landId][i+1].timestamp, _meral.def + _meral.spd, _event.baseDefence);
+      }
+      // FOR VIEW NEED EXTRA NOW PING
+      damage += calculateChange(stakeEvents[_stake.landId][stakeEvents[_stake.landId].length-1].timestamp, block.timestamp, _meral.def + _meral.spd, _landPlots.baseDefence);
     }
 
     damage = _stake.health >= damage ? 0 : damage - _stake.health;

@@ -76,31 +76,24 @@ contract WildsStaking is WildsCalculate {
   //////////////////////////////////////////////////////////////*/
 
   function defend(uint16 _landId, uint16 _tokenId) external {
-    uint256 timestamp = block.timestamp;
-
     // ADD TO ACTION SLOTS
     slots[_landId][StakeAction.DEFEND].push(_tokenId);
-    _defenderChange(_landId, timestamp, true);
+    _defenderChange(_landId, _tokenId, block.timestamp, true);
 
     // SET RAIDSTATUS
     if(slots[_landId][StakeAction.DEFEND].length == 5) {
       landPlots[_landId].raidStatus = RaidStatus.RAIDABLE;
     }
-
     stakes[_tokenId] = Stake({owner: msg.sender, lastAction: block.timestamp, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.DEFEND});
   }
 
   function loot(uint16 _landId, uint16 _tokenId) external {
     slots[_landId][StakeAction.LOOT].push(_tokenId);
-    // _defenderChange(_landId, timestamp, true);
-    // TODO last action or entry pointer
     stakes[_tokenId] = Stake({owner: msg.sender, lastAction: block.timestamp, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.LOOT});
   }
 
   function birth(uint16 _landId, uint16 _tokenId) external {
     slots[_landId][StakeAction.BIRTH].push(_tokenId);
-    // _defenderChange(_landId, timestamp, true);
-    // TODO last action or entry pointer
     stakes[_tokenId] = Stake({owner: msg.sender, lastAction: block.timestamp, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.BIRTH});
   }
 
@@ -118,21 +111,15 @@ contract WildsStaking is WildsCalculate {
     stakes[_tokenId] = Stake({owner: msg.sender, lastAction: block.timestamp, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.ATTACK});
   }
 
-  function undefend(uint16 _landId, uint16 _tokenId, uint16 _entryPointer) external {
-    // TODO NEED TO CLAIM?
+  function undefend(uint16 _landId, uint16 _tokenId) external {
     uint256 timestamp = block.timestamp;
-    _defenderChange(_landId, timestamp, false);
-    _reduceDefenderHealth(_tokenId);
-
-    // ADD LCP
-    uint256 change = timestamp - stakeEvents[_landId][_entryPointer].timestamp;
-    landClaimPoints[_landId][_tokenId] += change;
-
+    _defenderChange(_landId, _tokenId, timestamp, false);
     _unstake(_landId, _tokenId, StakeAction.DEFEND);
 
     if(slots[_landId][StakeAction.DEFEND].length == 0) {
-      // TODO Kick Birthers and Looters;
-      delete stakeEvents[_landId];
+      // NO DEFENDERS && NOT IN A RAID
+      _unstakeSlot(_landId, StakeAction.LOOT);
+      _unstakeSlot(_landId, StakeAction.BIRTH);
     }
     // SET RAIDSTATUS
     if(slots[_landId][StakeAction.DEFEND].length == 4) {
@@ -141,47 +128,55 @@ contract WildsStaking is WildsCalculate {
   }
 
   function unloot(uint16 _landId, uint16 _tokenId) external {
+    merals.changeScore(uint256(_tokenId), uint16(calculateDamage(_tokenId)), false, 0);
     _unstake(_landId, _tokenId, StakeAction.LOOT);
   }
 
   function unbirth(uint16 _landId, uint16 _tokenId) external {
+    merals.changeScore(uint256(_tokenId), uint16(calculateDamage(_tokenId)), false, 0);
     _unstake(_landId, _tokenId, StakeAction.BIRTH);
   }
 
   function deathKiss(uint16 _tokenId, uint16 _deathId) external {
     require(_tokenId != _deathId, 'no kiss yourself');
     Stake memory _stake = stakes[_tokenId];
-    require(landPlots[_stake.landId].raidStatus == RaidStatus.RAIDING && _stake.stakeAction == StakeAction.DEFEND, "not raiding");
+    uint16 _landId = _stake.landId;
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
-    uint256 damage = calculateDefenderDamage(_tokenId);
 
-    if(_meral.score > damage) { // safe
-      if(stakes[_deathId].owner == msg.sender && stakes[_deathId].landId == _stake.landId) {
-        require(_meral.score - damage <= 50, 'not dead');
-      } else {
-        require(_meral.score - damage <= 25, 'not really dead');
-      }
+    // TODO
+    uint256 damage = calculateDamage(_tokenId);
+
+    if(_meral.score > damage) {
+      require(_meral.score - damage <= 25, 'not dead');
     }
 
-    uint256 timestamp = block.timestamp;
-    _defenderChange(_stake.landId, timestamp, false);
-    _reduceDefenderHealth(_tokenId);
-    // ADD LCP
-    uint256 change = timestamp - stakeEvents[_stake.landId][_stake.entryPointer].timestamp;
-    landClaimPoints[_stake.landId][_tokenId] += change;
-
-    _unstake(_stake.landId, _tokenId, _stake.stakeAction);
-
-    if(slots[_stake.landId][StakeAction.DEFEND].length == 0) {
-      _endRaid(_stake.landId);
+    if(_stake.stakeAction == StakeAction.DEFEND) {
+      _defenderChange(_landId, _tokenId, block.timestamp, false);
+    }
+    if(_stake.stakeAction == StakeAction.ATTACK) {
+      _attackerChange(_landId, _tokenId, block.timestamp, false);
     }
 
-    // TODO GET REWARD
+    _unstake(_landId, _tokenId, _stake.stakeAction);
+
+    if(slots[_landId][StakeAction.DEFEND].length == 0) {
+      // ATTACKERS WON
+      _endRaid(_landId);
+    }
+
+    if(slots[_landId][StakeAction.ATTACK].length == 0) {
+      // DEFENDERS WON
+      delete slots[_landId][StakeAction.ATTACK];
+      landPlots[_landId].raidStatus = RaidStatus.DEFAULT;
+    }
+
+    // TODO GET REWARD TO DEATHID
 
   }
 
   function swapDefenders(uint16 _tokenId, uint16 _swapperId) external {
     Stake memory _stake = stakes[_tokenId];
+    require(_stake.stakeAction == StakeAction.DEFEND, 'not defending');
     require(block.timestamp - landPlots[_stake.landId].lastRaid < 86400, 'too late');
     require(_stake.owner == msg.sender, 'owner only');
 
@@ -201,31 +196,30 @@ contract WildsStaking is WildsCalculate {
   /*///////////////////////////////////////////////////////////////
                   PRIVATE INTERNAL FUNCTIONS
   //////////////////////////////////////////////////////////////*/
-  function _defenderChange(uint16 _landId, uint256 timestamp, bool add) private {
+
+  function _defenderChange(uint16 _landId, uint16 _tokenId, uint256 timestamp, bool add) private {
     // ADD or MINUS CONSTANT to global baseDefence
-    if(add) {
-      landPlots[_landId].baseDefence += extraDefBonus;
-    } else {
-      landPlots[_landId].baseDefence -= extraDefBonus;
-    }
+    landPlots[_landId].baseDefence = add ? landPlots[_landId].baseDefence + extraDefBonus : landPlots[_landId].baseDefence - extraDefBonus;
     _registerEvent(_landId, timestamp);
+
+    if(add == false) {
+      merals.changeScore(uint256(_tokenId), uint16(calculateDamage(_tokenId)), false, 0);
+      // ADD LCP
+      uint256 change = timestamp - stakeEvents[_landId][stakes[_tokenId].entryPointer].timestamp;
+      landClaimPoints[_landId][_tokenId] += change;
+    }
   }
 
   function _attackerChange(uint16 _landId, uint16 _tokenId, uint256 timestamp, bool add) private {
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId); // TODO USE INVENTORY
     uint256 scaledDamage = safeScale(_meral.atk, 1600, 80, 160);
-    // ADD or MINUS variable ATK damage to global baseDefence
-    if(add) {
-      landPlots[_landId].baseDefence -= uint16(scaledDamage);
-    } else {
-      landPlots[_landId].baseDefence += uint16(scaledDamage);
-    }
+    landPlots[_landId].baseDefence = add ? landPlots[_landId].baseDefence - uint16(scaledDamage) : landPlots[_landId].baseDefence + uint16(scaledDamage);
     _registerEvent(_landId, timestamp);
+    merals.changeScore(uint256(_tokenId), uint16(calculateDamage(_tokenId)), false, 0);
   }
 
   function _unstake(uint16 _landId, uint16 _tokenId, StakeAction _stakeAction) private {
     uint16[] storage _slots = slots[_landId][_stakeAction];
-
     for(uint16 i = 0; i < _slots.length; i ++) {
       if(_slots[i] == _tokenId) {
         _slots[i] = _slots[_slots.length - 1];
@@ -234,43 +228,24 @@ contract WildsStaking is WildsCalculate {
       }
     }
 
-    uint256 XPRewards;
-    if(_stakeAction == StakeAction.DEFEND) {
-      Stake memory _stake = stakes[_tokenId];
-      XPRewards = (block.timestamp - stakeEvents[_stake.landId][_stake.entryPointer].timestamp) / 3600;
-    }
-    if(_stakeAction == StakeAction.LOOT || _stakeAction == StakeAction.BIRTH)     {
-      Stake memory _stake = stakes[_tokenId];
-      XPRewards = (block.timestamp - _stake.lastAction) / 3600;
-    }
+    _gainXP(_tokenId, _stakeAction);
+  }
 
+  function _unstakeSlot(uint16 _landId, StakeAction _stakeAction) private {
+    uint16[] memory _slots = slots[_landId][_stakeAction];
+    for(uint16 i = 0; i < _slots.length; i ++) {
+      merals.safeTransferFrom(address(this), stakes[_slots[i]].owner, _slots[i]);
+      _gainXP(_slots[i], _stakeAction);
+    }
+    delete slots[_landId][_stakeAction];
+  }
+
+  function _gainXP(uint16 _tokenId, StakeAction _stakeAction) private {
+    uint256 XPRewards;
+    Stake memory _stake = stakes[_tokenId];
+    XPRewards = (block.timestamp - stakeEvents[_stake.landId][_stake.entryPointer].timestamp) / 3600;
     merals.changeRewards(_tokenId, uint32(XPRewards), true, uint8(_stakeAction));
     delete stakes[_tokenId];
-  }
-
-  function _registerEvent(uint16 _landId, uint256 timestamp) private {
-    // CREATE EVENT
-    StakeEvent memory _stakeEvent = StakeEvent(timestamp, landPlots[_landId].baseDefence);
-    stakeEvents[_landId].push(_stakeEvent);
-  }
-
-  function _reduceDefenderHealth(uint16 _tokenId) private {
-    Stake memory _stake = stakes[_tokenId];
-    IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
-    uint256 damage = _stake.damage;
-
-    // FAST FORWARD TO ENTRY POINT
-    for(uint256 i = _stake.entryPointer; i < stakeEvents[_stake.landId].length - 1; i ++) {
-      StakeEvent memory _event = stakeEvents[_stake.landId][i];
-      damage += calculateChange(_event.timestamp, stakeEvents[_stake.landId][i+1].timestamp, _meral.def, _event.baseDefence);
-    }
-
-    if(_stake.health >= damage) {
-      return;
-    }
-
-    damage -= _stake.health;
-    merals.changeScore(uint256(_tokenId), uint16(damage), false, 0);
   }
 
   function _endRaid(uint16 _landId) private {
@@ -294,24 +269,43 @@ contract WildsStaking is WildsCalculate {
 
   }
 
+  function _registerEvent(uint16 _landId, uint256 timestamp) private {
+    // CREATE EVENT
+    StakeEvent memory _stakeEvent = StakeEvent(timestamp, landPlots[_landId].baseDefence);
+    stakeEvents[_landId].push(_stakeEvent);
+  }
+
+
   /*///////////////////////////////////////////////////////////////
-                  INTERNAL VIEW FUNCTIONS
+                  PRIVATE VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function calculateDefenderDamage(uint16 _tokenId) internal view returns (uint256) {
+  function calculateDamage(uint16 _tokenId) private view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
     uint256 damage = _stake.damage;
 
     // FAST FORWARD TO ENTRY POINT
-    for(uint256 i = _stake.entryPointer; i < stakeEvents[_stake.landId].length - 1; i ++) {
-      StakeEvent memory _event = stakeEvents[_stake.landId][i];
-      damage += calculateChange(_event.timestamp, stakeEvents[_stake.landId][i+1].timestamp, _meral.def, _event.baseDefence);
+    if(_stake.stakeAction == StakeAction.DEFEND) {
+      for(uint256 i = _stake.entryPointer; i < stakeEvents[_stake.landId].length - 1; i ++) {
+        StakeEvent memory _event = stakeEvents[_stake.landId][i];
+        damage += calculateChange(_event.timestamp, stakeEvents[_stake.landId][i+1].timestamp, _meral.def, _event.baseDefence);
+      }
+      // FOR VIEW NEED EXTRA NOW PING
+      damage += calculateChange(stakeEvents[_stake.landId][stakeEvents[_stake.landId].length-1].timestamp, block.timestamp, _meral.def, _landPlots.baseDefence);
     }
 
-    // FOR VIEW NEED EXTRA NOW PING
-    damage += calculateChange(stakeEvents[_stake.landId][stakeEvents[_stake.landId].length-1].timestamp, block.timestamp, _meral.def, _landPlots.baseDefence);
+    // FAST FORWARD TO ENTRY POINT
+    if(_stake.stakeAction == StakeAction.BIRTH) {
+      for(uint256 i = _stake.entryPointer; i < stakeEvents[_stake.landId].length - 1; i ++) {
+        StakeEvent memory _event = stakeEvents[_stake.landId][i];
+        damage += calculateChange(_event.timestamp, stakeEvents[_stake.landId][i+1].timestamp, _meral.def + _meral.spd, _event.baseDefence);
+      }
+      // FOR VIEW NEED EXTRA NOW PING
+      damage += calculateChange(stakeEvents[_stake.landId][stakeEvents[_stake.landId].length-1].timestamp, block.timestamp, _meral.def + _meral.spd, _landPlots.baseDefence);
+    }
+
     damage = _stake.health >= damage ? 0 : damage - _stake.health;
     return damage > _meral.score ? _meral.score : damage;
   }

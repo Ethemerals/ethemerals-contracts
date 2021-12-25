@@ -421,32 +421,16 @@ describe('Wilds', function () {
 					await merals.changeScore(i, 1000, true, 0);
 					await wilds.stake(landId, i, 1);
 
-					await network.provider.send('evm_increaseTime', [hour * 6]);
-					await network.provider.send('evm_mine');
-
-					// await wilds.connect(player1).stake(landId, i + 10, 4); // ATTACKERS
+					// await network.provider.send('evm_increaseTime', [hour * 6]);
+					// await network.provider.send('evm_mine');
 
 					if (i === 5) {
 						landId = 2;
 					}
 				}
 
-				await network.provider.send('evm_increaseTime', [day * 2]);
+				await network.provider.send('evm_increaseTime', [day * 1]);
 				await network.provider.send('evm_mine');
-
-				// for (let i = 1; i < 11; i++) {
-				// 	let healthChange = await wilds.calculateDefenderDamage(i);
-				// 	let lcp = await wilds.calculateLCP(landId, i);
-				// 	if (i === 5) {
-				// 		landId = 2;
-				// 	}
-				// 	console.log(healthChange.toString(), `token id #${i}`, lcp.toString(), 'LCP');
-				// 	await wilds.unstake(i);
-				// 	let meral = await merals.getEthemeral(i);
-				// 	console.log(1000 - meral.score, meral.def, i);
-
-				// 	expect(meral.score).to.be.equal(1000 - parseInt(healthChange));
-				// }
 
 				function shuffle(array) {
 					return array.sort(() => Math.random() - 0.5);
@@ -456,8 +440,7 @@ describe('Wilds', function () {
 				let atkId = shuffle([11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
 
 				for (let i = 0; i < 10; i++) {
-					let healthChange = await wilds.calculateDefenderDamage(defId[i]);
-
+					let healthChange = await wilds.calculateDamage(defId[i]);
 					console.log(healthChange.toString(), `token id #${defId[i]}`);
 					await wilds.unstake(defId[i]);
 					let meral = await merals.getEthemeral(defId[i]);
@@ -485,7 +468,7 @@ describe('Wilds', function () {
 				await network.provider.send('evm_mine');
 
 				for (let i = 0; i < 10; i++) {
-					let healthChange = await wilds.calculateDefenderDamage(defId[i]);
+					let healthChange = await wilds.calculateDamage(defId[i]);
 
 					console.log(healthChange.toString(), `token id #${defId[i]}`);
 					await wilds.unstake(defId[i]);
@@ -505,7 +488,7 @@ describe('Wilds', function () {
 				await network.provider.send('evm_increaseTime', [day]);
 				await network.provider.send('evm_mine');
 
-				let healthChange = await wilds.calculateDefenderDamage(1);
+				let healthChange = await wilds.calculateDamage(1);
 				let lcp = await wilds.calculateLCP(landId, 1);
 				expect(lcp).to.be.within(day - 1000, day + 1000);
 				await wilds.unstake(1);
