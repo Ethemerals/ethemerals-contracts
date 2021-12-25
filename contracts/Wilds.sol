@@ -195,11 +195,11 @@ contract Wilds is ERC721Holder, WildsCalculate {
     }
     if(_action == StakeAction.LOOT) {
       require(slots[_landId][StakeAction.DEFEND].length > 0, "need defender");
-      // TODO
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("loot(uint16,uint16)", _landId, _tokenId));
     }
     if(_action == StakeAction.BIRTH) {
       require(slots[_landId][StakeAction.DEFEND].length > 0, "need defender");
-      // TODO
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("birth(uint16,uint16)", _landId, _tokenId));
     }
 
     require(success, "need success");
@@ -227,14 +227,10 @@ contract Wilds is ERC721Holder, WildsCalculate {
       (success, data) = staking.delegatecall(abi.encodeWithSignature("undefend(uint16,uint16,uint16)", _stake.landId, _tokenId, _stake.entryPointer));
     }
     if(_stake.stakeAction == StakeAction.LOOT) {
-      // LOOT
-      success = true;
-      // TODO
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("unloot(uint16,uint16)", _stake.landId, _tokenId));
     }
     if(_stake.stakeAction == StakeAction.BIRTH) {
-      // BIRTH
-      success = true;
-      // TODO
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("unbirth(uint16,uint16)", _stake.landId, _tokenId));
     }
 
     require(success, "need success");
@@ -297,10 +293,10 @@ contract Wilds is ERC721Holder, WildsCalculate {
   }
 
   /*///////////////////////////////////////////////////////////////
-                  PUBLIC VIEW FUNCTIONS
+                  PUBLIC VIEW FUNCTIONS DUPLICATES
   //////////////////////////////////////////////////////////////*/
 
-  function calculateDefenderDamage(uint16 _tokenId) public view returns (uint256) {
+  function calculateDefenderDamage(uint16 _tokenId) external view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);

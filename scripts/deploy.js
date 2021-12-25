@@ -18,9 +18,20 @@ const hre = require('hardhat');
 const EthemeralsAddress_4 = '0xcdb47e685819638668ff736d1a2ae32b68e76ba5';
 
 async function main() {
-	const Wilds = await hre.ethers.getContractFactory('Wilds');
-	const wilds = await Wilds.deploy(EthemeralsAddress_4);
+	const WildsAdminActions = await ethers.getContractFactory('WildsAdminActions');
+	wildsAdminActions = await WildsAdminActions.deploy();
+	await wildsAdminActions.deployed();
 
+	const WildsStaking = await ethers.getContractFactory('WildsStaking');
+	wildsStaking = await WildsStaking.deploy();
+	await wildsStaking.deployed();
+
+	const WildsActions = await ethers.getContractFactory('WildsActions');
+	wildsActions = await WildsActions.deploy();
+	await wildsActions.deployed();
+
+	const Wilds = await ethers.getContractFactory('Wilds');
+	wilds = await Wilds.deploy(EthemeralsAddress_4, wildsAdminActions.address, wildsStaking.address, wildsActions.address);
 	await wilds.deployed();
 
 	console.log('wilds deployed to:', wilds.address);

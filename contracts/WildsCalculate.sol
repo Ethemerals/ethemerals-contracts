@@ -18,7 +18,7 @@ contract WildsCalculate {
   }
 
   function calculateLightMagicDamage(uint16 def, uint16 spd) public pure returns(uint256) {
-    return safeScale(def, 1600, 0, 100) + safeScale(spd, 1600, 0, 100);
+    return safeScale(def, 1600, 0, 80) + safeScale(spd, 1600, 0, 60);
   }
 
   function calculateDarkMagicDamage(uint16 atk, uint16 def) public pure returns(uint256) {
@@ -35,5 +35,6 @@ contract WildsCalculate {
     uint256 scaled = (num * (outMax - outMin)) / inMax + outMin;
     return scaled > outMax ? outMax : scaled;
   }
+
 
 }

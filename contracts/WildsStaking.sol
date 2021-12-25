@@ -90,6 +90,20 @@ contract WildsStaking is WildsCalculate {
     stakes[_tokenId] = Stake({owner: msg.sender, lastAction: block.timestamp, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.DEFEND});
   }
 
+  function loot(uint16 _landId, uint16 _tokenId) external {
+    slots[_landId][StakeAction.LOOT].push(_tokenId);
+    // _defenderChange(_landId, timestamp, true);
+    // TODO last action or entry pointer
+    stakes[_tokenId] = Stake({owner: msg.sender, lastAction: block.timestamp, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.LOOT});
+  }
+
+  function birth(uint16 _landId, uint16 _tokenId) external {
+    slots[_landId][StakeAction.BIRTH].push(_tokenId);
+    // _defenderChange(_landId, timestamp, true);
+    // TODO last action or entry pointer
+    stakes[_tokenId] = Stake({owner: msg.sender, lastAction: block.timestamp, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.BIRTH});
+  }
+
   function attack(uint16 _landId, uint16 _tokenId) external {
     uint256 timestamp = block.timestamp;
 
@@ -117,13 +131,21 @@ contract WildsStaking is WildsCalculate {
     _unstake(_landId, _tokenId, StakeAction.DEFEND);
 
     if(slots[_landId][StakeAction.DEFEND].length == 0) {
+      // TODO Kick Birthers and Looters;
       delete stakeEvents[_landId];
-      // TODO What about the looters and birthers?
     }
     // SET RAIDSTATUS
     if(slots[_landId][StakeAction.DEFEND].length == 4) {
       landPlots[_landId].raidStatus = RaidStatus.DEFAULT;
     }
+  }
+
+  function unloot(uint16 _landId, uint16 _tokenId) external {
+    _unstake(_landId, _tokenId, StakeAction.LOOT);
+  }
+
+  function unbirth(uint16 _landId, uint16 _tokenId) external {
+    _unstake(_landId, _tokenId, StakeAction.BIRTH);
   }
 
   function deathKiss(uint16 _tokenId, uint16 _deathId) external {
@@ -212,10 +234,18 @@ contract WildsStaking is WildsCalculate {
       }
     }
 
+    uint256 XPRewards;
+    if(_stakeAction == StakeAction.DEFEND) {
+      Stake memory _stake = stakes[_tokenId];
+      XPRewards = (block.timestamp - stakeEvents[_stake.landId][_stake.entryPointer].timestamp) / 3600;
+    }
+    if(_stakeAction == StakeAction.LOOT || _stakeAction == StakeAction.BIRTH)     {
+      Stake memory _stake = stakes[_tokenId];
+      XPRewards = (block.timestamp - _stake.lastAction) / 3600;
+    }
+
+    merals.changeRewards(_tokenId, uint32(XPRewards), true, uint8(_stakeAction));
     delete stakes[_tokenId];
-    // ELF REWARDS
-
-
   }
 
   function _registerEvent(uint16 _landId, uint256 timestamp) private {
