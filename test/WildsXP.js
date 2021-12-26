@@ -76,7 +76,7 @@ describe('Wilds', function () {
 		await merals.connect(player3).setAllowDelegates(true);
 	});
 
-	describe('GIVE REWARDS', function () {
+	describe('GIVE XP', function () {
 		it('Should boot looters and birthers with no defenders and gain XP', async function () {
 			const landId = 1;
 
@@ -191,8 +191,9 @@ describe('Wilds', function () {
 			}
 		});
 
-		it('Should reward ATTACKERS WHO DEFENDED with XP', async function () {
+		it('Should reward ATTACKERS WHO NOW DEFENDED with XP', async function () {
 			const landId = 1;
+			let elapsedTime = 0;
 
 			for (let i = 1; i <= 5; i++) {
 				await merals.changeScore(i, 1000, true, 0);
@@ -215,6 +216,7 @@ describe('Wilds', function () {
 
 				await network.provider.send('evm_increaseTime', [day * 6]);
 				await network.provider.send('evm_mine');
+				elapsedTime += day * 6;
 
 				let damage = await wilds.calculateDamage(defender);
 				let meral = await merals.getEthemeral(defender);
@@ -228,17 +230,11 @@ describe('Wilds', function () {
 			for (let i = 11; i <= 15; i++) {
 				await network.provider.send('evm_increaseTime', [day]);
 				await network.provider.send('evm_mine');
-
-				let stake = await wilds.getStake(i);
-				let event = await wilds.getStakeEvent(1, stake.entryPointer);
-
-				const blockNumBefore = await ethers.provider.getBlockNumber();
-				const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-				const timestamp = blockBefore.timestamp;
+				elapsedTime += day;
 
 				await wilds.connect(player1).unstake(i);
 				let value = await merals.getEthemeral(i);
-				expect(value.rewards - 2000).to.equal(getXp(timestamp, event.timestamp));
+				expect(value.rewards - 2000).to.equal(elapsedTime / 3600);
 			}
 		});
 

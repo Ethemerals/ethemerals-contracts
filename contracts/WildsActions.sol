@@ -8,6 +8,17 @@ import "./IEthemerals.sol";
 
 contract WildsActions is WildsCalculate {
   /*///////////////////////////////////////////////////////////////
+                  EVENTS
+  //////////////////////////////////////////////////////////////*/
+  event LandChange(uint16 id, uint16 baseDefence);
+  event Staked(uint16 landId, uint16 tokenId, uint8 stakeAction, bool meral);
+  event Unstaked(uint16 tokenId, uint32 XPRewards);
+  event RaidStatusChange(uint16 id, uint8 RaidStatus);
+  event DeathKissed(uint16 tokenId, uint16 deathId);
+  event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType);
+
+
+  /*///////////////////////////////////////////////////////////////
                   STORAGE
   //////////////////////////////////////////////////////////////*/
   enum StakeAction {UNSTAKED, DEFEND, LOOT, BIRTH, ATTACK}
@@ -76,22 +87,23 @@ contract WildsActions is WildsCalculate {
 // defend - knight, paladin - take damage for another, 12hr cd
 // dodge - all rogues - 50% chance to ignore all next damage, 12hr cd
 
+  // [attack, attackAll, magicAttack, speedAttack, enrage, heal, healAll, concentrate]
   function raidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType) external {
-    require(stakes[fromTokenId].owner == msg.sender, "owner only");
-    require(stakes[fromTokenId].landId == stakes[toTokenId].landId, "raid group only");
-    require(uint16(calculateDamage(fromTokenId)) < merals.getEthemeral(fromTokenId).score, "alive only");
-    // TODO restrict by class
-    // [attack, attackAll, magicAttack, speedAttack, enrage, heal, healAll, concentrate]
-
-    uint16 maxStamina = 100; // TODO get from inventory
-    uint16 staminaCost = staminaCosts[actionType]; // HARDCODED
-    uint16 stamina = calculateStamina(fromTokenId);
-    require(stamina + staminaCost <= maxStamina, 'need stamina');
-
     Stake storage toStake = stakes[toTokenId];
     Stake storage fromStake = stakes[fromTokenId];
     IEthemerals.Meral memory toMeral = merals.getEthemeral(toTokenId);
     IEthemerals.Meral memory fromMeral = merals.getEthemeral(fromTokenId);
+
+    uint16 maxStamina = 100; // TODO get from inventory
+    uint16 staminaCost = staminaCosts[actionType]; // HARDCODED
+    uint16 stamina = calculateStamina(fromTokenId);
+
+    require(fromStake.owner == msg.sender, "owner only");
+    require(stamina + staminaCost <= maxStamina, 'need stamina');
+    require(fromStake.stakeAction == StakeAction.DEFEND || fromStake.stakeAction == StakeAction.ATTACK, "DEFers or ATKers");
+    require(fromStake.landId == toStake.landId, "raid group only");
+    require(uint16(calculateDamage(fromTokenId)) < fromMeral.score, "alive only");
+    // TODO restrict by class
 
     fromStake.stamina = stamina + staminaCost;
     fromStake.lastAction = block.timestamp;
@@ -112,7 +124,6 @@ contract WildsActions is WildsCalculate {
       _changeBaseDefence(fromTokenId, false);
     }
     if(actionType == 5) {
-      // single heal
       require(toStake.stakeAction == fromStake.stakeAction, 'allies only');
       toStake.health += uint16(calculateLightMagicDamage(fromMeral.def, fromMeral.spd));
     }
@@ -125,7 +136,7 @@ contract WildsActions is WildsCalculate {
       _changeBaseDefence(fromTokenId, true);
     }
 
-
+    emit RaidAction(toTokenId, fromTokenId, actionType);
   }
 
   function _attackAll(uint16 _landId, uint16 atk, StakeAction _stakeAction) private {
@@ -167,7 +178,7 @@ contract WildsActions is WildsCalculate {
                   PRIVATE VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function calculateDamage(uint16 _tokenId) private view returns (uint256) {
+  function calculateDamage(uint16 _tokenId) public view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
@@ -197,7 +208,7 @@ contract WildsActions is WildsCalculate {
     return damage > _meral.score ? _meral.score : damage;
   }
 
-  function calculateStamina(uint16 _tokenId) private view returns(uint16) {
+  function calculateStamina(uint16 _tokenId) public view returns(uint16) {
     Stake memory _stake = stakes[_tokenId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
 

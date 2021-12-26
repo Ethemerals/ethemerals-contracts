@@ -8,6 +8,17 @@ import "./IEthemerals.sol";
 
 contract WildsStaking is WildsCalculate {
   /*///////////////////////////////////////////////////////////////
+                  EVENTS
+  //////////////////////////////////////////////////////////////*/
+  event LandChange(uint16 id, uint16 baseDefence);
+  event Staked(uint16 landId, uint16 tokenId, uint8 stakeAction, bool meral);
+  event Unstaked(uint16 tokenId, uint32 XPRewards);
+  event RaidStatusChange(uint16 id, uint8 RaidStatus);
+  event DeathKissed(uint16 tokenId, uint16 deathId);
+  event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType);
+
+
+  /*///////////////////////////////////////////////////////////////
                   STORAGE
   //////////////////////////////////////////////////////////////*/
   enum StakeAction {UNSTAKED, DEFEND, LOOT, BIRTH, ATTACK}
@@ -83,6 +94,7 @@ contract WildsStaking is WildsCalculate {
     // SET RAIDSTATUS
     if(slots[_landId][StakeAction.DEFEND].length == 5) {
       landPlots[_landId].raidStatus = RaidStatus.RAIDABLE;
+      emit RaidStatusChange(_landId, uint8(RaidStatus.RAIDABLE));
     }
     stakes[_tokenId] = Stake({owner: msg.sender, lastAction: block.timestamp, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.DEFEND});
   }
@@ -106,6 +118,7 @@ contract WildsStaking is WildsCalculate {
     // SET RAIDSTATUS
     if(slots[_landId][StakeAction.ATTACK].length == 1) {
       landPlots[_landId].raidStatus = RaidStatus.RAIDING;
+      emit RaidStatusChange(_landId, uint8(RaidStatus.RAIDING));
     }
 
     stakes[_tokenId] = Stake({owner: msg.sender, lastAction: block.timestamp, entryPointer: uint16(stakeEvents[_landId].length - 1), damage: 0, health: 0, stamina: 0, landId: _landId, stakeAction: StakeAction.ATTACK});
@@ -124,7 +137,9 @@ contract WildsStaking is WildsCalculate {
     // SET RAIDSTATUS
     if(slots[_landId][StakeAction.DEFEND].length == 4) {
       landPlots[_landId].raidStatus = RaidStatus.DEFAULT;
+      emit RaidStatusChange(_landId, uint8(RaidStatus.DEFAULT));
     }
+
   }
 
   function unloot(uint16 _landId, uint16 _tokenId) external {
@@ -143,7 +158,6 @@ contract WildsStaking is WildsCalculate {
     uint16 _landId = _stake.landId;
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
 
-    // TODO
     uint256 damage = calculateDamage(_tokenId);
 
     if(_meral.score > damage) {
@@ -168,7 +182,12 @@ contract WildsStaking is WildsCalculate {
       // DEFENDERS WON
       delete slots[_landId][StakeAction.ATTACK];
       landPlots[_landId].raidStatus = RaidStatus.DEFAULT;
+      emit RaidStatusChange(_landId, uint8(RaidStatus.DEFAULT));
     }
+
+    merals.safeTransferFrom(address(this), _stake.owner, _tokenId);
+
+    emit DeathKissed(_tokenId, _deathId);
 
     // TODO GET REWARD TO DEATHID
 
@@ -176,9 +195,10 @@ contract WildsStaking is WildsCalculate {
 
   function swapDefenders(uint16 _tokenId, uint16 _swapperId) external {
     Stake memory _stake = stakes[_tokenId];
+    require(_stake.owner == msg.sender, 'owner only');
     require(_stake.stakeAction == StakeAction.DEFEND, 'not defending');
     require(block.timestamp - landPlots[_stake.landId].lastRaid < 86400, 'too late');
-    require(_stake.owner == msg.sender, 'owner only');
+
 
     _stake.owner = msg.sender;
     stakes[_swapperId] = _stake;
@@ -187,10 +207,14 @@ contract WildsStaking is WildsCalculate {
     for(uint256 i = 0; i < _slots.length; i ++) {
       if(_slots[i] == _tokenId) {
         _slots[i] == _swapperId;
+        _gainXP(_tokenId, StakeAction.DEFEND);
+        emit Staked(_stake.landId, _swapperId, uint8(StakeAction.DEFEND), true);
       }
     }
 
     delete stakes[_tokenId];
+    merals.safeTransferFrom(msg.sender, address(this), _swapperId);
+    merals.safeTransferFrom(address(this), msg.sender, _tokenId);
   }
 
   /*///////////////////////////////////////////////////////////////
@@ -240,33 +264,34 @@ contract WildsStaking is WildsCalculate {
     delete slots[_landId][_stakeAction];
   }
 
-  function _gainXP(uint16 _tokenId, StakeAction _stakeAction) private {
-    uint256 XPRewards;
-    Stake memory _stake = stakes[_tokenId];
-    XPRewards = (block.timestamp - stakeEvents[_stake.landId][_stake.entryPointer].timestamp) / 3600;
-    merals.changeRewards(_tokenId, uint32(XPRewards), true, uint8(_stakeAction));
-    delete stakes[_tokenId];
-  }
-
   function _endRaid(uint16 _landId) private {
     // EMPTY
+    StakeEvent[] memory _stakeEvents = stakeEvents[_landId];
     delete stakeEvents[_landId];
 
     // NEW DEFENDERS
     uint256 timestamp = block.timestamp;
-    landPlots[_landId].baseDefence = landPlots[_landId].initBaseDefence;
+    landPlots[_landId].baseDefence = landPlots[_landId].initBaseDefence + uint16(extraDefBonus * slots[_landId][StakeAction.ATTACK].length);
     landPlots[_landId].lastRaid = timestamp;
     _registerEvent(_landId, timestamp);
 
     for(uint256 i = 0; i < slots[_landId][StakeAction.ATTACK].length; i ++) {
-      stakes[slots[_landId][StakeAction.ATTACK][i]].stakeAction = StakeAction.DEFEND;
-      stakes[slots[_landId][StakeAction.ATTACK][i]].entryPointer = 0;
+      uint16 _tokenId = slots[_landId][StakeAction.ATTACK][i];
+      Stake storage _stake = stakes[_tokenId];
+      uint256 XPRewards = (block.timestamp - _stakeEvents[_stake.entryPointer].timestamp) / 3600;
+      merals.changeRewards(_tokenId, uint32(XPRewards), true, uint8(StakeAction.ATTACK));
+
+      _stake.stakeAction = StakeAction.DEFEND;
+      _stake.entryPointer = 0;
+
+      emit Unstaked(_tokenId, uint32(XPRewards));
+      emit Staked(_landId, _tokenId, uint8(StakeAction.DEFEND), true);
     }
 
     slots[_landId][StakeAction.DEFEND] = slots[_landId][StakeAction.ATTACK];
     delete slots[_landId][StakeAction.ATTACK];
     landPlots[_landId].raidStatus = RaidStatus.DEFAULT;
-
+    emit RaidStatusChange(_landId, uint8(RaidStatus.DEFAULT));
   }
 
   function _registerEvent(uint16 _landId, uint256 timestamp) private {
@@ -275,12 +300,21 @@ contract WildsStaking is WildsCalculate {
     stakeEvents[_landId].push(_stakeEvent);
   }
 
+  function _gainXP(uint16 _tokenId, StakeAction _stakeAction) private {
+    Stake memory _stake = stakes[_tokenId];
+    uint256 XPRewards = (block.timestamp - stakeEvents[_stake.landId][_stake.entryPointer].timestamp) / 3600;
+    merals.changeRewards(_tokenId, uint32(XPRewards), true, uint8(_stakeAction));
+    delete stakes[_tokenId];
+
+    emit Unstaked(_tokenId, uint32(XPRewards));
+  }
+
 
   /*///////////////////////////////////////////////////////////////
                   PRIVATE VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function calculateDamage(uint16 _tokenId) private view returns (uint256) {
+  function calculateDamage(uint16 _tokenId) public view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
@@ -309,5 +343,6 @@ contract WildsStaking is WildsCalculate {
     damage = _stake.health >= damage ? 0 : damage - _stake.health;
     return damage > _meral.score ? _meral.score : damage;
   }
+
 
 }

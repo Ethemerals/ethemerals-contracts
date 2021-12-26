@@ -7,6 +7,17 @@ import "./IEthemerals.sol";
 
 contract WildsAdminActions {
   /*///////////////////////////////////////////////////////////////
+                  EVENTS
+  //////////////////////////////////////////////////////////////*/
+  event LandChange(uint16 id, uint16 baseDefence);
+  event Staked(uint16 landId, uint16 tokenId, uint8 stakeAction, bool meral);
+  event Unstaked(uint16 tokenId, uint32 XPRewards);
+  event RaidStatusChange(uint16 id, uint8 RaidStatus);
+  event DeathKissed(uint16 tokenId, uint16 deathId);
+  event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType);
+
+
+  /*///////////////////////////////////////////////////////////////
                   STORAGE
   //////////////////////////////////////////////////////////////*/
   enum StakeAction {UNSTAKED, DEFEND, LOOT, BIRTH, ATTACK}
@@ -86,15 +97,12 @@ contract WildsAdminActions {
   /*///////////////////////////////////////////////////////////////
                   PRIVATE INTERNAL FUNCTIONS
   //////////////////////////////////////////////////////////////*/
-
-  function _addItemPool(uint8 _cost, uint8[] calldata _drops) private pure returns (ItemPool memory) {
-    return ItemPool({cost: _cost, drop1: _drops[0], drop2: _drops[1], drop3: _drops[2]});
-  }
-
   function _adminUnstake(uint16[] storage _slots) private {
     for(uint16 i = 0; i < _slots.length; i++) {
       merals.safeTransferFrom(address(this), stakes[_slots[i]].owner, _slots[i]);
       delete stakes[_slots[i]];
+
+      emit Unstaked(_slots[i], 0);
     }
   }
 

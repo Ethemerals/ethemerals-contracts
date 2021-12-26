@@ -10,6 +10,18 @@ import "./IEthemerals.sol";
 
 contract Wilds is ERC721Holder, WildsCalculate {
   /*///////////////////////////////////////////////////////////////
+                  EVENTS
+  //////////////////////////////////////////////////////////////*/
+  event LandChange(uint16 id, uint16 baseDefence);
+  event Staked(uint16 landId, uint16 tokenId, uint8 stakeAction, bool meral);
+  event Unstaked(uint16 tokenId, uint16 score, uint32 rewards);
+  event RaidStatusChange(uint16 id, uint8 RaidStatus);
+  event DeathKissed(uint16 tokenId, uint16 deathId);
+  event Swapped(uint16 tokenId, uint16 swapperId);
+  event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType, uint16 value);
+
+
+  /*///////////////////////////////////////////////////////////////
                   STORAGE
   //////////////////////////////////////////////////////////////*/
   enum StakeAction {UNSTAKED, DEFEND, LOOT, BIRTH, ATTACK}
@@ -72,11 +84,12 @@ contract Wilds is ERC721Holder, WildsCalculate {
   address public actions;
   bool public paused;
 
-
+  // TODO items and pets contract
   // TODO apply inventory
-  // TODO claim rewards, death kiss rewards, honey pot rewards
-  // TODO looters and birthers,
-  // TODO require health
+  // TODO claim rewards,
+  // TODO death kiss rewards,
+  // TODO honey pot rewards
+  // TODO EVENTS
 
   /*///////////////////////////////////////////////////////////////
                   ADMIN FUNCTIONS
@@ -123,6 +136,8 @@ contract Wilds is ERC721Holder, WildsCalculate {
       raidStatus: RaidStatus.DEFAULT
     });
     landPlots[id] = land;
+
+    emit LandChange(id, _baseDefence);
   }
 
   function setStaminas(uint8[] calldata _staminaCosts) external {
@@ -137,7 +152,9 @@ contract Wilds is ERC721Holder, WildsCalculate {
     _land.emissionRate = _emissionRate;
     _land.initBaseDefence = _initBaseDefence;
     _land.baseDefence = _initBaseDefence;
-    _land.raidStatus = RaidStatus(_raidStatus);
+    _land.raidStatus = _raidStatus;
+
+    emit LandChange(_landId, _initBaseDefence);
   }
 
   function emergencyUnstake(uint16 _landId) external {
@@ -145,6 +162,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
     bool success;
     bytes memory data;
     (success, data) = adminActions.delegatecall(abi.encodeWithSignature("emergencyUnstake(uint16)", _landId));
+    require(success, "need success");
   }
 
   function setPaused(bool _paused) external {
@@ -189,10 +207,6 @@ contract Wilds is ERC721Holder, WildsCalculate {
       require(landPlots[_landId].raidStatus != RaidStatus.RAIDING, "no reinforcements");
       (success, data) = staking.delegatecall(abi.encodeWithSignature("defend(uint16,uint16)", _landId, _tokenId));
     }
-    if(_action == StakeAction.ATTACK) {
-      require(landPlots[_landId].raidStatus != RaidStatus.DEFAULT, "not raidable");
-      (success, data) = staking.delegatecall(abi.encodeWithSignature("attack(uint16,uint16)", _landId, _tokenId));
-    }
     if(_action == StakeAction.LOOT) {
       require(slots[_landId][StakeAction.DEFEND].length > 0, "need defender");
       (success, data) = staking.delegatecall(abi.encodeWithSignature("loot(uint16,uint16)", _landId, _tokenId));
@@ -201,9 +215,15 @@ contract Wilds is ERC721Holder, WildsCalculate {
       require(slots[_landId][StakeAction.DEFEND].length > 0, "need defender");
       (success, data) = staking.delegatecall(abi.encodeWithSignature("birth(uint16,uint16)", _landId, _tokenId));
     }
+    if(_action == StakeAction.ATTACK) {
+      require(landPlots[_landId].raidStatus != RaidStatus.DEFAULT, "not raidable");
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("attack(uint16,uint16)", _landId, _tokenId));
+    }
 
     require(success, "need success");
     merals.safeTransferFrom(msg.sender, address(this), _tokenId);
+
+    emit Staked(_landId, _tokenId, uint8(_action), true);
   }
 
   /**
@@ -246,16 +266,14 @@ contract Wilds is ERC721Holder, WildsCalculate {
     require(paused == false, 'paused');
     bool success;
     bytes memory data;
-    address owner = stakes[_tokenId].owner;
     (success, data) = staking.delegatecall(abi.encodeWithSignature("deathKiss(uint16,uint16)", _tokenId, _deathId));
 
     require(success, "need success");
-    merals.safeTransferFrom(address(this), owner, _tokenId);
   }
 
   /**
   * @dev Swap new defenders
-  * Allows successful raiders to switch out their attackers / defenders
+  * Allows successful raiders to switch out their attackers / defenders within 1 day
   */
   function swapDefenders(uint16 _tokenId, uint16 _swapperId) external {
     require(paused == false, 'paused');
@@ -264,8 +282,6 @@ contract Wilds is ERC721Holder, WildsCalculate {
     (success, data) = staking.delegatecall(abi.encodeWithSignature("swapDefenders(uint16,uint16)", _tokenId, _swapperId));
 
     require(success, "need success");
-    merals.safeTransferFrom(msg.sender, address(this), _swapperId);
-    merals.safeTransferFrom(address(this), msg.sender, _tokenId);
   }
 
   /**
@@ -273,7 +289,6 @@ contract Wilds is ERC721Holder, WildsCalculate {
   * Parse the action in Actions contract
   */
   function raidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType) external {
-    // TODO only attackers and defenders
     require(paused == false, 'paused');
     bool success;
     bytes memory data;
@@ -295,7 +310,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
                   PUBLIC VIEW FUNCTIONS DUPLICATES
   //////////////////////////////////////////////////////////////*/
 
-  function calculateDamage(uint16 _tokenId) external view returns (uint256) {
+  function calculateDamage(uint16 _tokenId) public view returns (uint256) {
     Stake memory _stake = stakes[_tokenId];
     Land memory _landPlots = landPlots[_stake.landId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
@@ -325,7 +340,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
     return damage > _meral.score ? _meral.score : damage;
   }
 
-  function calculateStamina(uint16 _tokenId) external view returns(uint16) {
+  function calculateStamina(uint16 _tokenId) public view returns(uint16) {
     Stake memory _stake = stakes[_tokenId];
     IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
 
@@ -354,14 +369,8 @@ contract Wilds is ERC721Holder, WildsCalculate {
   }
 
   function getLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {
-    return landClaimPoints[_landId][_tokenId];
-  }
-
-  function calculateLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {
-    Stake memory _stake = stakes[_tokenId];
-    StakeEvent memory _stakeEvents = stakeEvents[_landId][_stake.entryPointer];
-    if(_stake.owner != address(0)) {
-
+    if(stakes[_tokenId].owner != address(0)) {
+      StakeEvent memory _stakeEvents = stakeEvents[_landId][stakes[_tokenId].entryPointer];
       return landClaimPoints[_landId][_tokenId] + block.timestamp - _stakeEvents.timestamp;
     } else {
       return landClaimPoints[_landId][_tokenId];

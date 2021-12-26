@@ -27,10 +27,6 @@ describe('Wilds', function () {
 		}
 	};
 
-	const getXp = (now, start) => {
-		return parseInt((now - start) / 3600);
-	};
-
 	beforeEach(async function () {
 		[admin, player1, player2, player3] = await ethers.getSigners();
 
@@ -76,41 +72,58 @@ describe('Wilds', function () {
 		await merals.connect(player3).setAllowDelegates(true);
 	});
 
-	describe('BIRTHING', function () {
-		it('Should slowly damage birthers', async function () {
-			const landId = 1;
+	describe('Adding Land Claim Points', function () {
+		it('Should stake as defender and add LCP', async function () {
+			let timeStaked = 86401;
+			let timeStaked2 = 2592000;
 
-			for (let i = 1; i <= 5; i++) {
-				await merals.changeScore(i, 1000, true, 0);
-				await merals.changeScore(i + 10, 1000, true, 0);
-				await network.provider.send('evm_increaseTime', [hour]);
-				await network.provider.send('evm_mine');
-				await wilds.stake(landId, i, 1);
-				await wilds.connect(player1).stake(landId, i + 10, 3);
-			}
+			await wilds.stake(1, 1, 1);
 
-			for (let i = 1; i <= 5; i++) {
-				await wilds.connect(player2).stake(landId, i + 20, 4);
-			}
+			await network.provider.send('evm_increaseTime', [timeStaked]);
 
-			await network.provider.send('evm_increaseTime', [day]);
-			await network.provider.send('evm_mine');
+			await wilds.unstake(1);
+			let lcp = await wilds.getLCP(1, 1);
+			expect(lcp).to.be.within(timeStaked - 1, timeStaked + 1);
 
-			for (let i = 1; i <= 5; i++) {
-				// let damage = await wilds.calculateDamage(i + 10);
-				// console.log(damage, 'birth');
-				// damage = await wilds.calculateDamage(i + 20);
-				// console.log(damage, 'looters');
-				// damage = await wilds.calculateDamage(i);
-				// console.log(damage, 'defenders');
-				await wilds.unstake(i + 10);
-			}
+			await wilds.stake(1, 1, 1); // +1 second
 
-			for (let i = 1; i <= 5; i++) {
-				let meral = await merals.getEthemeral(i + 10);
-				console.log(meral.score);
-				expect(meral.score).to.be.lt(1000);
-			}
+			await network.provider.send('evm_increaseTime', [timeStaked2]);
+			await wilds.unstake(1);
+			lcp = await wilds.getLCP(1, 1);
+			expect(lcp).to.be.within(timeStaked + timeStaked2 - 1, timeStaked + timeStaked2 + 1);
+
+			await wilds.stake(1, 2, 1);
+
+			await network.provider.send('evm_increaseTime', [timeStaked2]);
+			await wilds.unstake(2);
+			lcp = await wilds.getLCP(1, 1);
+			expect(lcp).to.be.within(timeStaked + timeStaked2 - 1, timeStaked + timeStaked2 + 1); // NOT ADD MORE FOR ID1
+		});
+
+		it('Should stake as defender and add LCP', async function () {
+			let timeStaked = 86401;
+			let timeStaked2 = 2592000;
+
+			await wilds.stake(1, 1, 1);
+
+			await network.provider.send('evm_increaseTime', [timeStaked]);
+			await wilds.unstake(1);
+			let lcp = await wilds.getLCP(1, 1);
+			expect(lcp).to.be.within(timeStaked - 1, timeStaked + 1);
+
+			await wilds.stake(1, 1, 1); // +1 second
+
+			await network.provider.send('evm_increaseTime', [timeStaked2]);
+			await wilds.unstake(1);
+			lcp = await wilds.getLCP(1, 1);
+			expect(lcp).to.be.within(timeStaked + timeStaked2 - 1, timeStaked + timeStaked2 + 1);
+
+			await wilds.stake(1, 2, 1);
+
+			await network.provider.send('evm_increaseTime', [timeStaked2]);
+			await wilds.unstake(2);
+			lcp = await wilds.getLCP(1, 1);
+			expect(lcp).to.be.within(timeStaked + timeStaked2 - 1, timeStaked + timeStaked2 + 1); // NOT ADD MORE FOR ID1
 		});
 	});
 });
