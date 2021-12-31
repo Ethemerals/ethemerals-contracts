@@ -9,12 +9,15 @@ contract WildsAdminActions {
   /*///////////////////////////////////////////////////////////////
                   EVENTS
   //////////////////////////////////////////////////////////////*/
-  event LandChange(uint16 id, uint16 baseDefence);
+  event LandChange(uint16 id, uint256 timestamp, uint16 baseDefence);
   event Staked(uint16 landId, uint16 tokenId, uint8 stakeAction, bool meral);
-  event Unstaked(uint16 tokenId, uint32 XPRewards);
+  event Unstaked(uint16 tokenId, uint32 rewards);
+  event LCPChange(uint16 landId, uint16 tokenId, uint256 change);
   event RaidStatusChange(uint16 id, uint8 RaidStatus);
   event DeathKissed(uint16 tokenId, uint16 deathId);
+  event Swapped(uint16 tokenId, uint16 swapperId);
   event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType);
+
 
 
   /*///////////////////////////////////////////////////////////////
@@ -37,7 +40,6 @@ contract WildsAdminActions {
   // [attack, attackAll, heal, healAll, magicAttack, speedAttack, enrage, concentrate]
   uint8[] public staminaCosts = [30,60,40,90,40,40,50,50];
   uint8 private extraDefBonus = 140; // DAILED already
-  uint16 private baseDefence = 2800; //
 
   struct StakeEvent {
     uint256 timestamp;

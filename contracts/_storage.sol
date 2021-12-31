@@ -9,6 +9,18 @@ import "./IEthemerals.sol";
 
 contract _Wilds {
   /*///////////////////////////////////////////////////////////////
+                  EVENTS
+  //////////////////////////////////////////////////////////////*/
+  event LandChange(uint16 id, uint16 baseDefence);
+  event Staked(uint16 landId, uint16 tokenId, uint8 stakeAction, bool meral);
+  event Unstaked(uint16 tokenId, uint16 score, uint32 rewards);
+  event RaidStatusChange(uint16 id, uint8 RaidStatus);
+  event DeathKissed(uint16 tokenId, uint16 deathId);
+  event Swapped(uint16 tokenId, uint16 swapperId);
+  event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType, uint16 value);
+
+
+  /*///////////////////////////////////////////////////////////////
                   STORAGE
   //////////////////////////////////////////////////////////////*/
   enum StakeAction {UNSTAKED, DEFEND, LOOT, BIRTH, ATTACK}
@@ -66,6 +78,7 @@ contract _Wilds {
 
   IEthemerals merals;
   address public admin;
+  address public adminActions;
   address public staking;
   address public actions;
   bool public paused;

@@ -154,13 +154,13 @@ describe('Wilds', function () {
 			expect(defenderSlots.length).to.equal(5);
 
 			for (let i = 1; i <= 5; i++) {
-				let value = await wilds.getStake(i);
+				let value = await wilds.stakes(i);
 				expect(value.stakeAction).to.equal(0);
 				expect(await merals.ownerOf(i)).to.equal(admin.address);
 			}
 
 			for (let i = 11; i <= 15; i++) {
-				let value = await wilds.getStake(i);
+				let value = await wilds.stakes(i);
 				expect(value.stakeAction).to.equal(1);
 			}
 
@@ -214,9 +214,9 @@ describe('Wilds', function () {
 
 				expect(await merals.ownerOf(i)).to.equal(player1.address);
 				expect(await merals.ownerOf(i + 5)).to.equal(wilds.address);
-				value = await wilds.getStake(i);
+				value = await wilds.stakes(i);
 				expect(value.stakeAction).to.equal(0);
-				value = await wilds.getStake(i + 5);
+				value = await wilds.stakes(i + 5);
 				expect(value.stakeAction).to.equal(1);
 			}
 

@@ -1,0 +1,10 @@
+wilds deployed to: 0x53779baa1887663e8Ff6B2DaAdFbC5c8Ea8C6E53
+wildsAdminActions deployed to: 0xb348CeAfF8cB897d835EC0ac8d0Bacd9FcdAE12D
+wildsStaking deployed to: 0x617c607D9f2C19dEED67033A8BefE6F1bA34D884
+wildsActions deployed to: 0x586C04902b9967ef6E393E136CBf5931dF4FF52c
+
+onsen deployed to: 0x0cA1c36D48C1f8fcd4ce6E7EB9d1316B5B8E657a
+
+https://oneclickdapp.com/agatha-radical - wilds
+https://oneclickdapp.com/passage-laptop - ethemerals
+https://oneclickdapp.com/passage-laptop - onsen

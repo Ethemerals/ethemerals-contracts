@@ -1,0 +1,8 @@
+Compilation finished successfully
+wilds deployed to: 0xCfaD3968888E8663E42622d4aFc897a9a6eA4fa5
+wildsAdminActions deployed to: 0x17E27a7101F247f1b9E77c2Ec7A946Bf886B8db7
+wildsStaking deployed to: 0x4c2ad38Fe503D96368280a9A0872845b41Ef003F
+wildsActions deployed to: 0x05d4cEE95Ad2dD69b4F6EF5ff3019A1CCdF872AC
+
+https://oneclickdapp.com/solo-fuji - wilds
+https://oneclickdapp.com/passage-laptop - ethemerals

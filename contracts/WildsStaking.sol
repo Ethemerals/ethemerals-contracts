@@ -10,11 +10,13 @@ contract WildsStaking is WildsCalculate {
   /*///////////////////////////////////////////////////////////////
                   EVENTS
   //////////////////////////////////////////////////////////////*/
-  event LandChange(uint16 id, uint16 baseDefence);
+  event LandChange(uint16 id, uint256 timestamp, uint16 baseDefence);
   event Staked(uint16 landId, uint16 tokenId, uint8 stakeAction, bool meral);
-  event Unstaked(uint16 tokenId, uint32 XPRewards);
+  event Unstaked(uint16 tokenId, uint32 rewards);
+  event LCPChange(uint16 landId, uint16 tokenId, uint256 change);
   event RaidStatusChange(uint16 id, uint8 RaidStatus);
   event DeathKissed(uint16 tokenId, uint16 deathId);
+  event Swapped(uint16 tokenId, uint16 swapperId);
   event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType);
 
 
@@ -38,7 +40,6 @@ contract WildsStaking is WildsCalculate {
   // [attack, attackAll, heal, healAll, magicAttack, speedAttack, enrage, concentrate]
   uint8[] public staminaCosts = [30,60,40,90,40,40,50,50];
   uint8 private extraDefBonus = 140; // DAILED already
-  uint16 private baseDefence = 2800; //
 
   struct StakeEvent {
     uint256 timestamp;
@@ -80,7 +81,6 @@ contract WildsStaking is WildsCalculate {
   address public staking;
   address public actions;
   bool public paused;
-
 
   /*///////////////////////////////////////////////////////////////
                   EXTERNAL FUNCTIONS
@@ -208,7 +208,7 @@ contract WildsStaking is WildsCalculate {
       if(_slots[i] == _tokenId) {
         _slots[i] == _swapperId;
         _gainXP(_tokenId, StakeAction.DEFEND);
-        emit Staked(_stake.landId, _swapperId, uint8(StakeAction.DEFEND), true);
+        emit Swapped(_tokenId, _swapperId);
       }
     }
 
@@ -231,6 +231,7 @@ contract WildsStaking is WildsCalculate {
       // ADD LCP
       uint256 change = timestamp - stakeEvents[_landId][stakes[_tokenId].entryPointer].timestamp;
       landClaimPoints[_landId][_tokenId] += change;
+      emit LCPChange(_landId, _tokenId, change);
     }
   }
 
@@ -298,6 +299,8 @@ contract WildsStaking is WildsCalculate {
     // CREATE EVENT
     StakeEvent memory _stakeEvent = StakeEvent(timestamp, landPlots[_landId].baseDefence);
     stakeEvents[_landId].push(_stakeEvent);
+
+    emit LandChange(_landId, timestamp, landPlots[_landId].baseDefence);
   }
 
   function _gainXP(uint16 _tokenId, StakeAction _stakeAction) private {

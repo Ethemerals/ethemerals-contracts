@@ -6,9 +6,8 @@
 const hre = require('hardhat');
 
 // async function main() {
-
-//   const Ethemerals = await hre.ethers.getContractFactory('Ethemerals');
-//   const ethemerals = await Ethemerals.deploy('https://api.ethemerals.com/api/', "0x169310e61e71ef5834ce5466c7155d8a90d15f1e"); // RANDOM ADDRESS
+// 	const Ethemerals = await hre.ethers.getContractFactory('Ethemerals');
+// 	const ethemerals = await Ethemerals.deploy('https://api.ethemerals.com/api/', '0x5900f8d3d9Fc8425c6DC22b5bda71a1e0E594135'); // MAINNET ADDRESS
 
 // 	await ethemerals.deployed();
 
@@ -35,6 +34,9 @@ async function main() {
 	await wilds.deployed();
 
 	console.log('wilds deployed to:', wilds.address);
+	console.log('wildsAdminActions deployed to:', wildsAdminActions.address);
+	console.log('wildsStaking deployed to:', wildsStaking.address);
+	console.log('wildsActions deployed to:', wildsActions.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

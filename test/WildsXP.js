@@ -95,8 +95,8 @@ describe('Wilds', function () {
 			await network.provider.send('evm_mine');
 
 			for (let i = 1; i <= 5; i++) {
-				let stake = await wilds.getStake(i);
-				let event = await wilds.getStakeEvent(1, stake.entryPointer);
+				let stake = await wilds.stakes(i);
+				let event = await wilds.stakeEvents(1, stake.entryPointer);
 
 				const blockNumBefore = await ethers.provider.getBlockNumber();
 				const blockBefore = await ethers.provider.getBlock(blockNumBefore);
@@ -136,8 +136,8 @@ describe('Wilds', function () {
 			await network.provider.send('evm_mine');
 
 			for (let i = 1; i <= 5; i++) {
-				let stake = await wilds.getStake(i);
-				let event = await wilds.getStakeEvent(1, stake.entryPointer);
+				let stake = await wilds.stakes(i);
+				let event = await wilds.stakeEvents(1, stake.entryPointer);
 
 				const blockNumBefore = await ethers.provider.getBlockNumber();
 				const blockBefore = await ethers.provider.getBlock(blockNumBefore);
@@ -165,8 +165,8 @@ describe('Wilds', function () {
 			await network.provider.send('evm_mine');
 
 			for (let i = 11; i <= 15; i++) {
-				let stake = await wilds.getStake(i);
-				let event = await wilds.getStakeEvent(1, stake.entryPointer);
+				let stake = await wilds.stakes(i);
+				let event = await wilds.stakeEvents(1, stake.entryPointer);
 
 				const blockNumBefore = await ethers.provider.getBlockNumber();
 				const blockBefore = await ethers.provider.getBlock(blockNumBefore);
@@ -178,8 +178,8 @@ describe('Wilds', function () {
 			}
 
 			for (let i = 21; i <= 25; i++) {
-				let stake = await wilds.getStake(i);
-				let event = await wilds.getStakeEvent(1, stake.entryPointer);
+				let stake = await wilds.stakes(i);
+				let event = await wilds.stakeEvents(1, stake.entryPointer);
 
 				const blockNumBefore = await ethers.provider.getBlockNumber();
 				const blockBefore = await ethers.provider.getBlock(blockNumBefore);
@@ -281,8 +281,8 @@ describe('Wilds', function () {
 			// console.log(meral.rewards);
 
 			for (let i = 1; i <= 5; i++) {
-				let stake = await wilds.getStake(i);
-				let event = await wilds.getStakeEvent(1, stake.entryPointer);
+				let stake = await wilds.stakes(i);
+				let event = await wilds.stakeEvents(1, stake.entryPointer);
 
 				const blockNumBefore = await ethers.provider.getBlockNumber();
 				const blockBefore = await ethers.provider.getBlock(blockNumBefore);

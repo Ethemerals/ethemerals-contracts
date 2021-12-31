@@ -92,10 +92,10 @@ describe('Wilds', function () {
 			expect(land.raidStatus).to.equal(1);
 
 			await makeRaid();
-			let stake = await wilds.getStake(1);
+			let stake = await wilds.stakes(1);
 			expect(stake.owner).to.equal(admin.address);
 			await wilds.emergencyUnstake(1);
-			stake = await wilds.getStake(1);
+			stake = await wilds.stakes(1);
 			expect(stake.owner).to.equal(addressZero);
 			let slots = await wilds.getSlots(1, 1);
 			expect(slots.length).to.equal(0);

@@ -1,0 +1,10 @@
+wilds deployed to: 0xBa8053e42c46A505e46d06CBF45bcc1F7038375f
+wildsAdminActions deployed to: 0xf80d479BF19f4e08FA1B305cf8e5dBC4E9bD5F8C
+wildsStaking deployed to: 0xC8bE555132827838e3F7565eeb69f4e2815D5595
+wildsActions deployed to: 0xb865964943FD17d21366C8DF99340653721B9262
+
+
+
+
+https://oneclickdapp.com/citrus-rapid - wilds
+https://oneclickdapp.com/passage-laptop - ethemerals

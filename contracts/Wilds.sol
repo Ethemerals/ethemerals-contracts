@@ -12,13 +12,14 @@ contract Wilds is ERC721Holder, WildsCalculate {
   /*///////////////////////////////////////////////////////////////
                   EVENTS
   //////////////////////////////////////////////////////////////*/
-  event LandChange(uint16 id, uint16 baseDefence);
+  event LandChange(uint16 id, uint256 timestamp, uint16 baseDefence);
   event Staked(uint16 landId, uint16 tokenId, uint8 stakeAction, bool meral);
-  event Unstaked(uint16 tokenId, uint16 score, uint32 rewards);
+  event Unstaked(uint16 tokenId, uint32 rewards);
+  event LCPChange(uint16 landId, uint16 tokenId, uint256 change);
   event RaidStatusChange(uint16 id, uint8 RaidStatus);
   event DeathKissed(uint16 tokenId, uint16 deathId);
   event Swapped(uint16 tokenId, uint16 swapperId);
-  event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType, uint16 value);
+  event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType);
 
 
   /*///////////////////////////////////////////////////////////////
@@ -41,7 +42,6 @@ contract Wilds is ERC721Holder, WildsCalculate {
   // [attack, attackAll, heal, healAll, magicAttack, speedAttack, enrage, concentrate]
   uint8[] public staminaCosts = [30,60,40,90,40,40,50,50];
   uint8 private extraDefBonus = 140; // DAILED already
-  uint16 private baseDefence = 2800; //
 
   struct StakeEvent {
     uint256 timestamp;
@@ -85,6 +85,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
   bool public paused;
 
   // TODO items and pets contract
+  // TODO KICK OUT BIRTHERS AND LOOTERS
   // TODO apply inventory
   // TODO claim rewards,
   // TODO death kiss rewards,
@@ -106,9 +107,11 @@ contract Wilds is ERC721Holder, WildsCalculate {
     ItemPool memory pet1 = ItemPool({ cost: 10, drop1: 1, drop2: 2, drop3: 3 });
 
     uint256 timestamp = block.timestamp;
+    uint16 baseDefence = 2800; //
 
     for(uint16 i = 1; i < 7; i ++) {
       landPlots[i] = Land({ remainingELFx: 1000, emissionRate: 10, lastRaid: timestamp, initBaseDefence: baseDefence, baseDefence: baseDefence, lootPool: loot1, petPool: pet1, raidStatus: RaidStatus.DEFAULT });
+      emit LandChange(i, timestamp, baseDefence);
     }
   }
 
@@ -137,7 +140,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
     });
     landPlots[id] = land;
 
-    emit LandChange(id, _baseDefence);
+    emit LandChange(id, block.timestamp, _baseDefence);
   }
 
   function setStaminas(uint8[] calldata _staminaCosts) external {
@@ -154,7 +157,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
     _land.baseDefence = _initBaseDefence;
     _land.raidStatus = _raidStatus;
 
-    emit LandChange(_landId, _initBaseDefence);
+    emit LandChange(_landId, block.timestamp, _initBaseDefence);
   }
 
   function emergencyUnstake(uint16 _landId) external {
@@ -356,16 +359,12 @@ contract Wilds is ERC721Holder, WildsCalculate {
                   EXTERNAL VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function getStake(uint16 _tokenId) external view returns (Stake memory) {
-    return stakes[_tokenId];
-  }
-
   function getSlots(uint16 _landId, StakeAction _action) external view returns (uint16[] memory) {
     return slots[_landId][_action];
   }
 
-  function getStakeEvent(uint16 _landId, uint256 _index) external view returns (StakeEvent memory) {
-    return stakeEvents[_landId][_index];
+  function getStakeEvents(uint16 _landId) external view returns (StakeEvent[] memory) {
+    return stakeEvents[_landId];
   }
 
   function getLCP(uint16 _landId, uint16 _tokenId) external view returns (uint256) {

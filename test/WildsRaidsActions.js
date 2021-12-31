@@ -139,14 +139,14 @@ describe('Wilds', function () {
 
 			while (damage < 1000) {
 				count++;
-				let preAttacker = await wilds.getStake(attacker);
+				let preAttacker = await wilds.stakes(attacker);
 				let stamina = await wilds.calculateStamina(attacker);
 				console.log('calcStamina', stamina);
 				if (stamina < 100 - 30) {
-					let preStake = await wilds.getStake(defender);
+					let preStake = await wilds.stakes(defender);
 					await wilds.connect(player1).raidAction(defender, attacker, raidAction);
-					let postStake = await wilds.getStake(defender);
-					let postAttacker = await wilds.getStake(attacker);
+					let postStake = await wilds.stakes(defender);
+					let postAttacker = await wilds.stakes(attacker);
 					expect(preStake.damage).to.be.lt(postStake.damage);
 
 					console.log('stake.damage', postStake.damage);
@@ -169,14 +169,14 @@ describe('Wilds', function () {
 			let defender = 2;
 			let attacker = 11;
 
-			let attackerStake = await wilds.getStake(attacker);
+			let attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(0);
 
-			let value = await wilds.getStake(1);
+			let value = await wilds.stakes(1);
 			expect(value.damage).to.equal(0);
 
 			await wilds.connect(player1).raidAction(defender, attacker, raidAction);
-			attackerStake = await wilds.getStake(attacker);
+			attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(staminaCost);
 
 			await wilds.setStaminas([10, 10]);
@@ -184,7 +184,7 @@ describe('Wilds', function () {
 			expect(staminaCost2).to.equal(10);
 
 			await wilds.connect(player1).raidAction(defender, attacker, raidAction);
-			attackerStake = await wilds.getStake(attacker);
+			attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(staminaCost + staminaCost2);
 		});
 
@@ -196,20 +196,20 @@ describe('Wilds', function () {
 			let defender = 2;
 			let attacker = 11;
 
-			let attackerStake = await wilds.getStake(attacker);
+			let attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(0);
 
 			for (let i = 1; i <= 5; i++) {
-				let value = await wilds.getStake(i);
+				let value = await wilds.stakes(i);
 				expect(value.damage).to.equal(0);
 			}
 
 			await wilds.connect(player1).raidAction(defender, attacker, raidAction);
-			attackerStake = await wilds.getStake(attacker);
+			attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(staminaCost);
 
 			for (let i = 1; i <= 5; i++) {
-				let value = await wilds.getStake(i);
+				let value = await wilds.stakes(i);
 				expect(value.damage).to.be.gt(0);
 				console.log(value.damage);
 			}
@@ -228,7 +228,7 @@ describe('Wilds', function () {
 			let attacker = 11;
 			let healer = 5;
 
-			let attackerStake = await wilds.getStake(attacker);
+			let attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(0);
 
 			await wilds.connect(player1).raidAction(defender, attacker, attackAllAction);
@@ -236,14 +236,14 @@ describe('Wilds', function () {
 			let preHealDamage = await wilds.calculateDamage(defender);
 			console.log(preHealDamage);
 
-			let preHealStamina = await wilds.getStake(2);
+			let preHealStamina = await wilds.stakes(2);
 			expect(preHealStamina.stamina).to.equal(0);
 			await wilds.raidAction(defender, healer, healAction);
 			let postHealDamage = await wilds.calculateDamage(defender);
 
 			expect(parseInt(preHealDamage)).to.be.gt(parseInt(postHealDamage));
 
-			let postHealStamina = await wilds.getStake(healer);
+			let postHealStamina = await wilds.stakes(healer);
 			expect(postHealStamina.stamina).to.equal(staminaCost);
 		});
 
@@ -261,13 +261,13 @@ describe('Wilds', function () {
 			let meral = await merals.getEthemeral(healer);
 			console.log(meral.atk, meral.def, meral.spd);
 
-			let attackerStake = await wilds.getStake(attacker);
+			let attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(0);
 
 			await wilds.connect(player1).raidAction(defender, attacker, attackAllAction);
 			await wilds.connect(player1).raidAction(defender, attacker, 0);
 
-			let preHealStamina = await wilds.getStake(2);
+			let preHealStamina = await wilds.stakes(2);
 			expect(preHealStamina.stamina).to.equal(0);
 
 			for (let i = 1; i <= 5; i++) {
@@ -282,7 +282,7 @@ describe('Wilds', function () {
 				console.log(postHealDamage);
 			}
 
-			let postHealStamina = await wilds.getStake(healer);
+			let postHealStamina = await wilds.stakes(healer);
 			expect(postHealStamina.stamina).to.equal(staminaCost);
 		});
 
@@ -294,17 +294,17 @@ describe('Wilds', function () {
 			let defender = 5;
 			let attacker = 11;
 
-			let attackerStake = await wilds.getStake(attacker);
+			let attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(0);
 
-			let value = await wilds.getStake(1);
+			let value = await wilds.stakes(1);
 			expect(value.damage).to.equal(0);
 
 			await wilds.connect(player1).raidAction(defender, attacker, raidAction);
-			attackerStake = await wilds.getStake(attacker);
+			attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(staminaCost);
 
-			value = await wilds.getStake(defender);
+			value = await wilds.stakes(defender);
 			console.log(value.damage, 'magic attack');
 		});
 
@@ -316,17 +316,17 @@ describe('Wilds', function () {
 			let defender = 5;
 			let attacker = 11;
 
-			let attackerStake = await wilds.getStake(attacker);
+			let attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(0);
 
-			let value = await wilds.getStake(1);
+			let value = await wilds.stakes(1);
 			expect(value.damage).to.equal(0);
 
 			await wilds.connect(player1).raidAction(defender, attacker, raidAction);
-			attackerStake = await wilds.getStake(attacker);
+			attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(staminaCost);
 
-			value = await wilds.getStake(defender);
+			value = await wilds.stakes(defender);
 			console.log(value.damage, 'speed attack');
 		});
 
@@ -338,14 +338,14 @@ describe('Wilds', function () {
 			let defender = 5;
 			let attacker = 11;
 
-			let defenderStake = await wilds.getStake(defender);
+			let defenderStake = await wilds.stakes(defender);
 			expect(defenderStake.stamina).to.equal(0);
 
 			let preLand = await wilds.landPlots(1);
 			console.log(preLand.baseDefence, 'baseDefence');
 
 			await wilds.raidAction(defender, defender, raidAction);
-			defenderStake = await wilds.getStake(defender);
+			defenderStake = await wilds.stakes(defender);
 			expect(defenderStake.stamina).to.equal(staminaCost);
 
 			let postLand = await wilds.landPlots(1);
@@ -361,14 +361,14 @@ describe('Wilds', function () {
 			let defender = 5;
 			let attacker = 11;
 
-			let stake = await wilds.getStake(attacker);
+			let stake = await wilds.stakes(attacker);
 			expect(stake.stamina).to.equal(0);
 
 			let preLand = await wilds.landPlots(1);
 			console.log(preLand.baseDefence, 'baseDefence');
 
 			await wilds.connect(player1).raidAction(defender, attacker, raidAction);
-			stake = await wilds.getStake(attacker);
+			stake = await wilds.stakes(attacker);
 			expect(stake.stamina).to.equal(staminaCost);
 
 			let postLand = await wilds.landPlots(1);
@@ -393,7 +393,7 @@ describe('Wilds', function () {
 
 			await wilds.setAddresses(wildsStaking.address, wildsActionsV2.address);
 
-			await wilds.raidAction(defender, 2, raidAction);
+			await wilds.connect(player1).raidAction(defender, attacker, raidAction);
 			let damage2 = await wilds.calculateDamage(defender);
 			expect(damage2).to.be.lt(damage);
 		});

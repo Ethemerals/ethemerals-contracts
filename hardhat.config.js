@@ -1,5 +1,7 @@
 require('@nomiclabs/hardhat-waffle');
 require('@nomiclabs/hardhat-ethers');
+require('@nomiclabs/hardhat-etherscan');
+
 require('dotenv').config();
 if (process.env.REPORT_GAS === '1') {
 	require('hardhat-gas-reporter');
@@ -23,6 +25,12 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
  */
 module.exports = {
 	solidity: '0.8.7',
+	settings: {
+		optimizer: {
+			enabled: true,
+			runs: 200,
+		},
+	},
 	paths: {
 		artifacts: './src/artifacts',
 	},
@@ -34,6 +42,13 @@ module.exports = {
 			url: `https://rinkeby.infura.io/v3/${process.env.PROJECTID}`,
 			accounts: [`0x${process.env.PRIV_KEY}`],
 		},
+		mainnet: {
+			url: `https://mainnet.infura.io/v3/${process.env.PROJECTID}`, // or any other JSON-RPC provider
+			accounts: [`0x${process.env.PRIV_KEY}`],
+		},
+	},
+	etherscan: {
+		apiKey: process.env.ETHERSCAN_APIKEY,
 	},
 	gasReporter: {
 		currency: 'USD',
