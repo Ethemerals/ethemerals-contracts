@@ -3,7 +3,7 @@ pragma solidity ^0.8.3;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "./IEthemerals.sol";
+import "./interfaces/interfaces.sol";
 
 
 contract Onsen is ERC721Holder {
@@ -12,8 +12,9 @@ contract Onsen is ERC721Holder {
                   STORAGE
   //////////////////////////////////////////////////////////////*/
 
-  IEthemerals merals;
+  IEthemeralsLike merals;
   address public admin;
+  address public meralManager;
 
   uint16 private scoreMod; // lower = more
   uint16 private rewardsMod; // lower = more
@@ -30,9 +31,10 @@ contract Onsen is ERC721Holder {
                   ADMIN FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  constructor(address meralAddress) {
+  constructor(address _meral, address _meralManager) {
     admin = msg.sender;
-    merals = IEthemerals(meralAddress);
+    merals = IEthemeralsLike(_meral);
+    meralManager = _meralManager;
     scoreMod = 10000;
     rewardsMod = 7200;
   }
@@ -75,7 +77,7 @@ contract Onsen is ERC721Holder {
   //////////////////////////////////////////////////////////////*/
 
   function calculateChange(uint16 _tokenId) public view returns (uint16 score, uint32 rewards) {
-    IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId); // TODO USE INVENTORY
+    IEthemeralsLike.Meral memory _meral = merals.getEthemeral(_tokenId); // TODO USE INVENTORY
     uint256 start = stakes[_tokenId].timestamp;
     uint256 end = block.timestamp;
     uint256 change = end - start;

@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const { ethers } = require('hardhat');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe('Wilds', function () {
+describe('Onsen', function () {
 	let merals;
 	let wilds;
 	let admin;
@@ -17,6 +17,10 @@ describe('Wilds', function () {
 		const Ethemerals = await ethers.getContractFactory('Ethemerals');
 		merals = await Ethemerals.deploy('https://api.ethemerals.com/api/', '0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ADDRESS
 		await merals.deployed();
+
+		const MeralManager = await ethers.getContractFactory('MeralManager');
+		meralManager = await MeralManager.deploy('0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // random
+		await meralManager.deployed();
 
 		const WildsAdminActions = await ethers.getContractFactory('WildsAdminActions');
 		wildsAdminActions = await WildsAdminActions.deploy();
@@ -36,7 +40,7 @@ describe('Wilds', function () {
 		await wilds.deployed();
 
 		const Onsen = await ethers.getContractFactory('Onsen');
-		onsen = await Onsen.deploy(merals.address);
+		onsen = await Onsen.deploy(merals.address, meralManager.address);
 		await onsen.deployed();
 
 		// mint merals
@@ -59,6 +63,9 @@ describe('Wilds', function () {
 		await merals.connect(player1).setAllowDelegates(true);
 		await merals.connect(player2).setAllowDelegates(true);
 		await merals.connect(player3).setAllowDelegates(true);
+
+		await meralManager.addGM(admin.address, true);
+		await meralManager.addGM(onsen.address, true);
 	});
 
 	function safeScale(number, inMax, outMin, outMax) {
@@ -75,9 +82,19 @@ describe('Wilds', function () {
 		return parseInt(((now - start) * parseInt(scaled)) / mod);
 	};
 
+	const migrateOGMerals = async () => {
+		for (let i = 1; i < 30; i++) {
+			let meral = await merals.getEthemeral(i);
+			let element = 1;
+			let subclass = 4;
+			await meralManager.registerOGMeral(i, meral.score, meral.rewards, meral.atk, meral.def, meral.spd, element, subclass);
+		}
+	};
+
 	describe('Onsen score and xp gains', function () {
 		it('Should allow and restrict admin actions', async function () {
-			let meral = await merals.getEthemeral(1);
+			await migrateOGMerals();
+			let meral = await meralManager.getMeral(1);
 			let score = meral.score;
 			let rewards = meral.rewards;
 			let rewardsMod = 7200;
@@ -98,7 +115,7 @@ describe('Wilds', function () {
 			let change = await onsen.calculateChange(1);
 			console.log(change);
 			await onsen.unstake(1);
-			let value = await merals.getEthemeral(1);
+			let value = await meralManager.getMeral(1);
 
 			console.log(value);
 			expect(value.rewards - rewards).to.equal(getXp(_now, _start, rewardsMod));
@@ -118,7 +135,7 @@ describe('Wilds', function () {
 			change = await onsen.calculateChange(2);
 			console.log(change);
 			await onsen.unstake(2);
-			value = await merals.getEthemeral(2);
+			value = await meralManager.getMeral(2);
 			console.log(value);
 			expect(value.rewards - rewards).to.equal(getXp(_now, _start, rewardsMod));
 			expect(value.score - score).to.equal(getScore(_now, _start, value.spd, scoreMod));
