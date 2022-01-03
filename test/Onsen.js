@@ -1,144 +1,193 @@
-// const { expect } = require('chai');
-// const { ethers } = require('hardhat');
-// const addressZero = '0x0000000000000000000000000000000000000000';
+const { expect } = require('chai');
+const { ethers } = require('hardhat');
+const { MeralsL1Data, minMaxAvg, getRandomInt } = require('./utils');
+const addressZero = '0x0000000000000000000000000000000000000000';
 
-// describe('Onsen', function () {
-// 	let merals;
-// 	let wilds;
-// 	let admin;
-// 	let player1;
-// 	let player2;
-// 	let player3;
-// 	let [min, hour, day, week] = [60, 3600, 86400, 604800];
+describe('Onsen', function () {
+	let merals;
+	let meralsL2;
+	let escrowL1;
+	let escrowL2;
+	let meralManager;
+	let wilds;
+	let onsen;
+	let admin;
+	let player1;
+	let player2;
+	let player3;
+	let [min, hour, day, week] = [60, 3600, 86400, 604800];
+	let allMeralStats = MeralsL1Data();
 
-// 	beforeEach(async function () {
-// 		[admin, player1, player2, player3] = await ethers.getSigners();
+	beforeEach(async function () {
+		[admin, player1, player2, player3] = await ethers.getSigners();
 
-// 		const Ethemerals = await ethers.getContractFactory('Ethemerals');
-// 		merals = await Ethemerals.deploy('https://api.ethemerals.com/api/', '0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ADDRESS
-// 		await merals.deployed();
+		// L1 Contracts
+		const Ethemerals = await ethers.getContractFactory('Ethemerals');
+		merals = await Ethemerals.deploy('https://api.ethemerals.com/api/', '0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ELF ADDRESS
+		await merals.deployed();
 
-// 		const MeralManager = await ethers.getContractFactory('MeralManager');
-// 		meralManager = await MeralManager.deploy('0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // random
-// 		await meralManager.deployed();
+		const EscrowL1 = await ethers.getContractFactory('EscrowOnL1');
+		escrowL1 = await EscrowL1.deploy(merals.address); // RANDOM ADDRESS
+		await escrowL1.deployed();
 
-// 		const WildsAdminActions = await ethers.getContractFactory('WildsAdminActions');
-// 		wildsAdminActions = await WildsAdminActions.deploy();
-// 		await wildsAdminActions.deployed();
+		// L2 Contracts
+		const EthemeralsL2 = await ethers.getContractFactory('EthemeralsOnL2');
+		meralsL2 = await EthemeralsL2.deploy('https://api.ethemerals.com/api/', '0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ELF ADDRESS
+		await meralsL2.deployed();
 
-// 		const WildsStaking = await ethers.getContractFactory('WildsStaking');
-// 		wildsStaking = await WildsStaking.deploy();
-// 		await wildsStaking.deployed();
+		const EscrowL2 = await ethers.getContractFactory('EscrowOnL2');
+		escrowL2 = await EscrowL2.deploy(meralsL2.address); // RANDOM ADDRESS
+		await escrowL2.deployed();
 
-// 		const WildsActions = await ethers.getContractFactory('WildsActions');
-// 		wildsActions = await WildsActions.deploy();
-// 		await wildsActions.deployed();
+		const MeralManager = await ethers.getContractFactory('MeralManager');
+		meralManager = await MeralManager.deploy('0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // TODO random register
+		await meralManager.deployed();
 
-// 		const Wilds = await ethers.getContractFactory('Wilds');
+		// L2 Wilds Contracts
+		const WildsAdminActions = await ethers.getContractFactory('WildsAdminActions');
+		wildsAdminActions = await WildsAdminActions.deploy();
+		await wildsAdminActions.deployed();
 
-// 		wilds = await Wilds.deploy(merals.address, wildsAdminActions.address, wildsStaking.address, wildsActions.address);
-// 		await wilds.deployed();
+		const WildsStaking = await ethers.getContractFactory('WildsStaking');
+		wildsStaking = await WildsStaking.deploy();
+		await wildsStaking.deployed();
 
-// 		const Onsen = await ethers.getContractFactory('Onsen');
-// 		onsen = await Onsen.deploy(merals.address, meralManager.address);
-// 		await onsen.deployed();
+		const WildsActions = await ethers.getContractFactory('WildsActions');
+		wildsActions = await WildsActions.deploy();
+		await wildsActions.deployed();
 
-// 		// mint merals
-// 		await merals.mintReserve();
-// 		await merals.setPrice(0);
-// 		await merals.setMaxMeralIndex(1000);
+		const Wilds = await ethers.getContractFactory('Wilds');
 
-// 		await network.provider.send('evm_increaseTime', [day]);
-// 		await network.provider.send('evm_mine');
+		wilds = await Wilds.deploy(meralsL2.address, wildsAdminActions.address, wildsStaking.address, wildsActions.address);
+		await wilds.deployed();
 
-// 		await merals.mintMeralsAdmin(player1.address, 10); // ID starts at 11
-// 		await merals.mintMeralsAdmin(player2.address, 10); // ID starts at 21
-// 		await merals.mintMeralsAdmin(player3.address, 10); // ID starts at 31
+		const Onsen = await ethers.getContractFactory('Onsen');
+		onsen = await Onsen.deploy(meralManager.address);
+		await onsen.deployed();
 
-// 		// set and allow delegates
-// 		await merals.addDelegate(wilds.address, true);
-// 		await merals.addDelegate(admin.address, true);
-// 		await merals.addDelegate(onsen.address, true);
-// 		await merals.setAllowDelegates(true);
-// 		await merals.connect(player1).setAllowDelegates(true);
-// 		await merals.connect(player2).setAllowDelegates(true);
-// 		await merals.connect(player3).setAllowDelegates(true);
+		// L1 mint merals
+		await merals.mintReserve();
+		await merals.setPrice(0);
+		await merals.setMaxMeralIndex(1000);
 
-// 		await meralManager.addGM(admin.address, true);
-// 		await meralManager.addGM(onsen.address, true);
-// 	});
+		await network.provider.send('evm_increaseTime', [day]);
+		await network.provider.send('evm_mine');
 
-// 	function safeScale(number, inMax, outMin, outMax) {
-// 		let scaled = (number * (outMax - outMin)) / inMax + outMin;
-// 		return scaled > outMax ? outMax : scaled;
-// 	}
+		await merals.mintMeralsAdmin(player1.address, 10); // ID starts at 11
+		await merals.mintMeralsAdmin(player2.address, 10); // ID starts at 21
+		await merals.mintMeralsAdmin(player3.address, 10); // ID starts at 31
 
-// 	const getXp = (now, start, mod) => {
-// 		return parseInt((now - start) / mod);
-// 	};
+		// DO ESCROW ON L1
+		// set and allow delegates
+		await merals.addDelegate(escrowL1.address, true);
+		await merals.connect(admin).setAllowDelegates(true);
+		await merals.connect(player1).setAllowDelegates(true);
+		await merals.connect(player2).setAllowDelegates(true);
+		await merals.connect(player3).setAllowDelegates(true);
 
-// 	const getScore = (now, start, stat, mod) => {
-// 		let scaled = safeScale(stat, 2000, 14, 22);
-// 		return parseInt(((now - start) * parseInt(scaled)) / mod);
-// 	};
+		for (let i = 1; i <= 10; i++) {
+			await escrowL1.transfer(i);
+		}
+		for (let i = 11; i <= 20; i++) {
+			await escrowL1.connect(player1).transfer(i);
+		}
+		for (let i = 21; i <= 30; i++) {
+			await escrowL1.connect(player2).transfer(i);
+		}
+		for (let i = 31; i <= 40; i++) {
+			await escrowL1.connect(player3).transfer(i);
+		}
 
-// 	const migrateOGMerals = async () => {
-// 		for (let i = 1; i < 30; i++) {
-// 			let meral = await merals.getEthemeral(i);
-// 			let element = 1;
-// 			let subclass = 4;
-// 			await meralManager.registerOGMeral(i, meral.score, meral.rewards, meral.atk, meral.def, meral.spd, element, subclass);
-// 		}
-// 	};
+		// NODE BACKEND MIGRATE TO L2
+		await meralManager.addGM(admin.address, true);
+		// await meralManager.addGM(onsen.address, true);
+		await meralManager.addMeralContracts(1, meralsL2.address);
 
-// 	describe('Onsen score and xp gains', function () {
-// 		it('Should allow and restrict admin actions', async function () {
-// 			await migrateOGMerals();
-// 			let meral = await meralManager.getMeral(1);
-// 			let score = meral.score;
-// 			let rewards = meral.rewards;
-// 			let rewardsMod = 7200;
-// 			let scoreMod = 10000;
+		await meralsL2.setEscrowAddress(admin.address);
+		for (let i = 1; i <= 10; i++) {
+			let meralStats = allMeralStats[i];
+			await meralsL2.migrateMeral(i, admin.address, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd);
+			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+		}
+		for (let i = 11; i <= 20; i++) {
+			let meralStats = allMeralStats[i];
+			await meralsL2.migrateMeral(i, player1.address, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd);
+			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+		}
+		for (let i = 21; i <= 30; i++) {
+			let meralStats = allMeralStats[i];
+			await meralsL2.migrateMeral(i, player2.address, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd);
+			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+		}
+		for (let i = 31; i <= 40; i++) {
+			let meralStats = allMeralStats[i];
+			await meralsL2.migrateMeral(i, player3.address, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd);
+			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+		}
 
-// 			await onsen.stake(1);
-// 			let blockNumBefore = await ethers.provider.getBlockNumber();
-// 			let blockBefore = await ethers.provider.getBlock(blockNumBefore);
-// 			let _start = blockBefore.timestamp;
+		// set and allow delegates
+		await meralManager.addGM(onsen.address, true);
+		await meralsL2.addDelegate(meralManager.address, true);
+	});
 
-// 			await network.provider.send('evm_increaseTime', [day * 2]);
-// 			await network.provider.send('evm_mine');
+	function safeScale(number, inMax, outMin, outMax) {
+		let scaled = (number * (outMax - outMin)) / inMax + outMin;
+		return scaled > outMax ? outMax : scaled;
+	}
 
-// 			blockNumBefore = await ethers.provider.getBlockNumber();
-// 			blockBefore = await ethers.provider.getBlock(blockNumBefore);
-// 			let _now = blockBefore.timestamp;
+	const getXp = (now, start, mod) => {
+		return parseInt((now - start) / mod);
+	};
 
-// 			let change = await onsen.calculateChange(1);
-// 			console.log(change);
-// 			await onsen.unstake(1);
-// 			let value = await meralManager.getMeral(1);
+	const gethp = (now, start, stat, mod) => {
+		let scaled = safeScale(stat, 2000, 14, 22);
+		return parseInt(((now - start) * parseInt(scaled)) / mod);
+	};
 
-// 			console.log(value);
-// 			expect(value.rewards - rewards).to.equal(getXp(_now, _start, rewardsMod));
-// 			expect(value.score - score).to.equal(getScore(_now, _start, value.spd, scoreMod));
+	describe('Onsen hp and xp gains', function () {
+		it.only('relax and gain', async function () {
+			let type = 1;
+			let tokenId = 1;
+			let id = await meralManager.getIdFromType(type, tokenId);
+			let meral = await meralManager.getMeralById(id);
+			let hp = meral.hp;
+			let xp = meral.xp;
+			let xpMod = 7200;
+			let hpMod = 10000;
 
-// 			rewardsMod = 3600;
-// 			scoreMod = 5000;
-// 			await onsen.setMods(scoreMod, rewardsMod);
-// 			await onsen.stake(2);
-// 			await expect(onsen.connect(player1).setMods(100, 100)).to.be.revertedWith('admin only');
-// 			await expect(onsen.connect(player1).unstake(2)).to.be.revertedWith('owner only');
-// 			await expect(onsen.connect(player1).stake(1)).to.be.revertedWith('ERC721: transfer of token that is not own');
+			await onsen.stake(id);
+			let blockNumBefore = await ethers.provider.getBlockNumber();
+			let blockBefore = await ethers.provider.getBlock(blockNumBefore);
+			let _start = blockBefore.timestamp;
 
-// 			await network.provider.send('evm_increaseTime', [day * 2]);
-// 			await network.provider.send('evm_mine');
+			await network.provider.send('evm_increaseTime', [day * 2]);
+			await network.provider.send('evm_mine');
 
-// 			change = await onsen.calculateChange(2);
-// 			console.log(change);
-// 			await onsen.unstake(2);
-// 			value = await meralManager.getMeral(2);
-// 			console.log(value);
-// 			expect(value.rewards - rewards).to.equal(getXp(_now, _start, rewardsMod));
-// 			expect(value.score - score).to.equal(getScore(_now, _start, value.spd, scoreMod));
-// 		});
-// 	});
-// });
+			blockNumBefore = await ethers.provider.getBlockNumber();
+			blockBefore = await ethers.provider.getBlock(blockNumBefore);
+			let _now = blockBefore.timestamp;
+
+			let change = await onsen.calculateChange(id);
+			await onsen.unstake(id);
+			let value = await meralManager.getMeral(type, tokenId);
+
+			expect(value.xp - xp).to.equal(getXp(_now, _start, xpMod));
+			expect(value.hp - hp).to.equal(gethp(_now, _start, value.spd, hpMod));
+
+			xpMod = 3600;
+			hpMod = 5000;
+			await onsen.setMods(hpMod, xpMod);
+			await onsen.stake(id);
+			await expect(onsen.connect(player1).setMods(100, 100)).to.be.revertedWith('admin only');
+			await expect(onsen.connect(player1).unstake(id)).to.be.revertedWith('owner only');
+			await expect(onsen.connect(player1).stake(id)).to.be.revertedWith('ERC721: transfer of token that is not own');
+
+			await network.provider.send('evm_increaseTime', [day * 2]);
+			await network.provider.send('evm_mine');
+
+			change = await onsen.calculateChange(id);
+			await onsen.unstake(id);
+			value = await meralManager.getMeralById(id);
+		});
+	});
+});

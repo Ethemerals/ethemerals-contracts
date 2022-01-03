@@ -1,4 +1,4 @@
-const { tokens } = require('./first1000');
+const { tokens } = require('./subgraphL1/first1000');
 
 const parseClass = (subclass) => {
 	let subclassInt = 0;
@@ -45,7 +45,7 @@ const parseClass = (subclass) => {
 	return subclassInt;
 };
 
-const Merals = () => {
+const MeralsL1Data = () => {
 	let merals = [];
 	tokens.forEach((token, index) => {
 		let atk = token.atk;
@@ -81,4 +81,4 @@ function getRandomInt(max) {
 	return Math.floor(Math.random() * max);
 }
 
-module.exports = { Merals, minMaxAvg, getRandomInt };
+module.exports = { MeralsL1Data, minMaxAvg, getRandomInt };

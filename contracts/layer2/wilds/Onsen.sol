@@ -5,44 +5,43 @@ import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "../interfaces/interfaces.sol";
+import "../managers/MeralParser.sol";
 
-contract Onsen is ERC721Holder {
+contract Onsen is ERC721Holder, MeralParser {
 
   /*///////////////////////////////////////////////////////////////
                   STORAGE
   //////////////////////////////////////////////////////////////*/
 
-  IEthemeralsLike merals;
+  IMeralManager merals;
   address public admin;
-  address public meralManager;
 
   uint16 private scoreMod; // lower = more
   uint16 private rewardsMod; // lower = more
 
   // MERALS => STAKES
-  mapping (uint16 => Stake) public stakes;
+  mapping (uint => Stake) public stakes;
 
   struct Stake {
     address owner;
-    uint256 timestamp;
+    uint timestamp;
   }
 
   /*///////////////////////////////////////////////////////////////
                   ADMIN FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  constructor(address _meral, address _meralManager) {
+  constructor(address _meralManager) {
     admin = msg.sender;
-    merals = IEthemeralsLike(_meral);
-    meralManager = _meralManager;
+    merals = IMeralManager(_meralManager);
     scoreMod = 10000;
     rewardsMod = 7200;
   }
 
-  function adminUnstake(uint16 _tokenId) external {
-    Stake memory _stake = stakes[_tokenId];
+  function adminUnstake(uint _Id) external {
+    Stake memory _stake = stakes[_Id];
     require(_stake.owner == msg.sender || msg.sender == admin, "owner only");
-    merals.safeTransferFrom(address(this), _stake.owner, _tokenId);
+    merals.transfer(address(this), _stake.owner, _Id);
   }
 
   function setMods(uint16 _scoreMod, uint16 _rewardsMod) external {
@@ -55,20 +54,20 @@ contract Onsen is ERC721Holder {
                   PUBLIC FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function stake(uint16 _tokenId) external {
+  function stake(uint _Id) external {
     // TODO allow non merals
-    merals.safeTransferFrom(msg.sender, address(this), _tokenId);
-    stakes[_tokenId] = Stake({owner: msg.sender, timestamp: block.timestamp});
+    merals.transfer(msg.sender, address(this), _Id);
+    stakes[_Id] = Stake({owner: msg.sender, timestamp: block.timestamp});
   }
 
-  function unstake(uint16 _tokenId) external {
-    Stake memory _stake = stakes[_tokenId];
+  function unstake(uint _Id) external {
+    Stake memory _stake = stakes[_Id];
     require(_stake.owner == msg.sender || msg.sender == admin, "owner only");
-    merals.safeTransferFrom(address(this), _stake.owner, _tokenId);
+    merals.transfer(address(this), _stake.owner, _Id);
 
     // CALCULATE CHANGE
-    (uint16 _scoreChange, uint32 _rewardsChange) = calculateChange(_tokenId);
-    merals.changeScore(_tokenId, _scoreChange, true, _rewardsChange);
+    (uint16 _scoreChange, uint32 _rewardsChange) = calculateChange(_Id);
+    merals.changeHP(_Id, _scoreChange, true, _rewardsChange);
   }
 
 
@@ -76,14 +75,14 @@ contract Onsen is ERC721Holder {
                   PUBLIC VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function calculateChange(uint16 _tokenId) public view returns (uint16 score, uint32 rewards) {
-    IEthemeralsLike.Meral memory _meral = merals.getEthemeral(_tokenId); // TODO USE INVENTORY
-    uint256 start = stakes[_tokenId].timestamp;
-    uint256 end = block.timestamp;
-    uint256 change = end - start;
-    uint256 scaled = safeScale(_meral.spd, 2000, 14, 22);
-    uint256 _score = (change * scaled) / scoreMod;
-    uint256 _rewards = change / rewardsMod;
+  function calculateChange(uint _Id) public view returns (uint16 score, uint32 rewards) {
+    IMeralManager.MeralStats memory _meral = merals.getMeralById(_Id); // TODO USE INVENTORY
+    uint start = stakes[_Id].timestamp;
+    uint end = block.timestamp;
+    uint change = end - start;
+    uint scaled = safeScale(_meral.spd, 2000, 14, 22);
+    uint _score = (change * scaled) / scoreMod;
+    uint _rewards = change / rewardsMod;
     return (uint16(_score), uint32(_rewards));
   }
 
@@ -92,8 +91,8 @@ contract Onsen is ERC721Holder {
                   INTERNAL VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function safeScale(uint256 num, uint256 inMax, uint256 outMin, uint256 outMax) internal pure returns(uint256) {
-    uint256 scaled = (num * (outMax - outMin)) / inMax + outMin;
+  function safeScale(uint num, uint inMax, uint outMin, uint outMax) internal pure returns(uint) {
+    uint scaled = (num * (outMax - outMin)) / inMax + outMin;
     return scaled > outMax ? outMax : scaled;
   }
 

@@ -3,16 +3,16 @@
 pragma solidity ^0.8.3;
 
 import "hardhat/console.sol";
-
+import "./MeralParser.sol";
 import "../interfaces/interfaces.sol";
 
-contract MeralManager {
+contract MeralManager is MeralParser {
 
-  event ChangeHP(uint8 meralType, uint256 tokenId, uint16 hp, bool add, uint32 xp);
-  event ChangeXP(uint8 meralType, uint256 tokenId, uint32 xp, bool add);
-  event ChangeStats(uint8 meralType, uint256 tokenId, uint16 atk, uint16 def, uint16 spd);
-  event ChangeElement(uint8 meralType, uint256 tokenId, uint8 element);
-  event InitMeral(uint8 meralType, uint256 tokenId, uint32 xp, uint16 hp, uint16 maxHp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass);
+  event ChangeHP(uint meralType, uint tokenId, uint16 hp, bool add, uint32 xp);
+  event ChangeXP(uint meralType, uint tokenId, uint32 xp, bool add);
+  event ChangeStats(uint meralType, uint tokenId, uint16 atk, uint16 def, uint16 spd);
+  event ChangeElement(uint meralType, uint tokenId, uint8 element);
+  event InitMeral(uint meralType, uint tokenId, uint32 xp, uint16 hp, uint16 maxHp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass);
   event AuthChange(address auth, bool add);
 
 
@@ -21,15 +21,15 @@ contract MeralManager {
   //////////////////////////////////////////////////////////////*/
 
   // TYPE OF MERAL => INDEX OF MERAL / 0 = Ethemerals, 1 = Monsters
-  mapping (uint8 => mapping(uint256 => MeralStats)) public allMerals;
+  mapping (uint => MeralStats) public allMerals;
 
   // include game masters
   mapping(address => bool) public gmAddresses;
 
   // IERC721 addresses
-  mapping(uint8 => address) public meralContracts;
+  mapping(uint => address) public meralContracts;
 
-  // IERC721Like public merals;
+  // IERC721 public merals;
   address public admin;
   address public register;
 
@@ -71,7 +71,7 @@ contract MeralManager {
     emit AuthChange(_gm, add);
   }
 
-  function addMeralContracts(uint8 _type, address _meralAddress) external {
+  function addMeralContracts(uint _type, address _meralAddress) external {
     require(msg.sender == admin, "admin only");
     meralContracts[_type] = _meralAddress;
   }
@@ -82,7 +82,7 @@ contract MeralManager {
   //////////////////////////////////////////////////////////////*/
 
   function registerOGMeral(
-      uint256 _tokenId,
+      uint _tokenId,
       uint16 _score,
       uint32 _rewards,
       uint16 _atk,
@@ -90,29 +90,33 @@ contract MeralManager {
       uint16 _spd,
       uint8 _element,
       uint8 _subclass
-    ) external onlyGM() {
+    ) external onlyGM {
 
-    allMerals[0][_tokenId] = MeralStats(_rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
-    emit InitMeral(0, _tokenId, _rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
+    allMerals[getIdFromType(1, _tokenId)] = MeralStats(_rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
+    emit InitMeral(1, _tokenId, _rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
   }
 
-  function transfer(uint8 _type, address from, address to, uint256 tokenId) external {
-    IERC721Like merals = IERC721Like(meralContracts[_type]);
-    merals.safeTransferFrom(from, to, tokenId);
+  function transfer(address from, address to, uint _id) external onlyGM {
+    IERC721 meralsAddress = IERC721(meralContracts[getTypeFromId(_id)]);
+    meralsAddress.safeTransferFrom(from, to, getTokenIdFromId(_id));
   }
 
-  // function registerMeral(uint8 _type, uint256 _tokenId) external onlyGM() {
+  function ownerOf(uint _id) external returns (address) {
+    IERC721 meralsAddress = IERC721(meralContracts[getTypeFromId(_id)]);
+    return meralsAddress.ownerOf(getTokenIdFromId(_id));
+  }
+
+  // function registerMeral(uint _type, uint _tokenId) external onlyGM() {
 
   //   bool success;
   //   bytes memory data;
 
-  //   (success, data) = register.delegatecall(abi.encodeWithSignature("registerMeral(uint8,uint256)", _type, _tokenId));
+  //   (success, data) = register.delegatecall(abi.encodeWithSignature("registerMeral(uint16,uint)", _type, _tokenId));
   //   require(success, "need success");
   // }
 
-  function changeHP(uint8 _type, uint256 _tokenId, uint16 offset, bool add, uint32 xp) external onlyGM() {
-
-    MeralStats storage _meral = allMerals[_type][_tokenId];
+  function changeHP(uint _id, uint16 offset, bool add, uint32 xp) external onlyGM {
+    MeralStats storage _meral = allMerals[_id];
 
     uint16 _HP = _meral.hp;
     uint16 newHP;
@@ -136,11 +140,11 @@ contract MeralManager {
       _meral.xp = sumXP > 100000 ? 100000 : sumXP;
     }
 
-    emit ChangeHP(_type, _tokenId, newHP, add, _meral.xp);
+    emit ChangeHP(getTypeFromId(_id), getTokenIdFromId(_id), newHP, add, _meral.xp);
   }
 
-  function changeXP(uint8 _type, uint256 _tokenId, uint32 offset, bool add) external onlyGM() {
-    MeralStats storage _meral = allMerals[_type][_tokenId];
+  function changeXP(uint _id, uint32 offset, bool add) external onlyGM {
+    MeralStats storage _meral = allMerals[_id];
 
     uint32 _XP = _meral.xp;
     uint32 newXP;
@@ -160,28 +164,28 @@ contract MeralManager {
 
     _meral.xp = newXP;
 
-    emit ChangeXP(_type, _tokenId, newXP, add);
+    emit ChangeXP(getTypeFromId(_id), getTokenIdFromId(_id), newXP, add);
   }
 
-  function changeStats(uint8 _type, uint256 _tokenId, uint16 _atk, uint16 _def, uint16 _spd) external onlyGM() {
-    MeralStats storage _meral = allMerals[_type][_tokenId];
+  function changeStats(uint _id, uint16 _atk, uint16 _def, uint16 _spd) external onlyGM {
+    MeralStats storage _meral = allMerals[_id];
     _meral.atk = _atk;
     _meral.def = _def;
     _meral.spd = _spd;
 
-    emit ChangeStats(_type, _tokenId, _atk, _def, _spd);
+    emit ChangeStats(getTypeFromId(_id), getTokenIdFromId(_id), _atk, _def, _spd);
   }
 
-  function changeElement(uint8 _type, uint256 _tokenId, uint8 _element) external onlyGM() {
-    MeralStats storage _meral = allMerals[_type][_tokenId];
+  function changeElement(uint _id, uint8 _element) external onlyGM {
+    MeralStats storage _meral = allMerals[_id];
     _meral.element = _element;
 
-    emit ChangeElement(_type, _tokenId, _element);
+    emit ChangeElement(getTypeFromId(_id), getTokenIdFromId(_id), _element);
   }
 
 
   /*///////////////////////////////////////////////////////////////
-                  PUBLIC VIEW FUNCTIONS
+                  MODIFIERS
   //////////////////////////////////////////////////////////////*/
 
   /**
@@ -197,9 +201,19 @@ contract MeralManager {
                   PUBLIC VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function getMeral(uint8 _type, uint256 _tokenId) external view returns (MeralStats memory) {
-    return allMerals[_type][_tokenId];
+  // INTERNAL ID
+  function getMeralById(uint _id) external view returns (MeralStats memory) {
+    return allMerals[_id];
   }
+
+  // CONTRACT TYPE & TOKENID
+  function getMeral(uint _type, uint _tokenId) external view returns (MeralStats memory) {
+    return allMerals[getIdFromType(_type, _tokenId)];
+  }
+
+
+
+
 
 
 }

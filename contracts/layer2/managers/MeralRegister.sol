@@ -26,7 +26,7 @@ contract MeralRegister {
   // include game masters
   mapping(address => bool) public gmAddresses;
 
-  IERC721Like public merals;
+  IERC721 public merals;
   address public admin;
   address public register;
 
