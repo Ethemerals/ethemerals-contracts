@@ -1,23 +1,24 @@
- // SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.3;
 
 import "hardhat/console.sol";
-import "./IEthemerals.sol";
+
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import "./WildsCalculate.sol";
+import "../../IEthemerals.sol";
 
 
-contract WildsAdminActions {
+contract _Wilds {
   /*///////////////////////////////////////////////////////////////
                   EVENTS
   //////////////////////////////////////////////////////////////*/
-  event LandChange(uint16 id, uint256 timestamp, uint16 baseDefence);
+  event LandChange(uint16 id, uint16 baseDefence);
   event Staked(uint16 landId, uint16 tokenId, uint8 stakeAction, bool meral);
-  event Unstaked(uint16 tokenId, uint32 rewards);
-  event LCPChange(uint16 landId, uint16 tokenId, uint256 change);
+  event Unstaked(uint16 tokenId, uint16 score, uint32 rewards);
   event RaidStatusChange(uint16 id, uint8 RaidStatus);
   event DeathKissed(uint16 tokenId, uint16 deathId);
   event Swapped(uint16 tokenId, uint16 swapperId);
-  event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType);
-
+  event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType, uint16 value);
 
 
   /*///////////////////////////////////////////////////////////////
@@ -40,6 +41,7 @@ contract WildsAdminActions {
   // [attack, attackAll, heal, healAll, magicAttack, speedAttack, enrage, concentrate]
   uint8[] public staminaCosts = [30,60,40,90,40,40,50,50];
   uint8 private extraDefBonus = 140; // DAILED already
+  uint16 private baseDefence = 2800; //
 
   struct StakeEvent {
     uint256 timestamp;
@@ -81,33 +83,5 @@ contract WildsAdminActions {
   address public staking;
   address public actions;
   bool public paused;
-
-
-  function emergencyUnstake(uint16 _landId) external {
-    require(msg.sender == admin, "admin only");
-    _adminUnstake(slots[_landId][StakeAction.DEFEND]);
-    _adminUnstake(slots[_landId][StakeAction.ATTACK]);
-    _adminUnstake(slots[_landId][StakeAction.LOOT]);
-    _adminUnstake(slots[_landId][StakeAction.BIRTH]);
-    delete slots[_landId][StakeAction.DEFEND];
-    delete slots[_landId][StakeAction.ATTACK];
-    delete slots[_landId][StakeAction.LOOT];
-    delete slots[_landId][StakeAction.BIRTH];
-    delete stakeEvents[_landId];
-  }
-
-  /*///////////////////////////////////////////////////////////////
-                  PRIVATE INTERNAL FUNCTIONS
-  //////////////////////////////////////////////////////////////*/
-  function _adminUnstake(uint16[] storage _slots) private {
-    for(uint16 i = 0; i < _slots.length; i++) {
-      merals.safeTransferFrom(address(this), stakes[_slots[i]].owner, _slots[i]);
-      delete stakes[_slots[i]];
-
-      emit Unstaked(_slots[i], 0);
-    }
-  }
-
-
 
 }

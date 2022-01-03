@@ -5,7 +5,7 @@ import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "./WildsCalculate.sol";
-import "./IEthemerals.sol";
+import "../../IEthemerals.sol";
 
 
 contract Wilds is ERC721Holder, WildsCalculate {

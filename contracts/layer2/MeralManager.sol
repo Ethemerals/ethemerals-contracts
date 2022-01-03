@@ -4,7 +4,7 @@ pragma solidity ^0.8.3;
 
 import "hardhat/console.sol";
 
-import "./interfaces/interfaces.sol";
+import "../interfaces/interfaces.sol";
 
 contract MeralManager {
 

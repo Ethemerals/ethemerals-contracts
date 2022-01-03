@@ -3,7 +3,7 @@ pragma solidity ^0.8.3;
 
 import "hardhat/console.sol";
 import "../WildsCalculate.sol";
-import "../IEthemerals.sol";
+import "../../../IEthemerals.sol";
 
 
 contract WildsActionsV2 is WildsCalculate {

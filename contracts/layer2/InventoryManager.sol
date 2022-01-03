@@ -5,9 +5,6 @@ pragma solidity ^0.8.3;
 import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "./IEthemerals.sol";
-
-
 
 contract InventoryManager is ERC721Holder {
 

@@ -2,9 +2,9 @@
 pragma solidity ^0.8.3;
 
 import "hardhat/console.sol";
-import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "./interfaces/interfaces.sol";
 
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import "../interfaces/interfaces.sol";
 
 contract Onsen is ERC721Holder {
 
