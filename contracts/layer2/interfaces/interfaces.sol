@@ -57,12 +57,12 @@ interface IMeralManager {
     uint8 subclass;
   }
 
-  function transfer(address from, address to, uint tokenId) external;
-  function ownerOf(uint tokenId) external returns (address);
-  function changeHP(uint _tokenId, uint16 offset, bool add, uint32 xp) external;
-  function changeXP(uint _tokenId, uint32 offset, bool add) external;
-  function changeStats(uint _tokenId, uint16 _atk, uint16 _def, uint16 _spd) external;
-  function changeElement(uint _tokenId, uint8 _element) external;
+  function transfer(address from, address to, uint _id) external;
+  function ownerOf(uint _id) external returns (address);
+  function changeHP(uint _id, uint16 offset, bool add, uint32 _xp) external;
+  function changeXP(uint _id, uint32 offset, bool add) external;
+  function changeStats(uint _id, uint16 _atk, uint16 _def, uint16 _spd) external;
+  function changeElement(uint _id, uint8 _element) external;
   function getMeralById(uint _id) external view returns (MeralStats memory);
   function getMeral(uint _type, uint _tokenId) external view returns (MeralStats memory);
 

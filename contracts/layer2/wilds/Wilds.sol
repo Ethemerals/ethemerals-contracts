@@ -4,19 +4,17 @@ pragma solidity ^0.8.3;
 import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+
 import "./WildsCalculate.sol";
-import "../managers/MeralParser.sol";
 import "../interfaces/interfaces.sol";
-// import "../../IEthemerals.sol";
 
-
-contract Wilds is ERC721Holder, WildsCalculate, MeralParser {
+contract Wilds is ERC721Holder, WildsCalculate {
   /*///////////////////////////////////////////////////////////////
                   EVENTS
   //////////////////////////////////////////////////////////////*/
   event LandChange(uint16 landId, uint timestamp, uint16 baseDefence);
   event Staked(uint16 landId, uint Id, uint8 stakeAction, bool meral);
-  event Unstaked(uint Id, uint32 rewards);
+  event Unstaked(uint Id, uint32 xp);
   event LCPChange(uint16 landId, uint Id, uint change);
   event RaidStatusChange(uint16 landId, uint8 RaidStatus);
   event DeathKissed(uint Id, uint deathId);
@@ -210,19 +208,19 @@ contract Wilds is ERC721Holder, WildsCalculate, MeralParser {
 
     if(_action == StakeAction.DEFEND) {
       require(landPlots[_landId].raidStatus != RaidStatus.RAIDING, "no reinforcements");
-      (success, data) = staking.delegatecall(abi.encodeWithSignature("defend(uint16,uint)", _landId, _Id));
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("defend(uint16,uint256)", _landId, _Id));
     }
     if(_action == StakeAction.LOOT) {
       require(slots[_landId][StakeAction.DEFEND].length > 0, "need defender");
-      (success, data) = staking.delegatecall(abi.encodeWithSignature("loot(uint16,uint)", _landId, _Id));
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("loot(uint16,uint256)", _landId, _Id));
     }
     if(_action == StakeAction.BIRTH) {
       require(slots[_landId][StakeAction.DEFEND].length > 0, "need defender");
-      (success, data) = staking.delegatecall(abi.encodeWithSignature("birth(uint16,uint)", _landId, _Id));
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("birth(uint16,uint256)", _landId, _Id));
     }
     if(_action == StakeAction.ATTACK) {
       require(landPlots[_landId].raidStatus != RaidStatus.DEFAULT, "not raidable");
-      (success, data) = staking.delegatecall(abi.encodeWithSignature("attack(uint16,uint)", _landId, _Id));
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("attack(uint16,uint256)", _landId, _Id));
     }
 
     require(success, "need success");
@@ -249,13 +247,13 @@ contract Wilds is ERC721Holder, WildsCalculate, MeralParser {
 
     if(_stake.stakeAction == StakeAction.DEFEND) {
       require(landPlots[_stake.landId].raidStatus != RaidStatus.RAIDING, 'in a raid');
-      (success, data) = staking.delegatecall(abi.encodeWithSignature("undefend(uint16,uint)", _stake.landId, _Id));
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("undefend(uint16,uint256)", _stake.landId, _Id));
     }
     if(_stake.stakeAction == StakeAction.LOOT) {
-      (success, data) = staking.delegatecall(abi.encodeWithSignature("unloot(uint16,uint)", _stake.landId, _Id));
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("unloot(uint16,uint256)", _stake.landId, _Id));
     }
     if(_stake.stakeAction == StakeAction.BIRTH) {
-      (success, data) = staking.delegatecall(abi.encodeWithSignature("unbirth(uint16,uint)", _stake.landId, _Id));
+      (success, data) = staking.delegatecall(abi.encodeWithSignature("unbirth(uint16,uint256)", _stake.landId, _Id));
     }
 
     require(success, "need success");
@@ -271,7 +269,7 @@ contract Wilds is ERC721Holder, WildsCalculate, MeralParser {
     require(paused == false, 'paused');
     bool success;
     bytes memory data;
-    (success, data) = staking.delegatecall(abi.encodeWithSignature("deathKiss(uint,uint)", _Id, _deathId));
+    (success, data) = staking.delegatecall(abi.encodeWithSignature("deathKiss(uint256,uint256)", _Id, _deathId));
 
     require(success, "need success");
   }
@@ -284,7 +282,7 @@ contract Wilds is ERC721Holder, WildsCalculate, MeralParser {
     require(paused == false, 'paused');
     bool success;
     bytes memory data;
-    (success, data) = staking.delegatecall(abi.encodeWithSignature("swapDefenders(uint,uint)", _Id, _swapperId));
+    (success, data) = staking.delegatecall(abi.encodeWithSignature("swapDefenders(uint256,uint256)", _Id, _swapperId));
 
     require(success, "need success");
   }
@@ -297,7 +295,7 @@ contract Wilds is ERC721Holder, WildsCalculate, MeralParser {
     require(paused == false, 'paused');
     bool success;
     bytes memory data;
-    (success, data) = actions.delegatecall(abi.encodeWithSignature("raidAction(uint,uint,uint)", toId, fromId, actionType));
+    (success, data) = actions.delegatecall(abi.encodeWithSignature("raidAction(uint256,uint256,uint256)", toId, fromId, actionType));
 
     require(success, "need success");
   }

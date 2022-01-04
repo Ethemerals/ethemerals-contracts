@@ -58,7 +58,7 @@ describe('Onsen', function () {
 
 		const Wilds = await ethers.getContractFactory('Wilds');
 
-		wilds = await Wilds.deploy(meralsL2.address, wildsAdminActions.address, wildsStaking.address, wildsActions.address);
+		wilds = await Wilds.deploy(meralManager.address, wildsAdminActions.address, wildsStaking.address, wildsActions.address);
 		await wilds.deployed();
 
 		const Onsen = await ethers.getContractFactory('Onsen');
@@ -145,7 +145,7 @@ describe('Onsen', function () {
 	};
 
 	describe('Onsen hp and xp gains', function () {
-		it.only('relax and gain', async function () {
+		it('relax and gain', async function () {
 			let type = 1;
 			let tokenId = 1;
 			let id = await meralManager.getIdFromType(type, tokenId);

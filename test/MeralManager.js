@@ -58,7 +58,7 @@ describe('Meral Manager', function () {
 
 		const Wilds = await ethers.getContractFactory('Wilds');
 
-		wilds = await Wilds.deploy(meralsL2.address, wildsAdminActions.address, wildsStaking.address, wildsActions.address);
+		wilds = await Wilds.deploy(meralManager.address, wildsAdminActions.address, wildsStaking.address, wildsActions.address);
 		await wilds.deployed();
 
 		const Onsen = await ethers.getContractFactory('Onsen');

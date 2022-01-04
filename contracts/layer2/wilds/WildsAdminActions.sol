@@ -2,22 +2,22 @@
 pragma solidity ^0.8.3;
 
 import "hardhat/console.sol";
-import "../../IEthemerals.sol";
+
+import "../interfaces/interfaces.sol";
 
 
 contract WildsAdminActions {
   /*///////////////////////////////////////////////////////////////
                   EVENTS
   //////////////////////////////////////////////////////////////*/
-  event LandChange(uint16 id, uint256 timestamp, uint16 baseDefence);
-  event Staked(uint16 landId, uint16 tokenId, uint8 stakeAction, bool meral);
-  event Unstaked(uint16 tokenId, uint32 rewards);
-  event LCPChange(uint16 landId, uint16 tokenId, uint256 change);
-  event RaidStatusChange(uint16 id, uint8 RaidStatus);
-  event DeathKissed(uint16 tokenId, uint16 deathId);
-  event Swapped(uint16 tokenId, uint16 swapperId);
-  event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType);
-
+  event LandChange(uint16 landId, uint timestamp, uint16 baseDefence);
+  event Staked(uint16 landId, uint Id, uint8 stakeAction, bool meral);
+  event Unstaked(uint Id, uint32 xp);
+  event LCPChange(uint16 landId, uint Id, uint change);
+  event RaidStatusChange(uint16 landId, uint8 RaidStatus);
+  event DeathKissed(uint Id, uint deathId);
+  event Swapped(uint Id, uint swapperId);
+  event RaidAction(uint toId, uint fromId, uint8 actionType);
 
 
   /*///////////////////////////////////////////////////////////////
@@ -29,11 +29,11 @@ contract WildsAdminActions {
   // ALL LANDSPLOTS
   mapping (uint16 => Land) public landPlots;
   // MERALS => STAKES
-  mapping (uint16 => Stake) public stakes;
+  mapping (uint => Stake) public stakes;
   // LAND PLOTS => MERALS => LCP
-  mapping (uint16 => mapping(uint16 => uint256)) private landClaimPoints;
+  mapping (uint16 => mapping(uint => uint)) private landClaimPoints;
   // land PLOTS => StakeAction Slots => MERALS
-  mapping (uint16 => mapping(StakeAction => uint16[])) private slots;
+  mapping (uint16 => mapping(StakeAction => uint[])) private slots;
   // land PLOTS => StakeEvents
   mapping (uint16 => StakeEvent[]) public stakeEvents;
 
@@ -42,13 +42,13 @@ contract WildsAdminActions {
   uint8 private extraDefBonus = 140; // DAILED already
 
   struct StakeEvent {
-    uint256 timestamp;
+    uint timestamp;
     uint16 baseDefence;
   }
 
   struct Stake {
     address owner;
-    uint256 lastAction;
+    uint lastAction;
     uint16 entryPointer;
     uint16 damage;
     uint16 health;
@@ -65,9 +65,9 @@ contract WildsAdminActions {
   }
 
   struct Land {
-    uint256 remainingELFx;
-    uint256 emissionRate; // DEV IMPROVE
-    uint256 lastRaid;
+    uint remainingELFx;
+    uint emissionRate; // DEV IMPROVE
+    uint lastRaid;
     uint16 initBaseDefence;
     uint16 baseDefence;
     RaidStatus raidStatus; // 0 - default, 1 - raidable, 2 - currently raiding
@@ -75,12 +75,13 @@ contract WildsAdminActions {
     ItemPool petPool;
   }
 
-  IEthemerals merals;
+  IMeralManager merals;
   address public admin;
   address public adminActions;
   address public staking;
   address public actions;
   bool public paused;
+
 
 
   function emergencyUnstake(uint16 _landId) external {
@@ -99,9 +100,9 @@ contract WildsAdminActions {
   /*///////////////////////////////////////////////////////////////
                   PRIVATE INTERNAL FUNCTIONS
   //////////////////////////////////////////////////////////////*/
-  function _adminUnstake(uint16[] storage _slots) private {
-    for(uint16 i = 0; i < _slots.length; i++) {
-      merals.safeTransferFrom(address(this), stakes[_slots[i]].owner, _slots[i]);
+  function _adminUnstake(uint[] storage _slots) private {
+    for(uint i = 0; i < _slots.length; i++) {
+      merals.transfer(address(this), stakes[_slots[i]].owner, _slots[i]);
       delete stakes[_slots[i]];
 
       emit Unstaked(_slots[i], 0);
