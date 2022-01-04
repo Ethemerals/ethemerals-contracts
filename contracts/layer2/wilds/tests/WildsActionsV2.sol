@@ -1,22 +1,25 @@
- // SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.3;
 
 import "hardhat/console.sol";
+
+
 import "../WildsCalculate.sol";
-import "../../../IEthemerals.sol";
+import "../../interfaces/interfaces.sol";
 
 
 contract WildsActionsV2 is WildsCalculate {
   /*///////////////////////////////////////////////////////////////
                   EVENTS
   //////////////////////////////////////////////////////////////*/
-  event LandChange(uint16 id, uint256 timestamp, uint16 baseDefence);
-  event Staked(uint16 landId, uint16 tokenId, uint8 stakeAction, bool meral);
-  event Unstaked(uint16 tokenId, uint32 rewards);
-  event RaidStatusChange(uint16 id, uint8 RaidStatus);
-  event DeathKissed(uint16 tokenId, uint16 deathId);
-  event Swapped(uint16 tokenId, uint16 swapperId);
-  event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType);
+  event LandChange(uint16 landId, uint timestamp, uint16 baseDefence);
+  event Staked(uint16 landId, uint Id, uint8 stakeAction, bool meral);
+  event Unstaked(uint Id, uint32 xp);
+  event LCPChange(uint16 landId, uint Id, uint change);
+  event RaidStatusChange(uint16 landId, uint8 RaidStatus);
+  event DeathKissed(uint Id, uint deathId);
+  event Swapped(uint Id, uint swapperId);
+  event RaidAction(uint toId, uint fromId, uint8 actionType);
 
 
   /*///////////////////////////////////////////////////////////////
@@ -28,11 +31,11 @@ contract WildsActionsV2 is WildsCalculate {
   // ALL LANDSPLOTS
   mapping (uint16 => Land) public landPlots;
   // MERALS => STAKES
-  mapping (uint16 => Stake) public stakes;
+  mapping (uint => Stake) public stakes;
   // LAND PLOTS => MERALS => LCP
-  mapping (uint16 => mapping(uint16 => uint256)) private landClaimPoints;
+  mapping (uint16 => mapping(uint => uint)) private landClaimPoints;
   // land PLOTS => StakeAction Slots => MERALS
-  mapping (uint16 => mapping(StakeAction => uint16[])) private slots;
+  mapping (uint16 => mapping(StakeAction => uint[])) private slots;
   // land PLOTS => StakeEvents
   mapping (uint16 => StakeEvent[]) public stakeEvents;
 
@@ -41,13 +44,13 @@ contract WildsActionsV2 is WildsCalculate {
   uint8 private extraDefBonus = 140; // DAILED already
 
   struct StakeEvent {
-    uint256 timestamp;
+    uint timestamp;
     uint16 baseDefence;
   }
 
   struct Stake {
     address owner;
-    uint256 lastAction;
+    uint lastAction;
     uint16 entryPointer;
     uint16 damage;
     uint16 health;
@@ -64,9 +67,9 @@ contract WildsActionsV2 is WildsCalculate {
   }
 
   struct Land {
-    uint256 remainingELFx;
-    uint256 emissionRate; // DEV IMPROVE
-    uint256 lastRaid;
+    uint remainingELFx;
+    uint emissionRate; // DEV IMPROVE
+    uint lastRaid;
     uint16 initBaseDefence;
     uint16 baseDefence;
     RaidStatus raidStatus; // 0 - default, 1 - raidable, 2 - currently raiding
@@ -74,7 +77,7 @@ contract WildsActionsV2 is WildsCalculate {
     ItemPool petPool;
   }
 
-  IEthemerals merals;
+  IMeralManager merals;
   address public admin;
   address public adminActions;
   address public staking;
@@ -87,29 +90,30 @@ contract WildsActionsV2 is WildsCalculate {
 // defend - knight, paladin - take damage for another, 12hr cd
 // dodge - all rogues - 50% chance to ignore all next damage, 12hr cd
 
-  // [attack, attackAll, magicAttack, speedAttack, enrage, heal, healAll, concentrate]
-  function raidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType) external {
-    Stake storage toStake = stakes[toTokenId];
-    Stake storage fromStake = stakes[fromTokenId];
-    IEthemerals.Meral memory toMeral = merals.getEthemeral(toTokenId);
-    IEthemerals.Meral memory fromMeral = merals.getEthemeral(fromTokenId);
 
-    uint16 maxStamina = 100; // TODO get from inventory
+  function raidAction(uint toId, uint fromId, uint8 actionType) external {
+    Stake storage toStake = stakes[toId];
+    Stake storage fromStake = stakes[fromId];
+    IMeralManager.MeralStats memory toMeral = merals.getMeralById(toId);
+    IMeralManager.MeralStats memory fromMeral = merals.getMeralById(fromId);
+
+    uint16 maxStamina = fromMeral.maxStamina;
     uint16 staminaCost = staminaCosts[actionType]; // HARDCODED
-    uint16 stamina = calculateStamina(fromTokenId);
+    uint16 stamina = calculateStamina(fromId);
 
     require(fromStake.owner == msg.sender, "owner only");
     require(stamina + staminaCost <= maxStamina, 'need stamina');
     require(fromStake.stakeAction == StakeAction.DEFEND || fromStake.stakeAction == StakeAction.ATTACK, "DEFers or ATKers");
     require(fromStake.landId == toStake.landId, "raid group only");
-    require(uint16(calculateDamage(fromTokenId)) < fromMeral.score, "alive only");
+    require(calculateDamage(fromId) < fromMeral.hp, "alive only");
     // TODO restrict by class
 
     fromStake.stamina = stamina + staminaCost;
     fromStake.lastAction = block.timestamp;
 
+    // [attack, attackAll, magicAttack, speedAttack, enrage, heal, healAll, concentrate]
     if(actionType == 0) {
-      toStake.damage -= uint16(calculateDefendedDamage(fromMeral.atk, toMeral.def));
+      toStake.damage -= uint16(calculateDefendedDamage(fromMeral.atk, toMeral.def)) ;
     }
     if(actionType == 1) {
       _attackAll(toStake.landId, fromMeral.atk, toStake.stakeAction);
@@ -121,10 +125,10 @@ contract WildsActionsV2 is WildsCalculate {
       toStake.damage += uint16(calculateSpdDamage(fromMeral.atk, toMeral.def, fromMeral.spd));
     }
     if(actionType == 4) {
-      _changeBaseDefence(fromTokenId, false);
+      _changeBaseDefence(fromId, false);
     }
     if(actionType == 5) {
-      // require(toStake.stakeAction == fromStake.stakeAction, 'allies only');
+      require(toStake.stakeAction == fromStake.stakeAction, 'allies only');
       toStake.health += uint16(calculateLightMagicDamage(fromMeral.def, fromMeral.spd));
     }
     if(actionType == 6) {
@@ -132,34 +136,35 @@ contract WildsActionsV2 is WildsCalculate {
       _healAll(fromStake, fromMeral.def, fromMeral.spd);
     }
     if(actionType == 7) {
-      require(stakes[fromTokenId].stakeAction == StakeAction.DEFEND, "defender only");
-      _changeBaseDefence(fromTokenId, true);
+      require(stakes[fromId].stakeAction == StakeAction.DEFEND, "defender only");
+      _changeBaseDefence(fromId, true);
     }
 
-    emit RaidAction(toTokenId, fromTokenId, actionType);
+    emit RaidAction(toId, fromId, actionType);
   }
 
   function _attackAll(uint16 _landId, uint16 atk, StakeAction _stakeAction) private {
-    uint16[] memory enemies = slots[_landId][_stakeAction];
+    uint[] memory enemies = slots[_landId][_stakeAction];
 
-    for(uint16 i = 0; i < enemies.length; i ++) {
+    for(uint i = 0; i < enemies.length; i ++) {
       Stake storage toStake = stakes[enemies[i]];
-      IEthemerals.Meral memory toMeral = merals.getEthemeral(enemies[i]);
-      toStake.damage += uint16(calculateDefendedDamage(atk, toMeral.def));
+      IMeralManager.MeralStats memory _toMeral = merals.getMeralById(enemies[i]);
+      toStake.damage += uint16(calculateDefendedDamage(atk, _toMeral.def));
     }
   }
 
   function _healAll(Stake storage fromStake, uint16 def, uint16 spd) private {
-    uint16[] memory allies = slots[fromStake.landId][fromStake.stakeAction];
+    uint[] memory allies = slots[fromStake.landId][fromStake.stakeAction];
 
-    for(uint16 i = 0; i < allies.length; i ++) {
+    for(uint i = 0; i < allies.length; i ++) {
       Stake storage toStake = stakes[allies[i]];
       toStake.health += uint16(calculateLightMagicDamage(def, spd));
     }
   }
 
-  function _changeBaseDefence(uint16 fromTokenId, bool add) private {
-    Land storage _land = landPlots[stakes[fromTokenId].landId];
+  function _changeBaseDefence(uint fromId, bool add) private {
+    uint16 _landId = stakes[fromId].landId;
+    Land storage _land = landPlots[_landId];
     uint16 _baseDefence;
     if(add) {
       _baseDefence = _land.baseDefence + 400;
@@ -170,7 +175,8 @@ contract WildsActionsV2 is WildsCalculate {
     }
     // REGISTER EVENT
     StakeEvent memory _stakeEvent = StakeEvent(block.timestamp, _land.baseDefence);
-    stakeEvents[stakes[fromTokenId].landId].push(_stakeEvent);
+    stakeEvents[_landId].push(_stakeEvent);
+    emit LandChange(_landId, block.timestamp, _land.baseDefence);
   }
 
 
@@ -178,15 +184,15 @@ contract WildsActionsV2 is WildsCalculate {
                   PRIVATE VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function calculateDamage(uint16 _tokenId) public view returns (uint256) {
-    Stake memory _stake = stakes[_tokenId];
+  function calculateDamage(uint _Id) public view returns (uint) {
+    Stake memory _stake = stakes[_Id];
     Land memory _landPlots = landPlots[_stake.landId];
-    IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
-    uint256 damage = _stake.damage;
+    IMeralManager.MeralStats memory _meral = merals.getMeralById(_Id);
+    uint damage = _stake.damage;
 
     // FAST FORWARD TO ENTRY POINT
     if(_stake.stakeAction == StakeAction.DEFEND) {
-      for(uint256 i = _stake.entryPointer; i < stakeEvents[_stake.landId].length - 1; i ++) {
+      for(uint i = _stake.entryPointer; i < stakeEvents[_stake.landId].length - 1; i ++) {
         StakeEvent memory _event = stakeEvents[_stake.landId][i];
         damage += calculateChange(_event.timestamp, stakeEvents[_stake.landId][i+1].timestamp, _meral.def, _event.baseDefence);
       }
@@ -196,7 +202,7 @@ contract WildsActionsV2 is WildsCalculate {
 
     // FAST FORWARD TO ENTRY POINT
     if(_stake.stakeAction == StakeAction.BIRTH) {
-      for(uint256 i = _stake.entryPointer; i < stakeEvents[_stake.landId].length - 1; i ++) {
+      for(uint i = _stake.entryPointer; i < stakeEvents[_stake.landId].length - 1; i ++) {
         StakeEvent memory _event = stakeEvents[_stake.landId][i];
         damage += calculateChange(_event.timestamp, stakeEvents[_stake.landId][i+1].timestamp, _meral.def + _meral.spd, _event.baseDefence);
       }
@@ -205,20 +211,19 @@ contract WildsActionsV2 is WildsCalculate {
     }
 
     damage = _stake.health >= damage ? 0 : damage - _stake.health;
-    return damage > _meral.score ? _meral.score : damage;
+    return damage > _meral.hp ? _meral.hp : damage;
   }
 
-  function calculateStamina(uint16 _tokenId) public view returns(uint16) {
-    Stake memory _stake = stakes[_tokenId];
-    IEthemerals.Meral memory _meral = merals.getEthemeral(_tokenId);
+  function calculateStamina(uint _Id) public view returns(uint16) {
+    Stake memory _stake = stakes[_Id];
+    IMeralManager.MeralStats memory _meral = merals.getMeralById(_Id);
 
-    uint256 change = block.timestamp - _stake.lastAction;
-    uint256 scaledSpeed = safeScale(_meral.spd, 1600, 2, 10);
-    uint256 gain = change / 3600 * scaledSpeed;
+    uint change = block.timestamp - _stake.lastAction;
+    uint scaledSpeed = safeScale(_meral.spd, 1600, 2, 10);
+    uint gain = change / 3600 * scaledSpeed;
 
     return uint16(gain > _stake.stamina ? 0 : _stake.stamina - gain);
   }
-
 
 
 }

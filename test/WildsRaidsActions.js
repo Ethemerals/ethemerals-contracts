@@ -1,27 +1,42 @@
 const { expect } = require('chai');
 const { ethers } = require('hardhat');
+const { MeralsL1Data, minMaxAvg, getRandomInt } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe('Wilds', function () {
+describe('Wilds Raid Actions', function () {
 	let merals;
+	let meralsL2;
+	let escrowL1;
+	let escrowL2;
+	let meralManager;
 	let wilds;
+	let onsen;
 	let admin;
 	let player1;
 	let player2;
 	let player3;
 	let [min, hour, day, week] = [60, 3600, 86400, 604800];
+	let allMeralStats = MeralsL1Data();
+
+	const getOGMeralId = async (tokenId) => {
+		let type = 1;
+		let id = await meralManager.getIdFromType(type, tokenId);
+		return id;
+	};
 
 	const makeRaid = async () => {
 		const landId = 1;
 		for (let i = 1; i <= 5; i++) {
-			await merals.changeScore(i, 1000, true, 0);
-			await wilds.stake(landId, i, 1);
+			let id = await getOGMeralId(i);
+			await meralManager.changeHP(id, 1000, true, 0);
+			await wilds.stake(landId, id, 1);
 			await network.provider.send('evm_increaseTime', [hour]);
 			await network.provider.send('evm_mine');
 		}
 
 		for (let i = 11; i <= 15; i++) {
-			await wilds.connect(player1).stake(landId, i, 4);
+			let id = getOGMeralId(i);
+			await wilds.connect(player1).stake(landId, id, 4);
 			await network.provider.send('evm_increaseTime', [hour]);
 			await network.provider.send('evm_mine');
 		}
@@ -30,10 +45,29 @@ describe('Wilds', function () {
 	beforeEach(async function () {
 		[admin, player1, player2, player3] = await ethers.getSigners();
 
+		// L1 Contracts
 		const Ethemerals = await ethers.getContractFactory('Ethemerals');
-		merals = await Ethemerals.deploy('https://api.ethemerals.com/api/', '0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ADDRESS
+		merals = await Ethemerals.deploy('https://api.ethemerals.com/api/', '0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ELF ADDRESS
 		await merals.deployed();
 
+		const EscrowL1 = await ethers.getContractFactory('EscrowOnL1');
+		escrowL1 = await EscrowL1.deploy(merals.address); // RANDOM ADDRESS
+		await escrowL1.deployed();
+
+		// L2 Contracts
+		const EthemeralsL2 = await ethers.getContractFactory('EthemeralsOnL2');
+		meralsL2 = await EthemeralsL2.deploy('https://api.ethemerals.com/api/', '0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ELF ADDRESS
+		await meralsL2.deployed();
+
+		const EscrowL2 = await ethers.getContractFactory('EscrowOnL2');
+		escrowL2 = await EscrowL2.deploy(meralsL2.address); // RANDOM ADDRESS
+		await escrowL2.deployed();
+
+		const MeralManager = await ethers.getContractFactory('MeralManager');
+		meralManager = await MeralManager.deploy('0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // TODO random register
+		await meralManager.deployed();
+
+		// L2 Wilds Contracts
 		const WildsAdminActions = await ethers.getContractFactory('WildsAdminActions');
 		wildsAdminActions = await WildsAdminActions.deploy();
 		await wildsAdminActions.deployed();
@@ -47,10 +81,15 @@ describe('Wilds', function () {
 		await wildsActions.deployed();
 
 		const Wilds = await ethers.getContractFactory('Wilds');
-		wilds = await Wilds.deploy(merals.address, wildsAdminActions.address, wildsStaking.address, wildsActions.address);
+
+		wilds = await Wilds.deploy(meralManager.address, wildsAdminActions.address, wildsStaking.address, wildsActions.address);
 		await wilds.deployed();
 
-		// mint merals
+		const Onsen = await ethers.getContractFactory('Onsen');
+		onsen = await Onsen.deploy(meralManager.address);
+		await onsen.deployed();
+
+		// L1 mint merals
 		await merals.mintReserve();
 		await merals.setPrice(0);
 		await merals.setMaxMeralIndex(1000);
@@ -62,13 +101,59 @@ describe('Wilds', function () {
 		await merals.mintMeralsAdmin(player2.address, 10); // ID starts at 21
 		await merals.mintMeralsAdmin(player3.address, 10); // ID starts at 31
 
+		// DO ESCROW ON L1
 		// set and allow delegates
-		await merals.addDelegate(wilds.address, true);
-		await merals.addDelegate(admin.address, true);
-		await merals.setAllowDelegates(true);
+		await merals.addDelegate(escrowL1.address, true);
+		await merals.connect(admin).setAllowDelegates(true);
 		await merals.connect(player1).setAllowDelegates(true);
 		await merals.connect(player2).setAllowDelegates(true);
 		await merals.connect(player3).setAllowDelegates(true);
+
+		for (let i = 1; i <= 10; i++) {
+			await escrowL1.transfer(i);
+		}
+		for (let i = 11; i <= 20; i++) {
+			await escrowL1.connect(player1).transfer(i);
+		}
+		for (let i = 21; i <= 30; i++) {
+			await escrowL1.connect(player2).transfer(i);
+		}
+		for (let i = 31; i <= 40; i++) {
+			await escrowL1.connect(player3).transfer(i);
+		}
+
+		// NODE BACKEND MIGRATE TO L2
+		await meralManager.addGM(admin.address, true);
+		// await meralManager.addGM(onsen.address, true);
+		await meralManager.addMeralContracts(1, meralsL2.address);
+
+		await meralsL2.setEscrowAddress(admin.address);
+		for (let i = 1; i <= 10; i++) {
+			let meralStats = allMeralStats[i];
+			await meralsL2.migrateMeral(i, admin.address, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd);
+			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+		}
+		for (let i = 11; i <= 20; i++) {
+			let meralStats = allMeralStats[i];
+			await meralsL2.migrateMeral(i, player1.address, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd);
+			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+		}
+		for (let i = 21; i <= 30; i++) {
+			let meralStats = allMeralStats[i];
+			await meralsL2.migrateMeral(i, player2.address, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd);
+			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+		}
+		for (let i = 31; i <= 40; i++) {
+			let meralStats = allMeralStats[i];
+			await meralsL2.migrateMeral(i, player3.address, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd);
+			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+		}
+
+		// set and allow delegates
+		await meralManager.addGM(onsen.address, true);
+		await meralManager.addGM(wilds.address, true);
+		await meralsL2.addDelegate(meralManager.address, true);
+		// await meralsL2.addDelegate(meralManager.address, true);
 	});
 
 	describe('GO RAIDING WITH ACTIONS!', function () {
@@ -78,47 +163,55 @@ describe('Wilds', function () {
 
 			// LAND2
 			for (let i = 6; i <= 10; i++) {
-				await wilds.stake(landId + 1, i, 1);
+				let id = getOGMeralId(i);
+				await wilds.stake(landId + 1, id, 1);
 				await network.provider.send('evm_increaseTime', [hour]);
 				await network.provider.send('evm_mine');
 			}
 
 			for (let i = 16; i <= 20; i++) {
-				await wilds.connect(player1).stake(landId + 1, i, 4);
+				let id = getOGMeralId(i);
+				await wilds.connect(player1).stake(landId + 1, id, 4);
 				await network.provider.send('evm_increaseTime', [hour]);
 				await network.provider.send('evm_mine');
 			}
 
 			// LOOTERS
 			for (let i = 21; i <= 25; i++) {
-				await wilds.connect(player2).stake(landId, i, 2);
+				let id = getOGMeralId(i);
+				await wilds.connect(player2).stake(landId, id, 2);
 				await network.provider.send('evm_increaseTime', [hour]);
 				await network.provider.send('evm_mine');
 			}
 
 			// use stamina
-			await wilds.raidAction(1, 2, 6);
-			await wilds.raidAction(1, 2, 6);
-			await merals.changeScore(1, 1000, false, 0);
+			let id = getOGMeralId(1);
+			let id2 = getOGMeralId(2);
+			await wilds.raidAction(id, id2, 6);
+			await wilds.raidAction(id, id2, 6);
+			await meralManager.changeHP(id, 1000, false, 0);
 
-			await expect(wilds.raidAction(11, 12, 1)).to.be.revertedWith('need success'); // only owner
-			await expect(wilds.raidAction(1, 2, 6)).to.be.revertedWith('need success'); // need stamina
-			await expect(wilds.connect(player2).raidAction(1, 21, 1)).to.be.revertedWith('need success'); // DEFers or ATKers
-			await expect(wilds.connect(player1).raidAction(6, 15, 1)).to.be.revertedWith('need success'); // raid group only
-			await expect(wilds.raidAction(11, 1, 0)).to.be.revertedWith('need success'); // alive only
+			await expect(wilds.raidAction(getOGMeralId(11), getOGMeralId(12), 1)).to.be.revertedWith('need success'); // only owner
+			await expect(wilds.raidAction(id, id2, 6)).to.be.revertedWith('need success'); // need stamina
+			await expect(wilds.connect(player2).raidAction(id, getOGMeralId(21), 1)).to.be.revertedWith('need success'); // DEFers or ATKers
+			await expect(wilds.connect(player1).raidAction(getOGMeralId(6), getOGMeralId(15), 1)).to.be.revertedWith('need success'); // raid group only
+			await expect(wilds.raidAction(getOGMeralId(11), id, 0)).to.be.revertedWith('need success'); // alive only
 
-			// type specific
-			await expect(wilds.connect(player1).raidAction(1, 11, 5)).to.be.revertedWith('need success'); // allies only
-			await expect(wilds.connect(player1).raidAction(1, 11, 6)).to.be.revertedWith('need success'); // allies only
-			await expect(wilds.connect(player1).raidAction(1, 11, 7)).to.be.revertedWith('need success'); // defenders only
+			// // type specific
+			let id11 = getOGMeralId(11);
+			await expect(wilds.connect(player1).raidAction(id, id11, 5)).to.be.revertedWith('need success'); // allies only
+			await expect(wilds.connect(player1).raidAction(id, id11, 6)).to.be.revertedWith('need success'); // allies only
+			await expect(wilds.connect(player1).raidAction(id, id11, 7)).to.be.revertedWith('need success'); // defenders only
 		});
 
 		it('Should calculate damage in raidActions', async function () {
 			await makeRaid();
 
 			for (let i = 1; i < 20; i++) {
-				let meral = await merals.getEthemeral(i);
-				let meral2 = await merals.getEthemeral(i + 10);
+				let id = getOGMeralId(i);
+				let id_b = getOGMeralId(i + 10);
+				let meral = await meralManager.getMeralById(id);
+				let meral2 = await meralManager.getMeralById(id_b);
 				let defDamage = await wilds.calculateDefendedDamage(meral.atk, meral2.def);
 				let lightMagic = await wilds.calculateLightMagicDamage(meral.def, meral.spd);
 				let darkMagic = await wilds.calculateDarkMagicDamage(meral.atk, meral.def);
@@ -132,8 +225,8 @@ describe('Wilds', function () {
 
 			// single attack
 			let raidAction = 0;
-			let defender = 2;
-			let attacker = 11;
+			let defender = getOGMeralId(2);
+			let attacker = getOGMeralId(11);
 			let damage = 0;
 			let count = 0;
 
@@ -166,8 +259,8 @@ describe('Wilds', function () {
 			//attack all
 			let raidAction = 0;
 			let staminaCost = await wilds.staminaCosts(raidAction);
-			let defender = 2;
-			let attacker = 11;
+			let defender = getOGMeralId(2);
+			let attacker = getOGMeralId(11);
 
 			let attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(0);
@@ -193,14 +286,15 @@ describe('Wilds', function () {
 			//attack all
 			let raidAction = 1;
 			let staminaCost = await wilds.staminaCosts(raidAction);
-			let defender = 2;
-			let attacker = 11;
+			let defender = getOGMeralId(2);
+			let attacker = getOGMeralId(11);
 
 			let attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(0);
 
 			for (let i = 1; i <= 5; i++) {
-				let value = await wilds.stakes(i);
+				let id = getOGMeralId(i);
+				let value = await wilds.stakes(id);
 				expect(value.damage).to.equal(0);
 			}
 
@@ -209,7 +303,8 @@ describe('Wilds', function () {
 			expect(attackerStake.stamina).to.equal(staminaCost);
 
 			for (let i = 1; i <= 5; i++) {
-				let value = await wilds.stakes(i);
+				let id = getOGMeralId(i);
+				let value = await wilds.stakes(id);
 				expect(value.damage).to.be.gt(0);
 				console.log(value.damage);
 			}
@@ -224,9 +319,9 @@ describe('Wilds', function () {
 			let attackAllAction = 1;
 			let healAction = 5;
 			let staminaCost = await wilds.staminaCosts(healAction);
-			let defender = 1;
-			let attacker = 11;
-			let healer = 5;
+			let defender = getOGMeralId(1);
+			let attacker = getOGMeralId(11);
+			let healer = getOGMeralId(5);
 
 			let attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(0);
@@ -236,7 +331,7 @@ describe('Wilds', function () {
 			let preHealDamage = await wilds.calculateDamage(defender);
 			console.log(preHealDamage);
 
-			let preHealStamina = await wilds.stakes(2);
+			let preHealStamina = await wilds.stakes(getOGMeralId(2));
 			expect(preHealStamina.stamina).to.equal(0);
 			await wilds.raidAction(defender, healer, healAction);
 			let postHealDamage = await wilds.calculateDamage(defender);
@@ -254,11 +349,11 @@ describe('Wilds', function () {
 			let attackAllAction = 1;
 			let healAction = 6;
 			let staminaCost = await wilds.staminaCosts(healAction);
-			let defender = 1;
-			let attacker = 11;
-			let healer = 1;
+			let defender = getOGMeralId(1);
+			let attacker = getOGMeralId(11);
+			let healer = getOGMeralId(1);
 
-			let meral = await merals.getEthemeral(healer);
+			let meral = await meralManager.getMeralById(healer);
 			console.log(meral.atk, meral.def, meral.spd);
 
 			let attackerStake = await wilds.stakes(attacker);
@@ -271,14 +366,16 @@ describe('Wilds', function () {
 			expect(preHealStamina.stamina).to.equal(0);
 
 			for (let i = 1; i <= 5; i++) {
-				let preHealDamage = await wilds.calculateDamage(i);
+				let id = getOGMeralId(i);
+				let preHealDamage = await wilds.calculateDamage(id);
 				console.log(preHealDamage);
 			}
 
 			await wilds.raidAction(defender, healer, healAction);
 
 			for (let i = 1; i <= 5; i++) {
-				let postHealDamage = await wilds.calculateDamage(i);
+				let id = getOGMeralId(i);
+				let postHealDamage = await wilds.calculateDamage(id);
 				console.log(postHealDamage);
 			}
 
@@ -291,13 +388,13 @@ describe('Wilds', function () {
 			//attack all
 			let raidAction = 2;
 			let staminaCost = await wilds.staminaCosts(raidAction);
-			let defender = 5;
-			let attacker = 11;
+			let defender = getOGMeralId(5);
+			let attacker = getOGMeralId(11);
 
 			let attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(0);
 
-			let value = await wilds.stakes(1);
+			let value = await wilds.stakes(getOGMeralId(1));
 			expect(value.damage).to.equal(0);
 
 			await wilds.connect(player1).raidAction(defender, attacker, raidAction);
@@ -313,13 +410,13 @@ describe('Wilds', function () {
 			//attack all
 			let raidAction = 3;
 			let staminaCost = await wilds.staminaCosts(raidAction);
-			let defender = 5;
-			let attacker = 11;
+			let defender = getOGMeralId(5);
+			let attacker = getOGMeralId(11);
 
 			let attackerStake = await wilds.stakes(attacker);
 			expect(attackerStake.stamina).to.equal(0);
 
-			let value = await wilds.stakes(1);
+			let value = await wilds.stakes(getOGMeralId(1));
 			expect(value.damage).to.equal(0);
 
 			await wilds.connect(player1).raidAction(defender, attacker, raidAction);
@@ -335,8 +432,8 @@ describe('Wilds', function () {
 			//attack all
 			let raidAction = 7;
 			let staminaCost = await wilds.staminaCosts(raidAction);
-			let defender = 5;
-			let attacker = 11;
+			let defender = getOGMeralId(5);
+			let attacker = getOGMeralId(11);
 
 			let defenderStake = await wilds.stakes(defender);
 			expect(defenderStake.stamina).to.equal(0);
@@ -358,8 +455,8 @@ describe('Wilds', function () {
 			//attack all
 			let raidAction = 4;
 			let staminaCost = await wilds.staminaCosts(raidAction);
-			let defender = 5;
-			let attacker = 11;
+			let defender = getOGMeralId(5);
+			let attacker = getOGMeralId(11);
 
 			let stake = await wilds.stakes(attacker);
 			expect(stake.stamina).to.equal(0);
@@ -380,8 +477,8 @@ describe('Wilds', function () {
 			await makeRaid();
 
 			let raidAction = 0;
-			let defender = 5;
-			let attacker = 11;
+			let defender = getOGMeralId(5);
+			let attacker = getOGMeralId(11);
 
 			await wilds.connect(player1).raidAction(defender, attacker, raidAction);
 			let damage = await wilds.calculateDamage(defender);
@@ -395,7 +492,7 @@ describe('Wilds', function () {
 
 			await wilds.connect(player1).raidAction(defender, attacker, raidAction);
 			let damage2 = await wilds.calculateDamage(defender);
-			expect(damage2).to.be.lt(damage);
+			expect(parseInt(damage2)).to.be.lt(parseInt(damage));
 		});
 	});
 });

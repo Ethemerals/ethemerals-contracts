@@ -195,7 +195,7 @@ contract WildsStaking is WildsCalculate {
 
   }
 
-  function swapDefenders(uint _id, uint16 _swapperId) external {
+  function swapDefenders(uint _id, uint _swapperId) external {
     Stake memory _stake = stakes[_id];
     require(_stake.owner == msg.sender, 'owner only');
     require(_stake.stakeAction == StakeAction.DEFEND, 'not defending');

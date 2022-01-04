@@ -295,7 +295,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
     require(paused == false, 'paused');
     bool success;
     bytes memory data;
-    (success, data) = actions.delegatecall(abi.encodeWithSignature("raidAction(uint256,uint256,uint256)", toId, fromId, actionType));
+    (success, data) = actions.delegatecall(abi.encodeWithSignature("raidAction(uint256,uint256,uint8)", toId, fromId, actionType));
 
     require(success, "need success");
   }
