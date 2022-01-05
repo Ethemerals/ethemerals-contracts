@@ -1,0 +1,21 @@
+meralsL2 deployed to: 0x953D960bbfbAB46abcAAe3007e39a9E13069a466
+meralManager deployed to: 0x70016006e7fA497e0FF0f4ff9Abc0f9B405b687b
+wildsAdminActions deployed to: 0x57ebb98a8DA6A26eF6bd3F438Df5700B14492C85
+wildsStaking deployed to: 0xe5cfcead704c557a9647B40232D5D5D3eBE96558
+wildsActions deployed to: 0x7F07f90A6C372507eCd5fD264C528e408105cC4B
+wilds deployed to: 0xCE70Ca3fB7Bb85B809053D51CcdFa670AF637094
+onsen deployed to: 0x66851a235cbA924Ffe9C12E14Da3E745D7D7Fe70
+
+
+contracts:
+
+meralsL2: 0xc4f58128c639a6E2d9F2EcFA7C9c5EC00D0965B3
+meralManager: 0x177E93232F4c2bc3903aDdBe5f8cBACCa7A451a7
+
+wilds: 0xbFe21e0B7268795DCb42e1EC367B2AEe0817B970
+onsen: 0x14D0c9eae41Ac31E874d61746c2a088C168468e0
+
+https://oneclickdapp.com/cigar-voltage - meralsL2
+https://oneclickdapp.com/scratch-simon - wilds
+https://oneclickdapp.com/cotton-disco - meralManager
+https://oneclickdapp.com/atlanta-janet - onsen

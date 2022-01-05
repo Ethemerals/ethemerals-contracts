@@ -5,9 +5,8 @@ import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "../interfaces/interfaces.sol";
-import "../managers/MeralParser.sol";
 
-contract Onsen is ERC721Holder, MeralParser {
+contract Onsen is ERC721Holder {
 
   /*///////////////////////////////////////////////////////////////
                   STORAGE
@@ -50,12 +49,16 @@ contract Onsen is ERC721Holder, MeralParser {
     rewardsMod = _rewardsMod;
   }
 
+  function setMeralManager(address _meralManager) external {
+    require(msg.sender == admin, "admin only");
+    merals = IMeralManager(_meralManager);
+  }
+
   /*///////////////////////////////////////////////////////////////
                   PUBLIC FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
   function stake(uint _Id) external {
-    // TODO allow non merals
     merals.transfer(msg.sender, address(this), _Id);
     stakes[_Id] = Stake({owner: msg.sender, timestamp: block.timestamp});
   }

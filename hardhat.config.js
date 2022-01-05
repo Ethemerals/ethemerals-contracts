@@ -46,9 +46,23 @@ module.exports = {
 			url: `https://mainnet.infura.io/v3/${process.env.PROJECTID}`, // or any other JSON-RPC provider
 			accounts: [`0x${process.env.PRIV_KEY}`],
 		},
+		mumbai: {
+			url: `https://polygon-mumbai.infura.io/v3/${process.env.PROJECTID}`,
+			accounts: [`0x${process.env.PRIV_KEY}`],
+		},
+		matic: {
+			url: 'https://speedy-nodes-nyc.moralis.io/<YOUR_ID>/polygon/mainnet',
+			accounts: [`0x${process.env.PRIV_KEY}`],
+		},
 	},
 	etherscan: {
-		apiKey: process.env.ETHERSCAN_APIKEY,
+		// apiKey: {
+		// 	mainnet: process.env.ETHERSCAN_APIKEY,
+		// 	rinkeby: process.env.ETHERSCAN_APIKEY,
+		// 	polygon = process.env.POLYGONSCAN_APIKEY,
+		// 	polygonMumbai = process.env.POLYGONSCAN_APIKEY,
+		// },
+		apiKey: process.env.POLYGONSCAN_APIKEY,
 	},
 	gasReporter: {
 		currency: 'USD',
@@ -60,3 +74,4 @@ module.exports = {
 // npx hardhat node
 // npx hardhat run scripts/deploy.js --network localhost
 // npx hardhat run scripts/deploy.js --network rinkeby
+// npx hardhat verify --constructor-args ./scripts/arguments/ethemeralArguments.js --network mumbai 0xc4f58128c639a6E2d9F2EcFA7C9c5EC00D0965B3

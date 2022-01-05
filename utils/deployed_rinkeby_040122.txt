@@ -1,0 +1,16 @@
+onsen deployed to: 0x74908bF819F643CC065460895bB1DCDd3021581d
+wilds deployed to: 0x9a5C24a660Ab9C0d73E0e40f07721c8462bF923B
+wildsAdminActions deployed to: 0x8DC39388E27CFA1587c2d3CAd191452f34E8eD4e
+wildsStaking deployed to: 0x0fD99bC9DF4aDc1A9f2684CC126B9E8f41d511d3
+wildsActions deployed to: 0x22D5C08a6616D6765941922a749f74D3F8B72d1E
+meralManager deployed to: 0x26ea7B282Dba059eB35b9eF1CC71a103f2Cd44d4
+escrowL2 deployed to: 0x746EF66C7016D56A271EC0404B960ff16a6Ec308
+meralsL2 deployed to: 0x8aC7949B9Dd1FA8Ec2077d7e14B08Fe4fa8697Ae
+escrowL1 deployed to: 0x2bC20E0b87b689bB21c2EAc0F5c3A913057Ab760
+add meral contracts
+add onsen gm
+add wilds gm
+set admin as gm
+add meralManager delegate
+set admin as escrow
+Error: cannot estimate gas; transaction may fail or may require manual gas limit (error={"name":"ProviderError","code":3,"_isProviderError":true,"data":"0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002143616c6c6572206973206e6f742074686520657363726f7720636f6e7472616374000000000000000000000000000000

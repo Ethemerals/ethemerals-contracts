@@ -144,7 +144,7 @@ describe('Onsen', function () {
 		return parseInt(((now - start) * parseInt(scaled)) / mod);
 	};
 
-	describe('Onsen hp and xp gains', function () {
+	describe.only('Onsen hp and xp gains', function () {
 		it('relax and gain', async function () {
 			let type = 1;
 			let tokenId = 1;

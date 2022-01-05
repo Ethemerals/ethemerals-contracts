@@ -10,6 +10,16 @@ const tokens = [
 		subClass: 'Dragoon',
 	},
 	{
+		atk: '670',
+		atkBonus: '45',
+		bgId: '12',
+		def: '218',
+		defBonus: '47',
+		spd: '500',
+		spdBonus: '96',
+		subClass: 'Dragoon',
+	},
+	{
 		atk: '643',
 		atkBonus: '9',
 		bgId: '21',

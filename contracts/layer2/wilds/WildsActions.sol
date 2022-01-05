@@ -170,8 +170,8 @@ contract WildsActions is WildsCalculate {
       _baseDefence = _land.baseDefence + 400;
       _land.baseDefence = _baseDefence > 4000 ? 4000 : _baseDefence;
     } else {
-      _baseDefence = _land.baseDefence < 800 ? 400 : _land.baseDefence - 400;
-      _land.baseDefence = _baseDefence < 1000 ? 1000 : _baseDefence;
+      _baseDefence = _land.baseDefence < 1000 ? 400 : _land.baseDefence - 400;
+      _land.baseDefence = _baseDefence < 2000 ? 2000 : _baseDefence;
     }
     // REGISTER EVENT
     StakeEvent memory _stakeEvent = StakeEvent(block.timestamp, _land.baseDefence);

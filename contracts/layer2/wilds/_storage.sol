@@ -5,20 +5,20 @@ import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "./WildsCalculate.sol";
-import "../../IEthemerals.sol";
-
+import "../interfaces/interfaces.sol";
 
 contract _Wilds {
   /*///////////////////////////////////////////////////////////////
                   EVENTS
   //////////////////////////////////////////////////////////////*/
-  event LandChange(uint16 id, uint16 baseDefence);
-  event Staked(uint16 landId, uint16 tokenId, uint8 stakeAction, bool meral);
-  event Unstaked(uint16 tokenId, uint16 score, uint32 rewards);
-  event RaidStatusChange(uint16 id, uint8 RaidStatus);
-  event DeathKissed(uint16 tokenId, uint16 deathId);
-  event Swapped(uint16 tokenId, uint16 swapperId);
-  event RaidAction(uint16 toTokenId, uint16 fromTokenId, uint8 actionType, uint16 value);
+  event LandChange(uint16 landId, uint timestamp, uint16 baseDefence);
+  event Staked(uint16 landId, uint Id, uint8 stakeAction, bool meral);
+  event Unstaked(uint Id, uint32 xp);
+  event LCPChange(uint16 landId, uint Id, uint change);
+  event RaidStatusChange(uint16 landId, uint8 RaidStatus);
+  event DeathKissed(uint Id, uint deathId);
+  event Swapped(uint Id, uint swapperId);
+  event RaidAction(uint toId, uint fromId, uint8 actionType);
 
 
   /*///////////////////////////////////////////////////////////////
@@ -30,27 +30,26 @@ contract _Wilds {
   // ALL LANDSPLOTS
   mapping (uint16 => Land) public landPlots;
   // MERALS => STAKES
-  mapping (uint16 => Stake) public stakes;
+  mapping (uint => Stake) public stakes;
   // LAND PLOTS => MERALS => LCP
-  mapping (uint16 => mapping(uint16 => uint256)) private landClaimPoints;
+  mapping (uint16 => mapping(uint => uint)) private landClaimPoints;
   // land PLOTS => StakeAction Slots => MERALS
-  mapping (uint16 => mapping(StakeAction => uint16[])) private slots;
+  mapping (uint16 => mapping(StakeAction => uint[])) private slots;
   // land PLOTS => StakeEvents
   mapping (uint16 => StakeEvent[]) public stakeEvents;
 
   // [attack, attackAll, heal, healAll, magicAttack, speedAttack, enrage, concentrate]
   uint8[] public staminaCosts = [30,60,40,90,40,40,50,50];
   uint8 private extraDefBonus = 140; // DAILED already
-  uint16 private baseDefence = 2800; //
 
   struct StakeEvent {
-    uint256 timestamp;
+    uint timestamp;
     uint16 baseDefence;
   }
 
   struct Stake {
     address owner;
-    uint256 lastAction;
+    uint lastAction;
     uint16 entryPointer;
     uint16 damage;
     uint16 health;
@@ -67,9 +66,9 @@ contract _Wilds {
   }
 
   struct Land {
-    uint256 remainingELFx;
-    uint256 emissionRate; // DEV IMPROVE
-    uint256 lastRaid;
+    uint remainingELFx;
+    uint emissionRate; // DEV IMPROVE
+    uint lastRaid;
     uint16 initBaseDefence;
     uint16 baseDefence;
     RaidStatus raidStatus; // 0 - default, 1 - raidable, 2 - currently raiding
@@ -77,11 +76,12 @@ contract _Wilds {
     ItemPool petPool;
   }
 
-  IEthemerals merals;
+  IMeralManager merals;
   address public admin;
   address public adminActions;
   address public staking;
   address public actions;
   bool public paused;
+
 
 }
