@@ -21,7 +21,7 @@ contract MeralManager is MeralParser {
   //////////////////////////////////////////////////////////////*/
 
   // TYPE OF MERAL => INDEX OF MERAL / 0 = Ethemerals, 1 = Monsters
-  mapping (uint => MeralStats) public allMerals;
+  mapping (uint => Meral) public allMerals;
 
   // include game masters
   mapping(address => bool) public gmAddresses;
@@ -33,7 +33,7 @@ contract MeralManager is MeralParser {
   address public admin;
   address public register;
 
-  struct MeralStats {
+  struct Meral {
     uint32 xp;
     uint16 hp;
     uint16 maxHp;
@@ -82,17 +82,16 @@ contract MeralManager is MeralParser {
   //////////////////////////////////////////////////////////////*/
 
   function registerOGMeral(
-      uint _tokenId,
-      uint16 _score,
-      uint32 _rewards,
-      uint16 _atk,
-      uint16 _def,
-      uint16 _spd,
-      uint8 _element,
-      uint8 _subclass
-    ) external onlyGM {
-
-    allMerals[getIdFromType(1, _tokenId)] = MeralStats(_rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
+    uint _tokenId,
+    uint16 _score,
+    uint32 _rewards,
+    uint16 _atk,
+    uint16 _def,
+    uint16 _spd,
+    uint8 _element,
+    uint8 _subclass
+  ) external onlyGM {
+    allMerals[getIdFromType(1, _tokenId)] = Meral(_rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
     emit InitMeral(1, _tokenId, _rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
   }
 
@@ -116,7 +115,7 @@ contract MeralManager is MeralParser {
   // }
 
   function changeHP(uint _id, uint16 offset, bool add, uint32 xp) external onlyGM {
-    MeralStats storage _meral = allMerals[_id];
+    Meral storage _meral = allMerals[_id];
 
     uint16 _HP = _meral.hp;
     uint16 newHP;
@@ -144,7 +143,7 @@ contract MeralManager is MeralParser {
   }
 
   function changeXP(uint _id, uint32 offset, bool add) external onlyGM {
-    MeralStats storage _meral = allMerals[_id];
+    Meral storage _meral = allMerals[_id];
 
     uint32 _XP = _meral.xp;
     uint32 newXP;
@@ -168,7 +167,7 @@ contract MeralManager is MeralParser {
   }
 
   function changeStats(uint _id, uint16 _atk, uint16 _def, uint16 _spd) external onlyGM {
-    MeralStats storage _meral = allMerals[_id];
+    Meral storage _meral = allMerals[_id];
     _meral.atk = _atk;
     _meral.def = _def;
     _meral.spd = _spd;
@@ -177,7 +176,7 @@ contract MeralManager is MeralParser {
   }
 
   function changeElement(uint _id, uint8 _element) external onlyGM {
-    MeralStats storage _meral = allMerals[_id];
+    Meral storage _meral = allMerals[_id];
     _meral.element = _element;
 
     emit ChangeElement(getTypeFromId(_id), getTokenIdFromId(_id), _element);
@@ -202,12 +201,12 @@ contract MeralManager is MeralParser {
   //////////////////////////////////////////////////////////////*/
 
   // INTERNAL ID
-  function getMeralById(uint _id) external view returns (MeralStats memory) {
+  function getMeralById(uint _id) external view returns (Meral memory) {
     return allMerals[_id];
   }
 
   // CONTRACT TYPE & TOKENID
-  function getMeral(uint _type, uint _tokenId) external view returns (MeralStats memory) {
+  function getMeral(uint _type, uint _tokenId) external view returns (Meral memory) {
     return allMerals[getIdFromType(_type, _tokenId)];
   }
 

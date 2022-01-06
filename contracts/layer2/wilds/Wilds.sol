@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 
 import "./WildsCalculate.sol";
 import "../interfaces/interfaces.sol";
+import "../interfaces/IMeralManager.sol";
 
 contract Wilds is ERC721Holder, WildsCalculate {
   /*///////////////////////////////////////////////////////////////
@@ -316,7 +317,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
   function calculateDamage(uint _Id) public view returns (uint) {
     Stake memory _stake = stakes[_Id];
     Land memory _landPlots = landPlots[_stake.landId];
-    IMeralManager.MeralStats memory _meral = merals.getMeralById(_Id);
+    IMeralManager.Meral memory _meral = merals.getMeralById(_Id);
     uint damage = _stake.damage;
 
     // FAST FORWARD TO ENTRY POINT
@@ -345,7 +346,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
 
   function calculateStamina(uint _Id) public view returns(uint16) {
     Stake memory _stake = stakes[_Id];
-    IMeralManager.MeralStats memory _meral = merals.getMeralById(_Id);
+    IMeralManager.Meral memory _meral = merals.getMeralById(_Id);
 
     uint change = block.timestamp - _stake.lastAction;
     uint scaledSpeed = safeScale(_meral.spd, 1600, 2, 10);

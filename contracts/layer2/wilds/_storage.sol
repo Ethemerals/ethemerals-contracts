@@ -6,6 +6,7 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "./WildsCalculate.sol";
 import "../interfaces/interfaces.sol";
+import "../interfaces/IMeralManager.sol";
 
 contract _Wilds {
   /*///////////////////////////////////////////////////////////////

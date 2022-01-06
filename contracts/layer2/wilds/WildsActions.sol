@@ -6,7 +6,7 @@ import "hardhat/console.sol";
 
 import "./WildsCalculate.sol";
 import "../interfaces/interfaces.sol";
-
+import "../interfaces/IMeralManager.sol";
 
 contract WildsActions is WildsCalculate {
   /*///////////////////////////////////////////////////////////////
@@ -94,8 +94,8 @@ contract WildsActions is WildsCalculate {
   function raidAction(uint toId, uint fromId, uint8 actionType) external {
     Stake storage toStake = stakes[toId];
     Stake storage fromStake = stakes[fromId];
-    IMeralManager.MeralStats memory toMeral = merals.getMeralById(toId);
-    IMeralManager.MeralStats memory fromMeral = merals.getMeralById(fromId);
+    IMeralManager.Meral memory toMeral = merals.getMeralById(toId);
+    IMeralManager.Meral memory fromMeral = merals.getMeralById(fromId);
 
     uint16 maxStamina = fromMeral.maxStamina;
     uint16 staminaCost = staminaCosts[actionType]; // HARDCODED
@@ -148,7 +148,7 @@ contract WildsActions is WildsCalculate {
 
     for(uint i = 0; i < enemies.length; i ++) {
       Stake storage toStake = stakes[enemies[i]];
-      IMeralManager.MeralStats memory _toMeral = merals.getMeralById(enemies[i]);
+      IMeralManager.Meral memory _toMeral = merals.getMeralById(enemies[i]);
       toStake.damage += uint16(calculateDefendedDamage(atk, _toMeral.def));
     }
   }
@@ -187,7 +187,7 @@ contract WildsActions is WildsCalculate {
   function calculateDamage(uint _Id) public view returns (uint) {
     Stake memory _stake = stakes[_Id];
     Land memory _landPlots = landPlots[_stake.landId];
-    IMeralManager.MeralStats memory _meral = merals.getMeralById(_Id);
+    IMeralManager.Meral memory _meral = merals.getMeralById(_Id);
     uint damage = _stake.damage;
 
     // FAST FORWARD TO ENTRY POINT
@@ -216,7 +216,7 @@ contract WildsActions is WildsCalculate {
 
   function calculateStamina(uint _Id) public view returns(uint16) {
     Stake memory _stake = stakes[_Id];
-    IMeralManager.MeralStats memory _meral = merals.getMeralById(_Id);
+    IMeralManager.Meral memory _meral = merals.getMeralById(_Id);
 
     uint change = block.timestamp - _stake.lastAction;
     uint scaledSpeed = safeScale(_meral.spd, 1600, 2, 10);

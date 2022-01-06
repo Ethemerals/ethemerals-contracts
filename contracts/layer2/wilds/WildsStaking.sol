@@ -5,7 +5,7 @@ import "hardhat/console.sol";
 
 import "./WildsCalculate.sol";
 import "../interfaces/interfaces.sol";
-
+import "../interfaces/IMeralManager.sol";
 
 contract WildsStaking is WildsCalculate {
   /*///////////////////////////////////////////////////////////////
@@ -158,7 +158,7 @@ contract WildsStaking is WildsCalculate {
     require(_id != _deathId, 'no kiss yourself');
     Stake memory _stake = stakes[_id];
     uint16 _landId = _stake.landId;
-    IMeralManager.MeralStats memory _meral = merals.getMeralById(_id);
+    IMeralManager.Meral memory _meral = merals.getMeralById(_id);
 
     uint damage = calculateDamage(_id);
 
@@ -238,7 +238,7 @@ contract WildsStaking is WildsCalculate {
   }
 
   function _attackerChange(uint16 _landId, uint _id, uint timestamp, bool add) private {
-    IMeralManager.MeralStats memory _meral = merals.getMeralById(_id); // TODO USE INVENTORY
+    IMeralManager.Meral memory _meral = merals.getMeralById(_id); // TODO USE INVENTORY
     uint scaledDamage = safeScale(_meral.atk, 1600, 80, 160);
     landPlots[_landId].baseDefence = add ? landPlots[_landId].baseDefence - uint16(scaledDamage) : landPlots[_landId].baseDefence + uint16(scaledDamage);
     _registerEvent(_landId, timestamp);
@@ -325,7 +325,7 @@ contract WildsStaking is WildsCalculate {
   function calculateDamage(uint _Id) public view returns (uint) {
     Stake memory _stake = stakes[_Id];
     Land memory _landPlots = landPlots[_stake.landId];
-    IMeralManager.MeralStats memory _meral = merals.getMeralById(_Id);
+    IMeralManager.Meral memory _meral = merals.getMeralById(_Id);
     uint damage = _stake.damage;
 
     // FAST FORWARD TO ENTRY POINT

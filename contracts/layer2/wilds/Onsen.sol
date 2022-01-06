@@ -5,6 +5,7 @@ import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "../interfaces/interfaces.sol";
+import "../interfaces/IMeralManager.sol";
 
 contract Onsen is ERC721Holder {
 
@@ -79,7 +80,7 @@ contract Onsen is ERC721Holder {
   //////////////////////////////////////////////////////////////*/
 
   function calculateChange(uint _Id) public view returns (uint16 score, uint32 rewards) {
-    IMeralManager.MeralStats memory _meral = merals.getMeralById(_Id); // TODO USE INVENTORY
+    IMeralManager.Meral memory _meral = merals.getMeralById(_Id); // TODO USE INVENTORY
     uint start = stakes[_Id].timestamp;
     uint end = block.timestamp;
     uint change = end - start;

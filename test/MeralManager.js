@@ -18,6 +18,30 @@ describe('Meral Manager', function () {
 	let [min, hour, day, week] = [60, 3600, 86400, 604800];
 	let allMeralStats = MeralsL1Data();
 
+	const getOGMeralId = async (tokenId) => {
+		let type = 1;
+		let id = await meralManager.getIdFromType(type, tokenId);
+		return id;
+	};
+
+	const makeRaid = async () => {
+		const landId = 1;
+		for (let i = 1; i <= 5; i++) {
+			let id = await getOGMeralId(i);
+			await meralManager.changeHP(id, 1000, true, 0);
+			await wilds.stake(landId, id, 1);
+			await network.provider.send('evm_increaseTime', [hour]);
+			await network.provider.send('evm_mine');
+		}
+
+		for (let i = 11; i <= 15; i++) {
+			let id = getOGMeralId(i);
+			await wilds.connect(player1).stake(landId, id, 4);
+			await network.provider.send('evm_increaseTime', [hour]);
+			await network.provider.send('evm_mine');
+		}
+	};
+
 	beforeEach(async function () {
 		[admin, player1, player2, player3] = await ethers.getSigners();
 
@@ -27,21 +51,21 @@ describe('Meral Manager', function () {
 		await merals.deployed();
 
 		const EscrowL1 = await ethers.getContractFactory('EscrowOnL1');
-		escrowL1 = await EscrowL1.deploy(merals.address); // RANDOM ADDRESS
+		escrowL1 = await EscrowL1.deploy(merals.address);
 		await escrowL1.deployed();
 
 		// L2 Contracts
-		const EthemeralsL2 = await ethers.getContractFactory('EthemeralsOnL2');
-		meralsL2 = await EthemeralsL2.deploy('https://api.ethemerals.com/api/', '0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ELF ADDRESS
-		await meralsL2.deployed();
-
-		const EscrowL2 = await ethers.getContractFactory('EscrowOnL2');
-		escrowL2 = await EscrowL2.deploy(meralsL2.address); // RANDOM ADDRESS
-		await escrowL2.deployed();
-
 		const MeralManager = await ethers.getContractFactory('MeralManager');
 		meralManager = await MeralManager.deploy('0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // TODO random register
 		await meralManager.deployed();
+
+		const EthemeralsL2 = await ethers.getContractFactory('EthemeralsOnL2');
+		meralsL2 = await EthemeralsL2.deploy(meralManager.address);
+		await meralsL2.deployed();
+
+		const EscrowL2 = await ethers.getContractFactory('EscrowOnL2');
+		escrowL2 = await EscrowL2.deploy(meralsL2.address);
+		await escrowL2.deployed();
 
 		// L2 Wilds Contracts
 		const WildsAdminActions = await ethers.getContractFactory('WildsAdminActions');
@@ -77,7 +101,17 @@ describe('Meral Manager', function () {
 		await merals.mintMeralsAdmin(player2.address, 10); // ID starts at 21
 		await merals.mintMeralsAdmin(player3.address, 10); // ID starts at 31
 
-		// DO ESCROW ON L1
+		// NODE BACKEND MINT (MIGRATE) TO L2
+		await meralManager.addGM(admin.address, true);
+		await meralManager.addGM(meralsL2.address, true);
+		await meralManager.addMeralContracts(1, meralsL2.address);
+		await meralsL2.setEscrowAddress(escrowL2.address);
+
+		for (let i = 1; i <= 40; i++) {
+			let meralStats = allMeralStats[i];
+			await meralsL2.migrateMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+		}
+
 		// set and allow delegates
 		await merals.addDelegate(escrowL1.address, true);
 		await merals.connect(admin).setAllowDelegates(true);
@@ -85,50 +119,37 @@ describe('Meral Manager', function () {
 		await merals.connect(player2).setAllowDelegates(true);
 		await merals.connect(player3).setAllowDelegates(true);
 
+		// DO ESCROW ON L1
 		for (let i = 1; i <= 10; i++) {
-			await escrowL1.transfer(i);
+			await escrowL1.deposit(i);
 		}
 		for (let i = 11; i <= 20; i++) {
-			await escrowL1.connect(player1).transfer(i);
+			await escrowL1.connect(player1).deposit(i);
 		}
 		for (let i = 21; i <= 30; i++) {
-			await escrowL1.connect(player2).transfer(i);
+			await escrowL1.connect(player2).deposit(i);
 		}
 		for (let i = 31; i <= 40; i++) {
-			await escrowL1.connect(player3).transfer(i);
+			await escrowL1.connect(player3).deposit(i);
 		}
 
-		// NODE BACKEND MIGRATE TO L2
-		await meralManager.addGM(admin.address, true);
-		// await meralManager.addGM(onsen.address, true);
-		await meralManager.addMeralContracts(1, meralsL2.address);
-
-		await meralsL2.setEscrowAddress(admin.address);
+		// DO ESCROW ON L2
 		for (let i = 1; i <= 10; i++) {
-			let meralStats = allMeralStats[i];
-			await meralsL2.migrateMeral(i, admin.address, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd);
-			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+			await escrowL2.transferToOwner(i, admin.address, i);
 		}
 		for (let i = 11; i <= 20; i++) {
-			let meralStats = allMeralStats[i];
-			await meralsL2.migrateMeral(i, player1.address, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd);
-			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+			await escrowL2.transferToOwner(i, player1.address, i);
 		}
 		for (let i = 21; i <= 30; i++) {
-			let meralStats = allMeralStats[i];
-			await meralsL2.migrateMeral(i, player2.address, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd);
-			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+			await escrowL2.transferToOwner(i, player2.address, i);
 		}
 		for (let i = 31; i <= 40; i++) {
-			let meralStats = allMeralStats[i];
-			await meralsL2.migrateMeral(i, player3.address, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd);
-			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+			await escrowL2.transferToOwner(i, player3.address, i);
 		}
 
-		// set and allow delegates
-		// await meralsL2.addDelegate(wilds.address, true);
-		// await meralsL2.addDelegate(admin.address, true);
-		// await meralsL2.addDelegate(onsen.address, true);
+		// // set and allow delegates
+		await meralManager.addGM(onsen.address, true);
+		await meralManager.addGM(wilds.address, true);
 		await meralsL2.addDelegate(meralManager.address, true);
 	});
 

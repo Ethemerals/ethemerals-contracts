@@ -3,7 +3,7 @@ const { ethers } = require('hardhat');
 const { MeralsL1Data, minMaxAvg, getRandomInt } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe('Wilds Birthing', function () {
+describe('Escrow Migration', function () {
 	let merals;
 	let meralsL2;
 	let escrowL1;
@@ -153,39 +153,132 @@ describe('Wilds Birthing', function () {
 		await meralsL2.addDelegate(meralManager.address, true);
 	});
 
-	describe('BIRTHING', function () {
-		it('Should slowly damage birthers', async function () {
-			const landId = 1;
+	const getXp = (now, start) => {
+		return parseInt((now - start) / 3600);
+	};
 
-			for (let i = 1; i <= 5; i++) {
-				let id = getOGMeralId(i);
-				let id_b = getOGMeralId(i + 10);
-				await meralManager.changeHP(id, 1000, true, 0);
-				await meralManager.changeHP(id_b, 1000, true, 0);
-				await network.provider.send('evm_increaseTime', [hour]);
-				await network.provider.send('evm_mine');
-				await wilds.stake(landId, id, 1);
-				await wilds.connect(player1).stake(landId, id_b, 3);
+	describe('Escrows', function () {
+		it('Should migrate merals to L2 and Back', async function () {
+			for (let i = 1; i <= 10; i++) {
+				let owner = await meralsL2.ownerOf(i);
+				expect(owner).to.equal(admin.address);
+			}
+			for (let i = 11; i <= 20; i++) {
+				let owner = await meralsL2.ownerOf(i);
+				expect(owner).to.equal(player1.address);
+			}
+			for (let i = 21; i <= 30; i++) {
+				let owner = await meralsL2.ownerOf(i);
+				expect(owner).to.equal(player2.address);
+			}
+			for (let i = 31; i <= 40; i++) {
+				let owner = await meralsL2.ownerOf(i);
+				expect(owner).to.equal(player3.address);
 			}
 
-			for (let i = 1; i <= 5; i++) {
-				let id = getOGMeralId(i + 20);
-				await wilds.connect(player2).stake(landId, id, 4);
+			for (let i = 1; i <= 40; i++) {
+				let owner = await merals.ownerOf(i);
+				expect(owner).to.equal(escrowL1.address);
 			}
 
-			await network.provider.send('evm_increaseTime', [day]);
-			await network.provider.send('evm_mine');
-
-			for (let i = 1; i <= 5; i++) {
-				let id = getOGMeralId(i + 10);
-				await wilds.unstake(id);
+			// BACK TO L1
+			for (let i = 1; i <= 10; i++) {
+				await escrowL2.deposit(i);
+			}
+			for (let i = 11; i <= 20; i++) {
+				await escrowL2.connect(player1).deposit(i);
+			}
+			for (let i = 21; i <= 30; i++) {
+				await escrowL2.connect(player2).deposit(i);
+			}
+			for (let i = 31; i <= 40; i++) {
+				await escrowL2.connect(player3).deposit(i);
 			}
 
-			for (let i = 1; i <= 5; i++) {
-				let id = getOGMeralId(i + 10);
-				let meral = await meralManager.getMeralById(id);
-				expect(meral.hp).to.be.lt(1000);
+			for (let i = 1; i <= 40; i++) {
+				let owner = await meralsL2.ownerOf(i);
+				expect(owner).to.equal(escrowL2.address);
 			}
+
+			// NODE ADMIN
+			for (let i = 1; i <= 10; i++) {
+				await escrowL1.transferToOwner(i, admin.address, i);
+			}
+			for (let i = 11; i <= 20; i++) {
+				await escrowL1.transferToOwner(i, player1.address, i);
+			}
+			for (let i = 21; i <= 30; i++) {
+				await escrowL1.transferToOwner(i, player2.address, i);
+			}
+			for (let i = 31; i <= 40; i++) {
+				await escrowL1.transferToOwner(i, player3.address, i);
+			}
+
+			for (let i = 1; i <= 10; i++) {
+				let owner = await merals.ownerOf(i);
+				expect(owner).to.equal(admin.address);
+			}
+			for (let i = 11; i <= 20; i++) {
+				let owner = await merals.ownerOf(i);
+				expect(owner).to.equal(player1.address);
+			}
+			for (let i = 21; i <= 30; i++) {
+				let owner = await merals.ownerOf(i);
+				expect(owner).to.equal(player2.address);
+			}
+			for (let i = 31; i <= 40; i++) {
+				let owner = await merals.ownerOf(i);
+				expect(owner).to.equal(player3.address);
+			}
+		});
+
+		it('Should Do Exceptions', async function () {
+			// BACK TO L1
+			for (let i = 1; i <= 10; i++) {
+				await escrowL2.deposit(i);
+			}
+			for (let i = 11; i <= 20; i++) {
+				await escrowL2.connect(player1).deposit(i);
+			}
+
+			for (let i = 1; i <= 10; i++) {
+				await escrowL1.transferToOwner(i, admin.address, i);
+			}
+			for (let i = 11; i <= 20; i++) {
+				await escrowL1.transferToOwner(i, player1.address, i);
+			}
+
+			for (let i = 1; i <= 10; i++) {
+				let owner = await merals.ownerOf(i);
+				expect(owner).to.equal(admin.address);
+			}
+
+			for (let i = 11; i <= 20; i++) {
+				let owner = await merals.ownerOf(i);
+				expect(owner).to.equal(player1.address);
+			}
+
+			// BACK TO L2
+			await escrowL1.pause();
+			await expect(escrowL1.connect(player1).deposit(11)).to.be.revertedWith('paused');
+			await escrowL1.unpause();
+			await expect(escrowL1.deposit(11)).to.be.revertedWith('ERC721: transfer of token that is not own');
+			await escrowL1.connect(player1).deposit(11);
+
+			await expect(escrowL2.transferToOwner(11, player1.address, 1)).to.be.revertedWith('already processed');
+			let nonce = await escrowL1.nonce();
+			await escrowL2.transferToOwner(11, player1.address, nonce);
+
+			await escrowL2.pause();
+			await expect(escrowL2.connect(player1).deposit(11)).to.be.revertedWith('paused');
+			await escrowL2.unpause();
+			await expect(escrowL2.deposit(11)).to.be.revertedWith('ERC721: transfer of token that is not own');
+			await escrowL2.connect(player1).deposit(11);
+
+			await expect(escrowL1.transferToOwner(11, player1.address, 1)).to.be.revertedWith('already processed');
+			nonce = await escrowL2.nonce();
+			await escrowL1.transferToOwner(11, player1.address, nonce);
+			await expect(escrowL1.transferToOwner(11, player1.address, 1)).to.be.revertedWith('not in escrow');
 		});
 	});
 });
