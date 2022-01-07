@@ -47,7 +47,7 @@ module.exports = {
 			accounts: [`0x${process.env.PRIV_KEY}`],
 		},
 		mumbai: {
-			url: `https://polygon-mumbai.infura.io/v3/${process.env.PROJECTID}`,
+			url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.PROJECTID}`,
 			accounts: [`0x${process.env.PRIV_KEY}`],
 		},
 		matic: {
