@@ -30,7 +30,6 @@ contract EscrowOnL1 is Ownable, Pausable, ERC721Holder, MeralParser {
 
   struct Deposit {
     address owner;
-    uint timestamp;
   }
 
   /*///////////////////////////////////////////////////////////////
@@ -63,7 +62,7 @@ contract EscrowOnL1 is Ownable, Pausable, ERC721Holder, MeralParser {
     require(contractAddress.ownerOf((_tokenId)) == msg.sender, "only owner");
 
     uint256 _id = getIdFromType(_type, _tokenId);
-    allDeposits[_id] = Deposit(msg.sender, block.timestamp);
+    allDeposits[_id] = Deposit(msg.sender);
     contractAddress.safeTransferFrom(msg.sender, address(this), _tokenId);
 
     emit TokenDeposit(_id, msg.sender, block.timestamp);
@@ -83,7 +82,7 @@ contract EscrowOnL1 is Ownable, Pausable, ERC721Holder, MeralParser {
     uint256 _id = getIdFromType(_type, _tokenId);
     Deposit storage _deposit = allDeposits[_id];
     require(_deposit.owner == msg.sender, "only owner");
-    require(block.timestamp - _deposit.timestamp >= 3600, "cooldown");
+    // require(block.timestamp - _deposit.timestamp >= 3600, "cooldown"); // 20% gas saving
 
     IERC721 contractAddress = IERC721(allContracts[_type]);
     contractAddress.safeTransferFrom(address(this), msg.sender, _tokenId);
