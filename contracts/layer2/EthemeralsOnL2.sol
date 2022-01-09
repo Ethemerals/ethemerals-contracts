@@ -24,6 +24,8 @@ contract EthemeralsOnL2 is ERC721, Ownable {
   // Delegates include game masters and auction houses
   mapping(address => bool) public delegates;
 
+  string private _uri;
+
 
   /*///////////////////////////////////////////////////////////////
                   GM FUNCTIONS
@@ -73,6 +75,18 @@ contract EthemeralsOnL2 is ERC721, Ownable {
 
   function setMeralManager(address meralManagerAddress) external onlyOwner {
     meralManager = IMeralManager(meralManagerAddress);
+  }
+
+  function setBaseURI(string memory newuri) external onlyOwner {
+    // ADMIN
+    _uri = newuri;
+  }
+
+  /*///////////////////////////////////////////////////////////////
+                  ADMIN FUNCTIONS
+  //////////////////////////////////////////////////////////////*/
+  function _baseURI() internal view override returns (string memory) {
+    return _uri;
   }
 
 

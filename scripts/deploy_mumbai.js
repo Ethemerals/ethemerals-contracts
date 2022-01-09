@@ -5,16 +5,22 @@ let allMeralStats = MeralsL1Data();
 async function main() {
 	let admin;
 	[admin, player1, player2, player3] = await ethers.getSigners();
-	// L2 Contracts
-	const EthemeralsL2 = await ethers.getContractFactory('EthemeralsOnL2');
-	meralsL2 = await EthemeralsL2.deploy('https://api.ethemerals.com/api/', '0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ELF ADDRESS
-	await meralsL2.deployed();
-	console.log('meralsL2 deployed to:', meralsL2.address);
 
+	// L2 Contracts
 	const MeralManager = await ethers.getContractFactory('MeralManager');
 	meralManager = await MeralManager.deploy('0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // TODO random register
 	await meralManager.deployed();
 	console.log('meralManager deployed to:', meralManager.address);
+
+	const EthemeralsL2 = await ethers.getContractFactory('EthemeralsOnL2');
+	meralsL2 = await EthemeralsL2.deploy(meralManager.address); // RANDOM ELF ADDRESS
+	await meralsL2.deployed();
+	console.log('meralsL2 deployed to:', meralsL2.address);
+
+	const EscrowL2 = await ethers.getContractFactory('EscrowOnL2');
+	escrowL2 = await EscrowL2.deploy(meralsL2.address);
+	await escrowL2.deployed();
+	console.log('escrowL2 deployed to:', escrowL2.address);
 
 	// // L2 Wilds Contracts
 	const WildsAdminActions = await ethers.getContractFactory('WildsAdminActions');

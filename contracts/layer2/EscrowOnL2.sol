@@ -8,33 +8,33 @@ import "./interfaces/IEthemeralsOnL2.sol";
 
 contract EscrowOnL2 is Ownable, Pausable, ERC721Holder {
 
-    event Deposit(uint256 id, address owner, uint256 date, uint256 nonce);
+  event Deposit(uint256 id, address owner, uint256 date, uint256 nonce);
 
-    // nonce is a sequence that identifes a transfer - on the L1 chain when the transfer is processed the nonce can be verified
-    uint256 public nonce;
-    // nonces coming from the L1 chain that are already processed
-    mapping(uint256 => bool) public processedNonces;
-    IEthemeralsOnL2 ethemerals;
+  // nonce is a sequence that identifes a transfer - on the L1 chain when the transfer is processed the nonce can be verified
+  uint256 public nonce;
+  // nonces coming from the L1 chain that are already processed
+  mapping(uint256 => bool) public processedNonces;
+  IEthemeralsOnL2 ethemerals;
 
-    constructor(address _ethemerals) {
-      ethemerals = IEthemeralsOnL2(_ethemerals);
-    }
+  constructor(address _ethemerals) {
+    ethemerals = IEthemeralsOnL2(_ethemerals);
+  }
 
-    /**
-     * @dev user can initiate a transfer of his token to the L1 chain. the token is transferred to the escrow contract's address.
-     * Transfer event is emitted.
-     *
-     * Requirements:
-     * - contract is not paused
-     * - only the owner can initiate the transfer
-     */
-    function deposit(uint256 _tokenId) external {
-      require(!paused(), "paused");
-      ethemerals.safeTransferFrom(msg.sender, address(this), _tokenId);
+  /**
+    * @dev user can initiate a transfer of his token to the L1 chain. the token is transferred to the escrow contract's address.
+    * Transfer event is emitted.
+    *
+    * Requirements:
+    * - contract is not paused
+    * - only the owner can initiate the transfer
+    */
+  function deposit(uint256 _tokenId) external {
+    require(!paused(), "paused");
+    ethemerals.safeTransferFrom(msg.sender, address(this), _tokenId);
 
-      emit Deposit(_tokenId, msg.sender, block.timestamp, nonce);
-      nonce++;
-    }
+    emit Deposit(_tokenId, msg.sender, block.timestamp, nonce);
+    nonce++;
+  }
 
   /**
     * @dev the bridge component (script) calls the migrate function once it detects a Transfer event from L1 chain.

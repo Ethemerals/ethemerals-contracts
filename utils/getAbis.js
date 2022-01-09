@@ -4,6 +4,7 @@ const EthemeralsOnL2 = require('../src/artifacts/contracts/layer2/EthemeralsOnL2
 const MeralManager = require('../src/artifacts/contracts/layer2/managers/MeralManager.sol/MeralManager.json');
 const Wilds = require('../src/artifacts/contracts/layer2/wilds/Wilds.sol/Wilds.json');
 const Onsen = require('../src/artifacts/contracts/layer2/wilds/Onsen.sol/Onsen.json');
+const EscrowL1 = require('../src/artifacts/contracts/EscrowOnL1.sol/EscrowOnL1.json');
 
 const writeABI = (path, abi) => {
 	try {
@@ -19,6 +20,7 @@ const main = async () => {
 	writeABI('./abi/MeralManager.json', MeralManager.abi);
 	writeABI('./abi/Wilds.json', Wilds.abi);
 	writeABI('./abi/Onsen.json', Onsen.abi);
+	writeABI('./abi/EscrowL1.json', EscrowL1.abi);
 
 	// const addresses = [{
 	//   EthemeralLifeForce: EthemeralLifeForce.networks['42'].address,

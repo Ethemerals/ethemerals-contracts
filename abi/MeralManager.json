@@ -524,7 +524,7 @@
             "type": "uint8"
           }
         ],
-        "internalType": "struct MeralManager.MeralStats",
+        "internalType": "struct MeralManager.Meral",
         "name": "",
         "type": "tuple"
       }
@@ -590,7 +590,7 @@
             "type": "uint8"
           }
         ],
-        "internalType": "struct MeralManager.MeralStats",
+        "internalType": "struct MeralManager.Meral",
         "name": "",
         "type": "tuple"
       }

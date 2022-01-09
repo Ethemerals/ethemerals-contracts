@@ -2,11 +2,8 @@ const hre = require('hardhat');
 const { MeralsL1Data, minMaxAvg, getRandomInt } = require('../../test/utils');
 let allMeralStats = MeralsL1Data();
 
-const meralsL2Address = '0x40fE7A2140354323F5c45c31dA16F4d9A93a20eD';
-const meralManagerAddress = '0xdF870c500E2Ab7b676eF7219524438cA8828F9cD';
-const wildsAddress = '0xbFe21e0B7268795DCb42e1EC367B2AEe0817B970';
-const onsenAddress = '0x14D0c9eae41Ac31E874d61746c2a088C168468e0';
-const escrowL2Address = '0xAB919bDbe7308CFdBaD24b512c270A901b9647e6';
+const EthemeralsAddress_4 = '0xcdb47e685819638668ff736d1a2ae32b68e76ba5';
+const EscrowL1Address_4 = '0x691ac8428BBD2Cf1e9e88Fe11CEE6E3a542Db28B';
 
 async function main() {
 	let admin;
@@ -14,20 +11,19 @@ async function main() {
 
 	console.log(admin.address);
 
-	const EthemeralsL2 = await ethers.getContractFactory('EthemeralsOnL2');
-	const meralsL2 = await EthemeralsL2.attach(meralsL2Address);
+	const Ethemerals = await ethers.getContractFactory('Ethemerals');
+	const merals = await Ethemerals.attach(EthemeralsAddress_4);
 
-	const MeralManager = await ethers.getContractFactory('MeralManager');
-	const meralManager = await MeralManager.attach(meralManagerAddress);
+	const EscrowL1 = await ethers.getContractFactory('EscrowOnL1');
+	const escrowL1 = await EscrowL1.attach(EscrowL1Address_4);
 
-	const EscrowL2 = await ethers.getContractFactory('EscrowOnL2');
-	const escrowL2 = await EscrowL2.attach(escrowL2Address);
+	await merals.addDelegate(EscrowL1Address_4, true);
 
-	await escrowL2.transferToOwner(7, '0x67256aB8E993Ed8647CBc4723883F4936058dfF2', 3);
-	// let value = await escrowL2.ethemerals();
-	// console.log(value);
-	// value = await meralsL2.ownerOf(7);
-	// console.log(value, escrowL2.address);
+	// const MeralManager = await ethers.getContractFactory('MeralManager');
+	// const meralManager = await MeralManager.attach(meralManagerAddress);
+
+	// const EscrowL2 = await ethers.getContractFactory('EscrowOnL2');
+	// const escrowL2 = await EscrowL2.attach(escrowL2Address);
 
 	// await meralsL2.setMeralManager(meralManagerAddress);
 
@@ -35,7 +31,7 @@ async function main() {
 	// await meralManager.addGM(admin.address, true);
 	// await meralManager.addGM(meralsL2.address, true);
 	// await meralManager.addMeralContracts(1, meralsL2.address);
-	await meralsL2.setEscrowAddress(escrowL2Address);
+	// await meralsL2.setEscrowAddress(escrowL2.address);
 
 	// for (let i = 2; i <= 40; i++) {
 	// 	let meralStats = allMeralStats[i];

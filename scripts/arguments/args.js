@@ -1,4 +1,4 @@
 // prettier-ignore
 module.exports = [
-  "0x70016006e7fA497e0FF0f4ff9Abc0f9B405b687b",
+  "0xB52c5C0B23b852783Ef99a64daEE9FbCE58B60f5",
 ];
