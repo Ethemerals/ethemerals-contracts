@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.3;
 
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "hardhat/console.sol";
-import "./MeralParser.sol";
-import "../interfaces/interfaces.sol";
+import "../../utils/MeralParser.sol";
+import "../../interfaces/IERC721.sol";
 
-contract MeralManager is MeralParser {
+contract MeralManager is ERC721Holder, MeralParser {
 
   event ChangeHP(uint meralType, uint tokenId, uint16 hp, bool add, uint32 xp);
   event ChangeXP(uint meralType, uint tokenId, uint32 xp, bool add);
@@ -20,13 +21,18 @@ contract MeralManager is MeralParser {
                   STORAGE
   //////////////////////////////////////////////////////////////*/
 
-  // TYPE OF MERAL => INDEX OF MERAL / 0 = Ethemerals, 1 = Monsters
-  mapping (uint => Meral) public allMerals;
+  /**
+    * @dev Storage of all Meral IDs
+    * Use MeralParser to parse Type and Token ID from IDs, max 100,000 in a type
+    * Ethemeral Merals = 0, Monster Merals = 1 etc etc
+    * Front end must call correct ID
+    */
+  mapping(uint => Meral) public allMerals;
 
   // include game masters
   mapping(address => bool) public gmAddresses;
 
-  // IERC721 addresses
+  // TYPE to IERC721 addresses
   mapping(uint => address) public meralContracts;
 
   // IERC721 public merals;
@@ -98,6 +104,18 @@ contract MeralManager is MeralParser {
   function transfer(address from, address to, uint _id) external onlyGM {
     IERC721 meralsAddress = IERC721(meralContracts[getTypeFromId(_id)]);
     meralsAddress.safeTransferFrom(from, to, getTokenIdFromId(_id));
+  }
+
+  function releaseFromPortal(address to, uint _id) external onlyGM {
+    IERC721 meralsAddress = IERC721(meralContracts[getTypeFromId(_id)]);
+    meralsAddress.safeTransferFrom(address(this), to, getTokenIdFromId(_id));
+  }
+
+  function returnToPortal(uint _id) external onlyGM {
+    IERC721 meralsAddress = IERC721(meralContracts[getTypeFromId(_id)]);
+    uint _tokenId = getTokenIdFromId(_id);
+    address _owner = meralsAddress.ownerOf(_tokenId);
+    meralsAddress.safeTransferFrom(_owner, address(this), _tokenId);
   }
 
   function ownerOf(uint _id) external returns (address) {

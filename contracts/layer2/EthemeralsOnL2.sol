@@ -3,7 +3,7 @@ pragma solidity ^0.8.3;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./interfaces/IMeralManager.sol";
+import "../interfaces/IMeralManager.sol";
 
 // DEV - stripped down Ethemerals contract on L2, Stats are stored on meralManager
 // DEV - modifed allow delegates to disallow delegates (true on default)
@@ -17,9 +17,8 @@ contract EthemeralsOnL2 is ERC721, Ownable {
   //////////////////////////////////////////////////////////////*/
 
   // the contract holding the stats
-  IMeralManager meralManager;
-
-  address public escrowAddress;
+  // IMeralManager meralManager;
+  address meralManager;
 
   // Delegates include game masters and auction houses
   mapping(address => bool) public delegates;
@@ -34,7 +33,7 @@ contract EthemeralsOnL2 is ERC721, Ownable {
   constructor(address meralManagerAddress)
     ERC721("Ethemerals", "MERALS")
   {
-    meralManager = IMeralManager(meralManagerAddress);
+    meralManager = meralManagerAddress;
   }
 
   /**
@@ -54,9 +53,9 @@ contract EthemeralsOnL2 is ERC721, Ownable {
     uint8 _subclass
   ) external onlyOwner {
     require(!_exists(_tokenId), "Token already exists");
-    require(escrowAddress != address(0), "escrow cannot be zero address");
-    _safeMint(escrowAddress, _tokenId);
-    meralManager.registerOGMeral(_tokenId, _score, _rewards, _atk, _def, _spd, _element, _subclass);
+    require(meralManager != address(0), "cannot be zero address");
+    _safeMint(meralManager, _tokenId);
+    IMeralManager(meralManager).registerOGMeral(_tokenId, _score, _rewards, _atk, _def, _spd, _element, _subclass);
   }
 
 
@@ -69,12 +68,8 @@ contract EthemeralsOnL2 is ERC721, Ownable {
     emit DelegateChange(_delegate, add);
   }
 
-  function setEscrowAddress(address _escrowAddress) external onlyOwner {
-    escrowAddress = _escrowAddress;
-  }
-
   function setMeralManager(address meralManagerAddress) external onlyOwner {
-    meralManager = IMeralManager(meralManagerAddress);
+    meralManager = meralManagerAddress;
   }
 
   function setBaseURI(string memory newuri) external onlyOwner {
@@ -105,7 +100,7 @@ contract EthemeralsOnL2 is ERC721, Ownable {
     override
     returns (bool)
   {
-    if (delegates[_operator] == true || escrowAddress == _operator) {
+    if (delegates[_operator] == true || meralManager == _operator) {
       return true;
     }
 

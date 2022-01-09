@@ -3,8 +3,8 @@ pragma solidity ^0.8.3;
 
 import "hardhat/console.sol";
 
-import "../interfaces/interfaces.sol";
-import "../interfaces/IMeralManager.sol";
+import "../../interfaces/IERC721.sol";
+import "../../interfaces/IMeralManager.sol";
 
 contract WildsAdminActions {
   /*///////////////////////////////////////////////////////////////

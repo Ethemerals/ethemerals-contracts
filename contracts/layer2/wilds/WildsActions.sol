@@ -5,8 +5,8 @@ import "hardhat/console.sol";
 
 
 import "./WildsCalculate.sol";
-import "../interfaces/interfaces.sol";
-import "../interfaces/IMeralManager.sol";
+import "../../interfaces/IERC721.sol";
+import "../../interfaces/IMeralManager.sol";
 
 contract WildsActions is WildsCalculate {
   /*///////////////////////////////////////////////////////////////

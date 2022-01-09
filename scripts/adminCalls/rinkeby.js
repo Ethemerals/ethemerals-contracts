@@ -17,7 +17,18 @@ async function main() {
 	const EscrowL1 = await ethers.getContractFactory('EscrowOnL1');
 	const escrowL1 = await EscrowL1.attach(EscrowL1Address_4);
 
-	await merals.addDelegate(EscrowL1Address_4, true);
+	// await merals.addDelegate(EscrowL1Address_4, true);
+
+	await escrowL1.transferToOwner(166, admin.address, 3);
+	await escrowL1.transferToOwner(163, admin.address, 4);
+	await escrowL1.transferToOwner(157, admin.address, 5);
+	await escrowL1.transferToOwner(151, admin.address, 6);
+	await escrowL1.transferToOwner(9, admin.address, 7);
+	await escrowL1.transferToOwner(8, admin.address, 8);
+	await escrowL1.transferToOwner(7, admin.address, 9);
+	await escrowL1.transferToOwner(5, admin.address, 10);
+	await escrowL1.transferToOwner(4, admin.address, 11);
+	await escrowL1.transferToOwner(10, admin.address, 12);
 
 	// const MeralManager = await ethers.getContractFactory('MeralManager');
 	// const meralManager = await MeralManager.attach(meralManagerAddress);
