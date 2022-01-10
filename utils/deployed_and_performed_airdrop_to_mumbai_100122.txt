@@ -1,0 +1,361 @@
+ELFX contract deployed at: 0x5A5eC8AEFdbd1f3587bA37ce53B038C605F1D419
+Airdrop contract deployed at: 0x616Ff5653b1329d76f7E0A4e3e6BaEA49Fc670A1
+
+0.txt processed
+1.txt processed
+10.txt processed
+11.txt processed
+12.txt processed
+13.txt processed
+14.txt processed
+15.txt processed
+16.txt processed
+17.txt processed
+18.txt processed
+19.txt processed
+2.txt processed
+20.txt processed
+21.txt processed
+22.txt processed
+23.txt processed
+24.txt processed
+25.txt processed
+26.txt processed
+27.txt processed
+28.txt processed
+29.txt processed
+3.txt processed
+30.txt processed
+31.txt processed
+32.txt processed
+33.txt processed
+34.txt processed
+35.txt processed
+36.txt processed
+37.txt processed
+38.txt processed
+39.txt processed
+4.txt processed
+40.txt processed
+41.txt processed
+42.txt processed
+43.txt processed
+44.txt processed
+45.txt processed
+46.txt processed
+47.txt processed
+48.txt processed
+49.txt processed
+5.txt processed
+50.txt processed
+51.txt processed
+52.txt processed
+53.txt processed
+54.txt processed
+55.txt processed
+56.txt processed
+57.txt processed
+58.txt processed
+59.txt processed
+6.txt processed
+60.txt processed
+61.txt processed
+62.txt processed
+63.txt processed
+64.txt processed
+65.txt processed
+66.txt processed
+67.txt processed
+68.txt processed
+69.txt processed
+7.txt processed
+70.txt processed
+71.txt processed
+72.txt processed
+73.txt processed
+74.txt processed
+75.txt processed
+76.txt processed
+77.txt processed
+78.txt processed
+79.txt processed
+8.txt processed
+80.txt processed
+81.txt processed
+82.txt processed
+83.txt processed
+84.txt processed
+85.txt processed
+86.txt processed
+87.txt processed
+88.txt processed
+89.txt processed
+9.txt processed
+90.txt processed
+91.txt processed
+92.txt processed
+93.txt processed
+94.txt processed
+95.txt processed
+96.txt processed
+97.txt processed
+98.txt processed
+99.txt processed
+0x53cb67568f2a266847b4f79c0acd922d989146ee owns 7 merals, hence it got 7 * 1 = 7 elfx
+0x94fc0c2446624e4a1832c12a4712ca110f3c5e3c owns 6 merals, hence it got 6 * 1 = 6 elfx
+0xf05e0b86b503ece60da6f14e14c979fc311781e1 owns 5 merals, hence it got 5 * 1 = 5 elfx
+0x97522b9ea400a423a25f9d51bf5d6245cad463fc owns 14 merals, hence it got 14 * 1 = 14 elfx
+0xbd874a4e472aec2777a137788a0c7cc1e043e8d7 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xec0cfe573d7f1234a91e745ef1480d5131a0a610 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x4e486e7eee27500b8851d63d003119c4da4825f6 owns 34 merals, hence it got 34 * 1 = 34 elfx
+0xad63e4d4be2229b080d20311c1402a2e45cf7e75 owns 9 merals, hence it got 9 * 1 = 9 elfx
+0xf5dcb2a47f738d8ba39f9fa2ddc7592f268a262a owns 7 merals, hence it got 7 * 1 = 7 elfx
+0x6632b50b00e16bc9807d6173142d950819b93fef owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x484aaf6cf481dc921117cb4b396a10db4934a063 owns 16 merals, hence it got 16 * 1 = 16 elfx
+0x91609451b6a5775608787f3da9501104935d3b25 owns 8 merals, hence it got 8 * 1 = 8 elfx
+0x3f002c41304b78cabd777042a13ed9fedf1ae47e owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x2e52f821ae8eb9d6979d048c2ea50b0870988fac owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x5fb8b9512684d451d4e585a1a0aabfb48a253c67 owns 99 merals, hence it got 99 * 1 = 99 elfx
+0x02e3f540be055029cd072a46899e61eb0d8566e8 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x35271f374d269b95522ef9e39034c2e6fdc29079 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xe9898d9c3ef978942d34e20367267be66cf12d5e owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xad6a6129f34728c2e7d8bc782ab48acccb46f660 owns 14 merals, hence it got 14 * 1 = 14 elfx
+0x199538def890cccd1dbc8eddcd790ba2744a46b5 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x08d816526bdc9d077dd685bd9fa49f58a5ab8e48 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xe76091f84ddf27f9e773ca8bd2090830943f615c owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xe87f91e59da41cd0f34dde3a0c0fb0c7b8a5853a owns 36 merals, hence it got 36 * 1 = 36 elfx
+0x03f7f1ab10e8ba1f6c3b7ea588087ee12d44dcc8 owns 17 merals, hence it got 17 * 1 = 17 elfx
+0xc0bca854c6116c37df08ede58583c93f246f89db owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xf58e98d93aa9141f03a84eeb106077c2aef7274e owns 5 merals, hence it got 5 * 1 = 5 elfx
+0x3c67cad4d247b47d21d6731a15aa062f2fbe6f8d owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x169310e61e71ef5834ce5466c7155d8a90d15f1e owns 8 merals, hence it got 8 * 1 = 8 elfx
+0xca4a31c7ebcb126c60fab495a4d7b545422f3aaf owns 8 merals, hence it got 8 * 1 = 8 elfx
+0xc6747f952fce0f8da8174d15f454cd12bbfb0650 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x2eb1a917bb45173def401baf74078e618030f693 owns 6 merals, hence it got 6 * 1 = 6 elfx
+0x8ac6a89a3484b372acf4f0de03646c8b2a962911 owns 5 merals, hence it got 5 * 1 = 5 elfx
+0xc205d9d70a6799a8abc5c0e508085becdcbb17d9 owns 7 merals, hence it got 7 * 1 = 7 elfx
+0x0c6909b890507efae9bf5fd9b08729e850c6317e owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xca216800bb9c5dc0b101cb693fd9240be3efa1de owns 18 merals, hence it got 18 * 1 = 18 elfx
+0x31cfb661407ce00c0c3663e22d6c8e5b06f6e36c owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x50a5d1832a6b4f7208d9b56df536cb4558ded9d2 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xf09d1acbf092ec47970a2aa9e16bc658b2ecf15e owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x5bcc31d3a34b019f73262b7f5257b53d1e2db8ea owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xdce64a75c5a15826d059fc3d0812dbd3baef5893 owns 26 merals, hence it got 26 * 1 = 26 elfx
+0x5ab2d1f5069dd2f9aeec3b0a8e923b1cdbe7fc44 owns 5 merals, hence it got 5 * 1 = 5 elfx
+0x5b63fcf959aae5f3982d8c2fe977dcfa22e89d36 owns 7 merals, hence it got 7 * 1 = 7 elfx
+0x6d62ff73bfadac8e24af5a5d86135d85350f5c09 owns 22 merals, hence it got 22 * 1 = 22 elfx
+0x7c4e643862068a8383a5fadc7b11069fe3e19cdd owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x9cbd60a51b54ab626cde7861afe43d2cd82da327 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x18131889b876ee2d883417ae3d14aa3dcee2a830 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x7f414912103af13f9bb66e2af80e0d9a49b694e7 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xceb0b1bc98a3a10762d4fab9d9490853b58a6305 owns 7 merals, hence it got 7 * 1 = 7 elfx
+0xdb41bf85939f75a0d40939646f34a9ff6eaffcfe owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x93a25512b5c30f460ab0bdc32847738853b39dcc owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x2bb7ce5f7750e6e21445243effd48200cbb63e49 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xd4bff2b92a51355d6b2b3f6c399aab5c87314e66 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x8104f16ae54474061cf22350e64128888851aba4 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x1552fde02335e156468e5c6b6ff20e123bcbdb85 owns 4 merals, hence it got 4 * 1 = 4 elfx
+0x3d3741df7a547fcb10b45615dcb3fa9a9d692e8e owns 9 merals, hence it got 9 * 1 = 9 elfx
+0x75d4bdbf6593ed463e9625694272a0ff9a6d346f owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xb1e302b3a3b0de2173c1a1c2de19d2868b7c446d owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x3ea9fc6cccf47ff9ed77849e93338ffaf895dc3c owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x310ef3996f950bf2273e6bfcc4f5e57ccac54efa owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x8d95336584a349eda8537e5084d28a278f215bf3 owns 4 merals, hence it got 4 * 1 = 4 elfx
+0xa314e7d9bb472436c9d07cc92907d971a7a31780 owns 6 merals, hence it got 6 * 1 = 6 elfx
+0x881b85bae36981a9581b8fb6c4dfea322386a952 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xbc6e70cb9b89851e6cff7ce198a774549f4c0f0c owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x6d361440dd4746387eff1ae65ddbfe891059e0ce owns 4 merals, hence it got 4 * 1 = 4 elfx
+0x364ac37a91fba5e4ab0d4dc6e9f7c30a75c4e91f owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x064e2e9c7df51861ac4492551baf1fd6e3286074 owns 5 merals, hence it got 5 * 1 = 5 elfx
+0xb9d1fb123c779b47269280d0e152ac32e40b1177 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x128d49c1351bf38a3790e1f89c258a1b517184d2 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xca609fce9f982d2f219f45a9d93f91a1d6845d0f owns 6 merals, hence it got 6 * 1 = 6 elfx
+0x275eb69f5778c4f8ac753f16edc24139ee1fac30 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x719b07ad76400cca438927cb475a1df754412cdc owns 4 merals, hence it got 4 * 1 = 4 elfx
+0x92e9b91aa2171694d740e7066f787739ca1af9de owns 8 merals, hence it got 8 * 1 = 8 elfx
+0x22f7887308852d74fe035dbf42f3462aa8151709 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x082dae6f747aa8601c5c7d908072a5073686d415 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xbcc599587aa0c97f7ceeee9c3bb2db2b33f835e4 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xf7a8fe61aa0b9051f12f72695fb3ad7546097a01 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xfeef2e81211d485ea5698505883a36d64f72e60c owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x7ee93e58f1784f23956de508ed0ec33ec8be9701 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xeed082bf726633ac4290a82cba6ef27958c3151b owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xd06f9775d010a75ec520c3feae693cfd773a5b18 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x2f6a87bc404569426c151eb435af1ccb82e61801 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x4e60be84870fe6ae350b563a121042396abe1eaf owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xfa5a9b0f25d033d30fdf62cf00e83fd7a366f619 owns 4 merals, hence it got 4 * 1 = 4 elfx
+0xb02313bb524047fd5332d81e1bf301cffea324b3 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x2e07fc9d9d1ea648b12d188f7fa0a53caa49979e owns 5 merals, hence it got 5 * 1 = 5 elfx
+0xf88d5ba0dc63478335ade00578015843fcc06684 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x254725a2d9989ab4202e1f6a6560b970dc4a67da owns 4 merals, hence it got 4 * 1 = 4 elfx
+0x2e285e94843a620a01a2462ab4b19a17b0847ddf owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xfaf51a5a39b72317bdc7f391fed0aefb162d9a8a owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xd692a8b22adee210234a7fb00510e300411a8b93 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xdfcd3f456bf215dd228342ee309c949287630eb8 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x56c893f95c83982fc5ac5996d75f6875c63aaefc owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x3052e1fd42db76738d0710971ef23db55130e3b0 owns 5 merals, hence it got 5 * 1 = 5 elfx
+0xe71d8ded9dee1187e25a2d0fca8c8b050559d7d3 owns 6 merals, hence it got 6 * 1 = 6 elfx
+0x283175f58b424745a6645eaa985fca329f51bed8 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x91d9921b08531004da912212dfbcd62af6f4b1e7 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x3a4408c8b3b6733f5cf495c997bd3658466a8c8f owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xf67f4c08be1d8feae815cbc70bf18966c19c5ade owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xbf4ec1f616bb62eb1172b677d9443a86f0a3884a owns 4 merals, hence it got 4 * 1 = 4 elfx
+0xb8c2eadac4f1edc6f0e8c226689a540d72f42386 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x6660a65623a8752c9d19eed87730fe17ed84ca8d owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x12918f13ce746da4cf486b907a93cffadbbf9a96 owns 6 merals, hence it got 6 * 1 = 6 elfx
+0xc55ba66cab0298b3a67e1d0bf6a1613907941b09 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x369e7043369fb35ef02b40d477c5e97f76dc11f7 owns 4 merals, hence it got 4 * 1 = 4 elfx
+0x74415472cac94d99f7d46c2b01defab0860ecd29 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xdc4471ee9dfca619ac5465fde7cf2634253a9dc6 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xa84f465907cafe5caa07c2593c7599f25ef552bd owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x06b201d5e1d14f57579a5a01ec4b8a0c80aa0e83 owns 9 merals, hence it got 9 * 1 = 9 elfx
+0x3e1f1fc109b0130a8ba13a1546c713d030b8613f owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x6c0424e0dad7a0324fa239246ce4483330930bd0 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xd7b2601022adc2bc676c2fb99f555769a1c91bcf owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xc443d816a011d720dc8f3dd69390b16554ff2a3b owns 6 merals, hence it got 6 * 1 = 6 elfx
+0x0a24c7547dd14be2f502d354afd224b226d177e4 owns 4 merals, hence it got 4 * 1 = 4 elfx
+0x7dd59016d418b72ffa2a9857f9fb6a99b8d80e4c owns 5 merals, hence it got 5 * 1 = 5 elfx
+0xeea89c8843e8beb56e411bb4cac6dbc2d937ee1d owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xc027990894203100c9a6e0050b4b86b56953eb3b owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xe6f61afb06caef91a37ba354d65812058f78e6c3 owns 5 merals, hence it got 5 * 1 = 5 elfx
+0x0407e302fc20055af2f510083c257c6b903021f9 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xe6181bdb6e75ccca82d2e7c105f26dc67090099a owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x2951b1f7058bd2c05f01954002c450bac0873847 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x3e9ea7007be15581dc4b2806a457b54a65ffa303 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x17a1615422fde0daaa329944080e6ac66168f7e9 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x764965e051b54f6695d48899506e2f26ca765edf owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x5c7175c23aa3792ac9d82fa2ada03baff7e3658b owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xc3150c77428542bb64a7a2199c33b1bdbf56b386 owns 7 merals, hence it got 7 * 1 = 7 elfx
+0x189b6e103c9d59b2d4ef377b4baee677d590c531 owns 5 merals, hence it got 5 * 1 = 5 elfx
+0x00abad41b1e76cff279d3fd28c293ba2bc7d64e7 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x4ebee6ba2771c19adf9af348985bcf06d3270d42 owns 6 merals, hence it got 6 * 1 = 6 elfx
+0x4bafea7c1452a3a8568d96d99d66b2228b8f7604 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xea30c7bb956aaee2df8a42464b8ac9b42d23658c owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x0a24b03fa2cb9b51af900c68600b3f70211b3540 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xf24febbdc2c97213432f5c149086630e53fda80e owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x7f717a2d3c57b30ba02567bb687fa3088a9dbc3f owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x8368a11817883e268f5b07c60d58dd17c34f27a1 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xffd68bb1b7882019b394a4efdd007a6e1b5ece5e owns 6 merals, hence it got 6 * 1 = 6 elfx
+0x7c7582643e67b443b0c3f82d0513ba3d25c09f92 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xe9f76e57388cf5ab613a1671027109188cf7789c owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x3668b5b07eb210452e8fbe6c9691cdc38fc54640 owns 4 merals, hence it got 4 * 1 = 4 elfx
+0x93b61c57c797003d096c612cefaa47b20c35d926 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xfc0b21ce3ffdb8fc73554ba3054e881cfa65aa7e owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xb7627583108b31580699344807cdc856afcefbd2 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xf887878e66dbe91dcdce5ffb05217b744f91780c owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x198e363e2e7d58f521960e4175a7dfe0f59936f2 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x1a7321b7bb00cbf284eb0a14ef8879105b73c4de owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xd0116778a76dda1bd0ed5cefb87aff6a46ecc580 owns 5 merals, hence it got 5 * 1 = 5 elfx
+0x3e5da968101d0a0a0fe198ead94856b07b81d57d owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x633e5a89c2cc04076b13f340cbd374d564fc1f80 owns 6 merals, hence it got 6 * 1 = 6 elfx
+0x0f0300471975b165ebc1618b81e1a3903ff2fb6e owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xded5cef8f83b609749ed82ac43549f8128f87d5b owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x8f8e214333dc4b7d5763ccd290fd1116c34d92b0 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x89e6f7e24d141d99e3d5bc81e79cf971e6656b08 owns 13 merals, hence it got 13 * 1 = 13 elfx
+0x7e7a55b11dd9a02b4da169620adfc36b930100fc owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xbcfe2095d57716ab0498ec2294c3f7003179e5e0 owns 4 merals, hence it got 4 * 1 = 4 elfx
+0x88783134bf06880b08aa2afa280d1296987f54e5 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xa2754ada78f5b736cc14bb28c3e7fe59459b5d9f owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x29999b764638f1d7edf443da7d5ae0c9c7da86c5 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x7eabac98a2d64b7e9ee08ba18ab239f42565af5d owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xdfdb434b6aec40240f06afffd085e4fc4990d8e1 owns 4 merals, hence it got 4 * 1 = 4 elfx
+0x970dafec8079e8b7500177a7d66873bf7d01f7af owns 4 merals, hence it got 4 * 1 = 4 elfx
+0xd0345e063fc2a9d45d9e7dcc8c2c448d411e843b owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x68d39be8c66851afbb61abb3b2e0a8ef59b58e80 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x193c82adf4e514d443735710fdc79f50de6f58a0 owns 4 merals, hence it got 4 * 1 = 4 elfx
+0x6de0b523177694eec2ad53ac564bb3ae15fe26bf owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xf91872d8146ffb2cc6e616b2b47c29f093cafa6d owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x83abce1657f4187b6b209d38d810ab480d995371 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x70f91ef34c4b509574876113f32c89b78d0621ee owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x5b44a8abf5b5280cd93fc7e481fbf1fd46bedb1a owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x88747e96c045e71b357ce0b75597492beaa1fb8f owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xa5bb2d4a381ddd83d2f719724298532c0f8051fc owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xc702accf44649dceb7cb71dc06086bd56ec1bce5 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x1dc1cf2ce34f49ea1be697848087c71241b95cdd owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x0e26b2af0cad6eda72fd0d2b39cfb4d71bab4a36 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x0b0e76b0f5faf4932dbf0388701c54de8cd7f4af owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xb2575a0b343e28b681f09b7fc64cade534615ff3 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x700643004ba7cb17b824c6808a4196a06eb25e4b owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xe713ce9e3b98c9fa580fc3b6ec3ac850622b5146 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x06644f3054d2579e8b7425436bb6ab13e91999eb owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x03bd77990f28a2393792fa111e553f4665121c88 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x6dcf8ae2862d6e045833aba9d8e4192892cbb646 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x1418ab54752826a82698a23e22ebbf7e678cfe47 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xc565001aff2bf6badafa0e4cfc9546768d9d6ea0 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x42351635d3e18bebbed4d119da64607d765ae877 owns 6 merals, hence it got 6 * 1 = 6 elfx
+0xf06fc22f0f9d15a271e18aa216fe183e20a7a092 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xc339cb9f3e017b0c71e15804bb7b1e23f3ce2ecc owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xba286acbae8b7d8e46ee08c0ea084d360a74786f owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xe05ccac337e32ab8028903a320e911e34f12405d owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x40215475f8a7417d8c4f977945d40a7f3860d654 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xfb9d2eb56e88607ee2a77797e35b4ebed934b791 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x1a35155a38bb1e673b34771694e4ce5ea12895d0 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x272edd645f795263eb3c4d83b4214ded8982e3ed owns 63 merals, hence it got 63 * 1 = 63 elfx
+0xf972bf8592c3171b378e97bb869a980c3f476583 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x7f74b71b5c3a200d9ff327d1f6f8fb695393ec5c owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xb97be55ef5deb93e40c471cb9dcc8de142a5d4b4 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xf6a3a919aecae723ab6d229a32ddf98536002b2c owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x34805e6a3796fb04e82183667a78c2f7bff29170 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x2daf6e1f7aee5bc0d88530cb9a60fe0ca86f5e67 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xa764e937556b742a88723bb6c8b269b26dae742a owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x9be8e4e9d4a68bbdaa8decae9f728ed50599be7c owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xa48ae1c287fa6de4581ca3e00f0a481a1ae80778 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x4dce05ee4a9046d21fd55c15656bd247e874b22b owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x5fbb99cd461c71c1c4ca14c5120f1fed05dab4f6 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xd2dc28f65c76510a4a930d28664a60828c4cf64e owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xe139f85ec44519efc33f48f28dc9d86a08e2d102 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x6f09ef3d1ece52e9c26e1ee2b004a93c7107ab0c owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xb23dabe7c83a37fd2d73802e4addc23c482b7d1c owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xa6f75b3ee93c634c65ff7db86f0263d2dbd54a27 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xf1a9f5aeb0f975489ac2628a22040cf42e9fe8dd owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x5338035c008ea8c4b850052bc8dad6a33dc2206c owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x6f1f500ee2b486d7755fbdea0c048672b07dbc73 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x43083c6804f6e343b9a1656ad07e407034b7fd21 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x070f40ccce59a4585e00227d9c01c705c6d087be owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x6adcf08deaaf5913079707f923279ef4c6d5225e owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xd36e903ad861ddc94b88ec27605c08716aa401d3 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xde923df474661ddf3727c913ebfee3df0b37beb8 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x83a4699a7526b979fca28633efb7f19d652f2773 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x77779dcf0487bbee0c65cbdc5e39a9335d6fe4dc owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x5f956ca9a2ed963bf955e9e4337e0a4f1d2dd8e9 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x0c4e0fd6f253b5ffef03e409559562b6a9efefd6 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xd05fbc0f7138b53e9ed53d49453811c5907a5af8 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x8c196d392a72dfdd465ff0bfd05ca56e37440fe5 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xfd845e60eaea6c960d2a2b6f490b53d26925d5cb owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x6f296016b95a05957a1d0a95a4f552010a6aa8b7 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x04f0bb58e1ac7891661a70d90713855c4c4ee24d owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x6e61d08397b9d4d9f67006867de67af0c4cbe1b4 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x010be20856e0d3e34856f6b96968154ae7834d51 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x0d76c6577dfaf57aca33848c40e646a7288ce183 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xcf2b7c6bc98bfe0d6138a25a3b6162b51f75e05d owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x6617c2e64a50119bd5dd4bed8e2348e842aa176a owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xba7b1e9635fe21d308f11ad83c3ff807de703b2c owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x8c053c40e688557a9a12f4c5896b8285ad4af5e9 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xaa4d65d31c17372804af9660a7f34c983f0355f0 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x3108e41705813dcf518a7d23fbb2ed551c10baa1 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x6c575a588c6277f8a3ea6180d070fc3759cf6de6 owns 2 merals, hence it got 2 * 1 = 2 elfx
+0x031e4440b19c6d144ee9eceb6ff782d6686d4d74 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x61e0841d103d77325e7743d1ff7117efe7c2c9f6 owns 21 merals, hence it got 21 * 1 = 21 elfx
+0x078ad2aa3b4527e4996d087906b2a3da51bba122 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x3b99e794378bd057f3ad7aea9206fb6c01f3ee60 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xe9e41d60618c5b57dd0410d5516033a34e6dee1a owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xa069f2204cab4862c861925ad40b113d158a5e2f owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x006bc663c480bff6f291086198c13f0af67b567c owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x5e4f4e4618c76109307ea7542012bd8bebdb8e81 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x9aeaffc6eb0a9d5f5ae24854d8904c8d48734978 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xae39c99270a91fa2cd76f76abc176a873706062f owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x36068e6c6461557fd97fd4d8baa3d3df07d1daa5 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x200fdaa83581e6d493fddd11aed3da3298e1c2e2 owns 5 merals, hence it got 5 * 1 = 5 elfx
+0xccf832c45454981c345f850a8e6d126ee34bbd90 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0xf607086267af70f88c8ad2a5a6de2261d0aed1cc owns 12 merals, hence it got 12 * 1 = 12 elfx
+0x30afa1c14df4069a60d89f0cf79a320021767016 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x5cabf9593dc0d2b837a885e37428390165f086a3 owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x70a39f36daa7fc7ede1c43c1c5e5ac2b8eae5c66 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x3824e037ccbf65dff5a9bb5c23c10e9315b2299e owns 2 merals, hence it got 2 * 1 = 2 elfx
+0xb1169c6daac76bacaf0d8f87641fc38fbabe569f owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x0f054f1d8231b9ddc17d65e24290431365840c30 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xcb5f64b4bd862d414b71aac7b9405b84bedf4c91 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x28debcf06200a1823fd6c601cc1a70456c2ff084 owns 1 merals, hence it got 1 * 1 = 1 elfx
+0xe46699e6058bc86143738657e3119717aea2025d owns 1 merals, hence it got 1 * 1 = 1 elfx
+0x65cbd6decf896eb1dc281e014f0ad3bec2811a3c owns 3 merals, hence it got 3 * 1 = 3 elfx
+0x037ce2f795a0f5079d4b2a5c01e30b141b03e11f owns 1 merals, hence it got 1 * 1 = 1 elfx

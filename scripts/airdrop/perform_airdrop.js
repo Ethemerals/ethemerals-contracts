@@ -1,9 +1,14 @@
 require('dotenv').config();
 const { ethers } = require('hardhat');
-const { getOwnerAddresses, chunk, occuranceCount } = require('../../utils/airdropUtils');
-const PROVIDER_URL = `https://polygon-mumbai.g.alchemy.com/v2/${process.env.PROJECTID}`;
-const ELFX_ADDRESS = "0xFC3719eDc116C89Ee2Eb26f13B5983dDB2d700f6";
-const AIRDROP_ADDRESS = "0x496c5FF9fdA755084a72BE062E4d99848a2a9179"
+const fs = require('fs');
+const { occuranceCount } = require('../../utils/airdropUtils');
+const BATCHES_TO_PROCESS = './scripts/airdrop/batches_to_process/';
+const PROCESSED_BATCHES = './scripts/airdrop/processed_batches/';
+const PROVIDER_URL = `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMYID}`;
+const ELFX_ADDRESS = "0x5A5eC8AEFdbd1f3587bA37ce53B038C605F1D419";
+const AIRDROP_ADDRESS = "0x616Ff5653b1329d76f7E0A4e3e6BaEA49Fc670A1"
+// how many elfx token is distributed for one meral owner - one address can have multiple merals so that address will get the multiple of this
+const distributionPerMeral = 1;
 
 async function main() {
     // setting up the admin account
@@ -14,26 +19,43 @@ async function main() {
     elfx = await ethers.getContractAt("ELFX", ELFX_ADDRESS);
     airdrop = await ethers.getContractAt("Airdrop", AIRDROP_ADDRESS);
 
-    // meral owners from the graph
-    const owners = await getOwnerAddresses();
-    // this is the biggest batch size that goes through without gas limit reached error
-    const batchSize = 10;
-    // create batches of owner address of batchSize
-    const batches = chunk(owners, batchSize);
-    // how many elfx token is distributed for one meral owner - one address can have multiple merals so that address will get the multiple of this
-    const distributionPerMeral = 1;
-    const totalDistribution = owners.length * distributionPerMeral;
+    // remove everything from the target directory
+    fs.rmdirSync(PROCESSED_BATCHES, { recursive: true }, (err) => {
+        if (err) {
+            throw err;
+        }
+    });
+    // create the target directory 
+    if (!fs.existsSync(PROCESSED_BATCHES)) {
+        console.log("creating directory")
+        fs.mkdirSync(PROCESSED_BATCHES);
+    }
 
+    // we need to collect all owners for approval and verification
+    let owners = [];
+    const filenames = fs.readdirSync(BATCHES_TO_PROCESS);
+    for (let filename of filenames) {
+        const data = fs.readFileSync(BATCHES_TO_PROCESS + filename, { encoding: 'utf8', flag: 'r' });
+        let batch = JSON.parse(data);
+        owners.push(...batch);
+    }
+
+    const totalDistribution = owners.length * distributionPerMeral;
     // need to approve the airdrop contract to transfer the elfx onbehalf of the admin
     await elfx.connect(admin).approve(airdrop.address, totalDistribution);
 
-    for (let i = 0; i < batches.length; i++) {
-        console.log("Processing the " + i + ". batch");
-        await airdrop.connect(admin).distribute(batches[i], distributionPerMeral);
+    for (let filename of filenames) {
+        const data = fs.readFileSync(BATCHES_TO_PROCESS + filename, { encoding: 'utf8', flag: 'r' });
+        let batch = JSON.parse(data);
+        await airdrop.connect(admin).distribute(batch, distributionPerMeral);
+        // move the file into the processed directory
+        fs.rename(BATCHES_TO_PROCESS + filename, PROCESSED_BATCHES + filename, function (err) {
+            if (err) throw err
+        })
+        console.log(filename + " processed");
     }
 
-    console.log("Distribution finished!")
-
+    // Verification    
     // we need to count the occurancies of unique owners
     const occurances = occuranceCount(owners);
     const uniquAddresses = Object.keys(occurances);

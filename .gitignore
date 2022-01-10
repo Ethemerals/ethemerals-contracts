@@ -31,3 +31,7 @@ typechain
 #Hardhat files
 cache
 artifacts
+
+#Airdrop batch files
+/scripts/airdrop/batches_to_process/
+/scripts/airdrop/processed_batches/
