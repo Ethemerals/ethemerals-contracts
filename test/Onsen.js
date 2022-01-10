@@ -55,7 +55,7 @@ describe('Onsen', function () {
 
 		// L2 Contracts
 		const MeralManager = await ethers.getContractFactory('MeralManager');
-		meralManager = await MeralManager.deploy('0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // TODO random register
+		meralManager = await MeralManager.deploy(); // TODO random register
 		await meralManager.deployed();
 
 		const EthemeralsL2 = await ethers.getContractFactory('EthemeralsOnL2');
@@ -103,8 +103,9 @@ describe('Onsen', function () {
 		await merals.connect(player2).setAllowDelegates(true);
 		await merals.connect(player3).setAllowDelegates(true);
 
-		// register MeralL1 Address
+		// register Meral Addresses
 		await escrowL1.addContract(1, merals.address);
+		await meralManager.addMeralContract(1, meralsL2.address);
 
 		// DO ESCROW ON L1
 		let type = 1;
@@ -122,14 +123,12 @@ describe('Onsen', function () {
 		}
 
 		// NODE BACKEND MINT (MIGRATE) TO L2
-		await meralManager.addGM(admin.address, true);
-		await meralManager.addGM(meralsL2.address, true);
-		await meralManager.addMeralContracts(1, meralsL2.address);
 
 		// // set and allow delegates
+		await meralManager.addGM(admin.address, true);
 		await meralManager.addGM(onsen.address, true);
 		await meralManager.addGM(wilds.address, true);
-		await meralsL2.addDelegate(meralManager.address, true);
+		await meralManager.addGM(meralsL2.address, true);
 
 		for (let i = 1; i <= 40; i++) {
 			let meralStats = allMeralStats[i];
@@ -140,8 +139,7 @@ describe('Onsen', function () {
 		for (let i = 1; i <= 40; i++) {
 			let deposits = await escrowL1.allDeposits(getOGMeralId(i));
 			let _id = await escrowL1.getIdFromType(type, i);
-			await meralManager.releaseFromPortal(deposits.owner, _id);
-			let owner = await meralsL2.ownerOf(i);
+			await meralManager.releaseFromPortal(deposits, _id);
 		}
 	});
 
@@ -160,7 +158,7 @@ describe('Onsen', function () {
 	};
 
 	describe('Onsen hp and xp gains', function () {
-		it('relax and gain', async function () {
+		it('should relax and gain', async function () {
 			let type = 1;
 			let tokenId = 1;
 			let id = await meralManager.getIdFromType(type, tokenId);

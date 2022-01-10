@@ -55,7 +55,7 @@ describe('Escrow Migration', function () {
 
 		// L2 Contracts
 		const MeralManager = await ethers.getContractFactory('MeralManager');
-		meralManager = await MeralManager.deploy('0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // TODO random register
+		meralManager = await MeralManager.deploy(); // TODO random register
 		await meralManager.deployed();
 
 		const EthemeralsL2 = await ethers.getContractFactory('EthemeralsOnL2');
@@ -101,7 +101,7 @@ describe('Escrow Migration', function () {
 		// NODE BACKEND MINT (MIGRATE) TO L2
 		await meralManager.addGM(admin.address, true);
 		await meralManager.addGM(meralsL2.address, true);
-		await meralManager.addMeralContracts(1, meralsL2.address);
+		await meralManager.addMeralContract(1, meralsL2.address);
 
 		for (let i = 1; i <= 40; i++) {
 			let meralStats = allMeralStats[i];
@@ -110,6 +110,11 @@ describe('Escrow Migration', function () {
 	});
 
 	describe('EscrowL1', function () {
+		it('not register an already registered contract', async function () {
+			await expect(escrowL1.addContract(1, merals.address)).to.be.revertedWith('type already exists');
+			await escrowL1.addContract(2, merals.address);
+		});
+
 		it('deposit and withdraw with exceptions', async function () {
 			let type = 1;
 			let tokenId = 1;
@@ -118,8 +123,9 @@ describe('Escrow Migration', function () {
 			await merals.setApprovalForAll(escrowL1.address, true);
 			await escrowL1.deposit(type, tokenId);
 
-			let _deposit = await escrowL1.allDeposits(getOGMeralId(tokenId));
-			expect(_deposit.owner).to.equal(admin.address);
+			let id = await escrowL1.getIdFromType(type, tokenId);
+			let _deposit = await escrowL1.allDeposits(id);
+			expect(_deposit).to.equal(admin.address);
 			let owner = await merals.ownerOf(tokenId);
 			expect(owner).to.equal(escrowL1.address);
 
@@ -160,7 +166,6 @@ describe('Escrow Migration', function () {
 
 			// WITHDRAWS
 			await expect(escrowL1.withdraw(type2, 11)).to.be.revertedWith('only owner');
-			await expect(escrowL1.connect(player1).withdraw(type2, 11)).to.be.revertedWith('cooldown');
 
 			await network.provider.send('evm_increaseTime', [day]);
 			await network.provider.send('evm_mine');
@@ -170,7 +175,7 @@ describe('Escrow Migration', function () {
 			expect(owner).to.equal(player1.address);
 			let _id = await escrowL1.getIdFromType(2, 11);
 			value = await escrowL1.allDeposits(_id);
-			expect(value.owner).to.equal(addressZero);
+			expect(value).to.equal(addressZero);
 		});
 
 		it('deposit and withdraw ', async function () {
@@ -243,7 +248,7 @@ describe('Escrow Migration', function () {
 			for (let i = 1; i <= 40; i++) {
 				let deposits = await escrowL1.allDeposits(getOGMeralId(i));
 				let _id = await escrowL1.getIdFromType(type, i);
-				await meralManager.releaseFromPortal(deposits.owner, _id);
+				await meralManager.releaseFromPortal(deposits, _id);
 				let owner = await meralsL2.ownerOf(i);
 				if (i < 11) {
 					expect(owner).to.equal(admin.address);

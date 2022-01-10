@@ -39,20 +39,20 @@ module.exports = {
 			chainId: 1337,
 		},
 		rinkeby: {
-			url: `https://rinkeby.infura.io/v3/${process.env.PROJECTID}`,
+			url: `https://rinkeby.infura.io/v3/${process.env.INFURAID}`,
 			accounts: [`0x${process.env.PRIV_KEY}`],
 		},
 		mainnet: {
-			url: `https://mainnet.infura.io/v3/${process.env.PROJECTID}`, // or any other JSON-RPC provider
+			url: `https://mainnet.infura.io/v3/${process.env.INFURAID}`, // or any other JSON-RPC provider
 			accounts: [`0x${process.env.PRIV_KEY}`],
 		},
 		mumbai: {
-			url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.PROJECTID}`,
-			accounts: [`0x${process.env.PRIV_KEY}`],
+			url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMYID}`,
+			accounts: [`0x${process.env.PRIV_KEY_MATIC}`],
 		},
 		matic: {
 			url: 'https://speedy-nodes-nyc.moralis.io/<YOUR_ID>/polygon/mainnet',
-			accounts: [`0x${process.env.PRIV_KEY}`],
+			accounts: [`0x${process.env.PRIV_KEY_MATIC}`],
 		},
 	},
 	etherscan: {

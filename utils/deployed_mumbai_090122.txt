@@ -1,0 +1,6 @@
+0x6b013Cfe4b23Ee60668400D2D64aC15034dFDf68
+meralManager deployed to: 0x1F4d4cDb96801A343492527b96E2C4dE7Bda5b74
+meralsL2 deployed to: 0x4778F420D9a1827e77bd4FB54EcAB65783062fB5
+register meralL2 contract
+add admin gm
+add meralsL2 gm

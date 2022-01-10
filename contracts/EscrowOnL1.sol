@@ -18,25 +18,22 @@ contract EscrowOnL1 is Ownable, Pausable, ERC721Holder, MeralParser {
   //////////////////////////////////////////////////////////////*/
 
   /**
-    * @dev Storage of all Deposit IDs
+    * @dev Storage of all Deposit IDs to Owners
     * Use MeralParser to parse Type and Token ID from IDs, max 100,000 in a type
     * example Ethemeral Merals = type0, Monster Merals = type1
     * Front end must call correct ID
     */
-  mapping(uint => Deposit) public allDeposits;
+  mapping(uint => address) public allDeposits;
 
   // TYPE to IERC721 addresses
   mapping(uint => address) public allContracts;
-
-  struct Deposit {
-    address owner;
-  }
 
   /*///////////////////////////////////////////////////////////////
                   ADMIN FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
   function addContract(uint _type, address _address) external onlyOwner {
+    require(allContracts[_type] == address(0), "type already exists");
     allContracts[_type] = _address;
   }
 
@@ -62,7 +59,7 @@ contract EscrowOnL1 is Ownable, Pausable, ERC721Holder, MeralParser {
     require(contractAddress.ownerOf((_tokenId)) == msg.sender, "only owner");
 
     uint256 _id = getIdFromType(_type, _tokenId);
-    allDeposits[_id] = Deposit(msg.sender);
+    allDeposits[_id] = msg.sender;
     contractAddress.safeTransferFrom(msg.sender, address(this), _tokenId);
 
     emit TokenDeposit(_id, msg.sender, block.timestamp);
@@ -73,21 +70,18 @@ contract EscrowOnL1 is Ownable, Pausable, ERC721Holder, MeralParser {
     * Transfer event is emitted.
     * Requirements:
     * - contract is not paused
-    * - holding period is passed (prevent gateway attack)
     * - only the owner can initiate the transfer
     * - id is generated from the front end
     */
   function withdraw(uint256 _type, uint256 _tokenId) external {
     require(!paused(), "paused");
     uint256 _id = getIdFromType(_type, _tokenId);
-    Deposit storage _deposit = allDeposits[_id];
-    require(_deposit.owner == msg.sender, "only owner");
-    // require(block.timestamp - _deposit.timestamp >= 3600, "cooldown"); // 20% gas saving
+    require(allDeposits[_id] == msg.sender, "only owner");
 
     IERC721 contractAddress = IERC721(allContracts[_type]);
     contractAddress.safeTransferFrom(address(this), msg.sender, _tokenId);
 
-    delete allDeposits[_id];
+    allDeposits[_id] = address(0);
 
     emit TokenWithdraw(_id, msg.sender, block.timestamp);
   }

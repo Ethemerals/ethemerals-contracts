@@ -56,29 +56,24 @@ contract MeralManager is ERC721Holder, MeralParser {
                   ADMIN FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  constructor(address _register) {
+  constructor() {
     admin = msg.sender;
-    register = _register;
   }
 
-  function setAdmin(address _admin) external {
-    require(msg.sender == admin, "admin only");
+  function setAdmin(address _admin) external onlyAdmin {
     admin = _admin;
   }
 
-  function setRegister(address _register) external {
-    require(msg.sender == admin, "admin only");
+  function setRegister(address _register) external onlyAdmin {
     register = _register;
   }
 
-  function addGM(address _gm, bool add) external {
-    require(msg.sender == admin, "admin only");
+  function addGM(address _gm, bool add) external onlyAdmin {
     gmAddresses[_gm] = add;
     emit AuthChange(_gm, add);
   }
 
-  function addMeralContracts(uint _type, address _meralAddress) external {
-    require(msg.sender == admin, "admin only");
+  function addMeralContract(uint _type, address _meralAddress) external onlyAdmin {
     meralContracts[_type] = _meralAddress;
   }
 
@@ -86,20 +81,6 @@ contract MeralManager is ERC721Holder, MeralParser {
   /*///////////////////////////////////////////////////////////////
                   GM FUNCTIONS
   //////////////////////////////////////////////////////////////*/
-
-  function registerOGMeral(
-    uint _tokenId,
-    uint16 _score,
-    uint32 _rewards,
-    uint16 _atk,
-    uint16 _def,
-    uint16 _spd,
-    uint8 _element,
-    uint8 _subclass
-  ) external onlyGM {
-    allMerals[getIdFromType(1, _tokenId)] = Meral(_rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
-    emit InitMeral(1, _tokenId, _rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
-  }
 
   function transfer(address from, address to, uint _id) external onlyGM {
     IERC721 meralsAddress = IERC721(meralContracts[getTypeFromId(_id)]);
@@ -118,9 +99,18 @@ contract MeralManager is ERC721Holder, MeralParser {
     meralsAddress.safeTransferFrom(_owner, address(this), _tokenId);
   }
 
-  function ownerOf(uint _id) external returns (address) {
-    IERC721 meralsAddress = IERC721(meralContracts[getTypeFromId(_id)]);
-    return meralsAddress.ownerOf(getTokenIdFromId(_id));
+  function registerOGMeral(
+    uint _tokenId,
+    uint16 _score,
+    uint32 _rewards,
+    uint16 _atk,
+    uint16 _def,
+    uint16 _spd,
+    uint8 _element,
+    uint8 _subclass
+  ) external onlyGM {
+    allMerals[getIdFromType(1, _tokenId)] = Meral(_rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
+    emit InitMeral(1, _tokenId, _rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
   }
 
   // function registerMeral(uint _type, uint _tokenId) external onlyGM() {
@@ -206,10 +196,18 @@ contract MeralManager is ERC721Holder, MeralParser {
   //////////////////////////////////////////////////////////////*/
 
   /**
-  * @dev Throws if called by any account other than the escrow contract.
+  * @dev Throws if called by any account other than the game master contract.
   */
   modifier onlyGM() {
     require(gmAddresses[msg.sender], "gm only");
+    _;
+  }
+
+  /**
+  * @dev Throws if called by any account other than the admin account.
+  */
+  modifier onlyAdmin() {
+    require(msg.sender == admin, "admin only");
     _;
   }
 
@@ -217,6 +215,17 @@ contract MeralManager is ERC721Holder, MeralParser {
   /*///////////////////////////////////////////////////////////////
                   PUBLIC VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
+  // INTERNAL ID
+  function ownerOf(uint _id) external returns (address) {
+    IERC721 meralsAddress = IERC721(meralContracts[getTypeFromId(_id)]);
+    return meralsAddress.ownerOf(getTokenIdFromId(_id));
+  }
+
+  // TODO
+  function ownerOfByType(uint _type, uint _tokenId) external returns (address) {
+    IERC721 meralsAddress = IERC721(meralContracts[_type]);
+    return meralsAddress.ownerOf(getTokenIdFromId(_tokenId));
+  }
 
   // INTERNAL ID
   function getMeralById(uint _id) external view returns (Meral memory) {
@@ -227,10 +236,5 @@ contract MeralManager is ERC721Holder, MeralParser {
   function getMeral(uint _type, uint _tokenId) external view returns (Meral memory) {
     return allMerals[getIdFromType(_type, _tokenId)];
   }
-
-
-
-
-
 
 }

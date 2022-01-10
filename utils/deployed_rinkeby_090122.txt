@@ -1,0 +1,3 @@
+escrowL1 deployed to: 0xF77D83997d4a4c7A55f54FF59b15464D05AC8336
+add ethemerals contract
+add escrow to delegates

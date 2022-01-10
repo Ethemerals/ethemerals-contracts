@@ -3,7 +3,7 @@ const { ethers } = require('hardhat');
 const { MeralsL1Data, minMaxAvg, getRandomInt } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe.only('Meral Manager', function () {
+describe('Meral Manager', function () {
 	let merals;
 	let meralsL2;
 	let escrowL1;
@@ -55,7 +55,7 @@ describe.only('Meral Manager', function () {
 
 		// L2 Contracts
 		const MeralManager = await ethers.getContractFactory('MeralManager');
-		meralManager = await MeralManager.deploy('0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // TODO random register
+		meralManager = await MeralManager.deploy();
 		await meralManager.deployed();
 
 		const EthemeralsL2 = await ethers.getContractFactory('EthemeralsOnL2');
@@ -103,8 +103,9 @@ describe.only('Meral Manager', function () {
 		await merals.connect(player2).setAllowDelegates(true);
 		await merals.connect(player3).setAllowDelegates(true);
 
-		// register MeralL1 Address
+		// register Meral Addresses
 		await escrowL1.addContract(1, merals.address);
+		await meralManager.addMeralContract(1, meralsL2.address);
 
 		// DO ESCROW ON L1
 		let type = 1;
@@ -122,15 +123,11 @@ describe.only('Meral Manager', function () {
 		}
 
 		// NODE BACKEND MINT (MIGRATE) TO L2
-		await meralManager.addGM(admin.address, true);
-		await meralManager.addGM(meralsL2.address, true);
-		await meralManager.addMeralContracts(1, meralsL2.address);
 
 		// // set and allow delegates
 		await meralManager.addGM(onsen.address, true);
 		await meralManager.addGM(wilds.address, true);
-		await meralsL2.addDelegate(meralManager.address, true);
-		await meralsL2.addDelegate(onsen.address, true);
+		await meralManager.addGM(meralsL2.address, true);
 
 		for (let i = 1; i <= 40; i++) {
 			let meralStats = allMeralStats[i];
@@ -140,6 +137,7 @@ describe.only('Meral Manager', function () {
 
 	describe('Meral Manager', function () {
 		it('Should change hp', async function () {
+			await meralManager.addGM(admin.address, true);
 			let offset = 300;
 			let tokenId = 20;
 			let type = 1;
@@ -164,6 +162,7 @@ describe.only('Meral Manager', function () {
 		});
 
 		it('Should change xp', async function () {
+			await meralManager.addGM(admin.address, true);
 			let offset = 300;
 			let tokenId = 1;
 			let type = 1;
@@ -187,6 +186,7 @@ describe.only('Meral Manager', function () {
 		});
 
 		it('Should change stats', async function () {
+			await meralManager.addGM(admin.address, true);
 			let tokenId = 30;
 			let type = 1;
 			let id = await meralManager.getIdFromType(type, tokenId);
@@ -200,6 +200,7 @@ describe.only('Meral Manager', function () {
 		});
 
 		it('Should change element', async function () {
+			await meralManager.addGM(admin.address, true);
 			let tokenId = 30;
 			let type = 1;
 			let id = await meralManager.getIdFromType(type, tokenId);
@@ -211,6 +212,7 @@ describe.only('Meral Manager', function () {
 		});
 
 		it('Should allow meralManager to transfer Merals', async function () {
+			await meralManager.addGM(admin.address, true);
 			let tokenId = 15;
 			let type = 1;
 			let id = await meralManager.getIdFromType(type, tokenId);
