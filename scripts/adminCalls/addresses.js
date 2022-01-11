@@ -1,3 +1,3 @@
-const meralsL2Address = '0x4778F420D9a1827e77bd4FB54EcAB65783062fB5';
-const meralManagerAddress = '0x1F4d4cDb96801A343492527b96E2C4dE7Bda5b74';
+const meralsL2Address = '0x15FdA876f5d2B43a71daE62c5F285fcC4A872982';
+const meralManagerAddress = '0xC271208b180f572d002f249A092f5DdEdE233b46';
 const escrowL1Address = '0xF77D83997d4a4c7A55f54FF59b15464D05AC8336';

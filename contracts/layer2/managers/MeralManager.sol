@@ -9,10 +9,10 @@ import "../../interfaces/IERC721.sol";
 
 contract MeralManager is ERC721Holder, MeralParser {
 
-  event ChangeHP(uint meralType, uint tokenId, uint16 hp, bool add, uint32 xp);
-  event ChangeXP(uint meralType, uint tokenId, uint32 xp, bool add);
-  event ChangeStats(uint meralType, uint tokenId, uint16 atk, uint16 def, uint16 spd);
-  event ChangeElement(uint meralType, uint tokenId, uint8 element);
+  event ChangeHP(uint id, uint16 hp, bool add, uint32 xp);
+  event ChangeXP(uint id, uint32 xp, bool add);
+  event ChangeStats(uint id, uint16 atk, uint16 def, uint16 spd);
+  event ChangeElement(uint id, uint8 element);
   event InitMeral(uint meralType, uint tokenId, uint32 xp, uint16 hp, uint16 maxHp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass);
   event AuthChange(address auth, bool add);
 
@@ -147,7 +147,7 @@ contract MeralManager is ERC721Holder, MeralParser {
       _meral.xp = sumXP > 100000 ? 100000 : sumXP;
     }
 
-    emit ChangeHP(getTypeFromId(_id), getTokenIdFromId(_id), newHP, add, _meral.xp);
+    emit ChangeHP(_id, newHP, add, _meral.xp);
   }
 
   function changeXP(uint _id, uint32 offset, bool add) external onlyGM {
@@ -171,7 +171,7 @@ contract MeralManager is ERC721Holder, MeralParser {
 
     _meral.xp = newXP;
 
-    emit ChangeXP(getTypeFromId(_id), getTokenIdFromId(_id), newXP, add);
+    emit ChangeXP(_id, newXP, add);
   }
 
   function changeStats(uint _id, uint16 _atk, uint16 _def, uint16 _spd) external onlyGM {
@@ -180,14 +180,14 @@ contract MeralManager is ERC721Holder, MeralParser {
     _meral.def = _def;
     _meral.spd = _spd;
 
-    emit ChangeStats(getTypeFromId(_id), getTokenIdFromId(_id), _atk, _def, _spd);
+    emit ChangeStats(_id, _atk, _def, _spd);
   }
 
   function changeElement(uint _id, uint8 _element) external onlyGM {
     Meral storage _meral = allMerals[_id];
     _meral.element = _element;
 
-    emit ChangeElement(getTypeFromId(_id), getTokenIdFromId(_id), _element);
+    emit ChangeElement(_id, _element);
   }
 
 
