@@ -1,0 +1,30 @@
+Steps to perform the airdrop:
+
+1. Deploy the contracts:
+npx hardhat run --network mumbai scripts/airdrop/deploy_airdrop.js 
+
+The address that deployed the contracts has to perform the airdrop or should transfer the ownership of the airdrop contract to the performer.
+
+2. Save meral owner from graph into files. Each file is a batch to process by the perform_airdrop scripts:
+node scripts/airdrop/save_meralOwners.js
+
+Possible to adjust the batch size at the beginning of the script:
+const BATCH_SIZE = 10;
+Suggested to use smaller batches for being able to handle if one of them fails.
+Biggest batch size that is supported: 500, bigger than that causes a gas limit reached transaction error in the airdrop.distribute function
+
+3. Perform the airdrop:
+npx hardhat run --network mumbai scripts/airdrop/perform_airdrop.js
+It processes the batch files and moves them into the /processed_batches dierctory
+
+If some batches fails than they can be reprocessed by running the script again on the failed files. 
+In case of failure failed files stay in the batches_to_process directory.
+
+4. Verification:
+The perform script checks the elfx balance of each individual owners and console.log the result like this:
+0x53cb67568f2a266847b4f79c0acd922d989146ee owns 7 merals, hence it got 7 * 1 = 7 elfx
+"7 merals" is counted from the occurance of this address amoung the owners (in the batch files)
+"7 elfx" is the elfx balance of the address from onchain
+So the two numbers has to match for each address.
+This can be verified if the txt is saved into .csv and imported into excel as the numbers are parsed into separate columns. 
+The sum of merals has to match the sum of the balances (sum of both columns).
