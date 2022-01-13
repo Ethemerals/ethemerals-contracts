@@ -1,9 +1,9 @@
 const { expect } = require('chai');
-const { ethers } = require('hardhat');
+const { ethers, network, waffle } = require('hardhat');
 const { MeralsL1Data, minMaxAvg, getRandomInt } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe('Escrow Migration', function () {
+describe.only('Escrow Migration', function () {
 	let merals;
 	let meralsL2;
 	let escrowL1;
@@ -288,6 +288,236 @@ describe('Escrow Migration', function () {
 				let owner = await meralsL2.ownerOf(i);
 				expect(owner).to.equal(meralManager.address);
 			}
+		});
+
+		it('deposit and sell ', async function () {
+			let type = 1;
+			await merals.addDelegate(escrowL1.address, true);
+			await merals.setAllowDelegates(true);
+			await merals.connect(player1).setAllowDelegates(true);
+
+			const tokenId = 11;
+			await escrowL1.connect(player1).deposit(type, tokenId);
+			const price = 10;
+			await escrowL1.connect(player1).sellNft(type, tokenId, price);
+			let sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(price);
+
+			let id = await escrowL1.getIdFromType(type, tokenId);
+			let ownerInEscrow = await escrowL1.allDeposits(id);
+			expect(ownerInEscrow).to.equal(player1.address);
+
+			let ownerInMeral = await merals.ownerOf(tokenId);
+			expect(ownerInMeral).to.equal(escrowL1.address);
+		});
+
+		it('deposit and revert sell if not the owner tries to sell', async function () {
+			let type = 1;
+			await merals.addDelegate(escrowL1.address, true);
+			await merals.setAllowDelegates(true);
+			await merals.connect(player1).setAllowDelegates(true);
+
+			const tokenId = 11;
+			await escrowL1.connect(player1).deposit(type, tokenId);
+			const price = 10;
+			await expect(escrowL1.connect(player2).sellNft(type, tokenId, price)).to.be.revertedWith('only owner');
+		});
+
+		it('deposit and revert sell if the contract is paused', async function () {
+			let type = 1;
+			await merals.addDelegate(escrowL1.address, true);
+			await merals.setAllowDelegates(true);
+			await merals.connect(player1).setAllowDelegates(true);
+
+			const tokenId = 11;
+			await escrowL1.connect(player1).deposit(type, tokenId);
+			await escrowL1.connect(admin).pause();
+			const price = 10;
+			await expect(escrowL1.connect(player2).sellNft(type, tokenId, price)).to.be.revertedWith('paused');
+		});
+
+		it('deposit, sell and cancel sell order', async function () {
+			let type = 1;
+			await merals.addDelegate(escrowL1.address, true);
+			await merals.setAllowDelegates(true);
+			await merals.connect(player1).setAllowDelegates(true);
+
+			const tokenId = 11;
+			await escrowL1.connect(player1).deposit(type, tokenId);
+			const price = 10;
+			await escrowL1.connect(player1).sellNft(type, tokenId, price);
+			let sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(price);
+
+			await escrowL1.connect(player1).cancelSellNftOrder(type, tokenId);
+			sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(0);
+		});
+
+		it('deposit, sell and revert sell order if not the owner tries to cancel', async function () {
+			let type = 1;
+			await merals.addDelegate(escrowL1.address, true);
+			await merals.setAllowDelegates(true);
+			await merals.connect(player1).setAllowDelegates(true);
+
+			const tokenId = 11;
+			await escrowL1.connect(player1).deposit(type, tokenId);
+			const price = 10;
+			await escrowL1.connect(player1).sellNft(type, tokenId, price);
+			let sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(price);
+
+			await expect(escrowL1.connect(player2).cancelSellNftOrder(type, tokenId)).to.be.revertedWith('only owner');
+		});
+
+		it('deposit, sell and revert sell order if the contract is paused', async function () {
+			let type = 1;
+			await merals.addDelegate(escrowL1.address, true);
+			await merals.setAllowDelegates(true);
+			await merals.connect(player1).setAllowDelegates(true);
+
+			const tokenId = 11;
+			await escrowL1.connect(player1).deposit(type, tokenId);
+			const price = 10;
+			await escrowL1.connect(player1).sellNft(type, tokenId, price);
+			let sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(price);
+
+			await escrowL1.connect(admin).pause();
+			await expect(escrowL1.connect(player2).cancelSellNftOrder(type, tokenId)).to.be.revertedWith('paused');
+		});
+
+		it('deposit, sell and buy', async function () {
+			let type = 1;
+			await merals.addDelegate(escrowL1.address, true);
+			await merals.setAllowDelegates(true);
+			await merals.connect(player1).setAllowDelegates(true);
+
+			const tokenId = 11;
+			await escrowL1.connect(player1).deposit(type, tokenId);
+			const price = 10;
+			await escrowL1.connect(player1).sellNft(type, tokenId, price);
+			let sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(price);
+
+			const provider = waffle.provider;
+			let previousOwnerBalanceBefore = await provider.getBalance(player1.address);
+			await expect(escrowL1.connect(player2).buyNft(type, tokenId, { value: price }))
+				.to.emit(escrowL1, "TokenOwnerChange");
+
+			sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(0);
+
+			let id = await escrowL1.getIdFromType(type, tokenId);
+			let newOwner = await escrowL1.allDeposits(id);
+			expect(newOwner).to.equal(player2.address);
+
+			let previousOwnerBalanceAfter = await provider.getBalance(player1.address);
+			expect(previousOwnerBalanceAfter).to.equal(previousOwnerBalanceBefore.add(price));
+		});
+
+		it('deposit, sell and revert on buy if the contract is paused', async function () {
+			let type = 1;
+			await merals.addDelegate(escrowL1.address, true);
+			await merals.setAllowDelegates(true);
+			await merals.connect(player1).setAllowDelegates(true);
+
+			const tokenId = 11;
+			await escrowL1.connect(player1).deposit(type, tokenId);
+			const price = 10;
+			await escrowL1.connect(player1).sellNft(type, tokenId, price);
+			let sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(price);
+
+			await escrowL1.connect(admin).pause();
+			await expect(escrowL1.connect(player2).buyNft(type, tokenId, { value: price })).to.be.revertedWith('paused');
+		});
+
+		it('deposit, sell and revert on buy if the token is not for sale', async function () {
+			let type = 1;
+			await merals.addDelegate(escrowL1.address, true);
+			await merals.setAllowDelegates(true);
+			await merals.connect(player1).setAllowDelegates(true);
+
+			const tokenId = 11;
+			await escrowL1.connect(player1).deposit(type, tokenId);
+			let sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(0);
+
+			const price = 1;
+			await expect(escrowL1.connect(player2).buyNft(type, tokenId, { value: price })).to.be.revertedWith('token is not for sale');
+		});
+
+		it('deposit, sell and revert on buy if the price is different from the msg.value', async function () {
+			let type = 1;
+			await merals.addDelegate(escrowL1.address, true);
+			await merals.setAllowDelegates(true);
+			await merals.connect(player1).setAllowDelegates(true);
+
+			const tokenId = 11;
+			await escrowL1.connect(player1).deposit(type, tokenId);
+			const price = 10;
+			await escrowL1.connect(player1).sellNft(type, tokenId, price);
+			let sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(price);
+
+			let msgValue = price + 1;
+			await expect(escrowL1.connect(player2).buyNft(type, tokenId, { value: msgValue })).to.be.revertedWith('msg.value different from the price');
+		});
+
+		it('deposit, sell and buy and withdraw', async function () {
+			let type = 1;
+			await merals.addDelegate(escrowL1.address, true);
+			await merals.setAllowDelegates(true);
+			await merals.connect(player1).setAllowDelegates(true);
+
+			const tokenId = 11;
+			await escrowL1.connect(player1).deposit(type, tokenId);
+			const price = 10;
+			await escrowL1.connect(player1).sellNft(type, tokenId, price);
+			let sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(price);
+
+			let ownerInMeral = await merals.ownerOf(tokenId);
+			expect(ownerInMeral).to.equal(escrowL1.address);
+
+			const provider = waffle.provider;
+			let previousOwnerBalanceBefore = await provider.getBalance(player1.address);
+			await expect(escrowL1.connect(player2).buyAndWithdrawNft(type, tokenId, { value: price }))
+				.to.emit(escrowL1, "TokenOwnerChange");
+
+			sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(0);
+
+			let id = await escrowL1.getIdFromType(type, tokenId);
+			let newOwnerInEscrow = await escrowL1.allDeposits(id);
+			expect(newOwnerInEscrow).to.equal(addressZero);
+
+			let newOwnerInMeral = await merals.ownerOf(tokenId);
+			expect(newOwnerInMeral).to.equal(player2.address);
+
+			let previousOwnerBalanceAfter = await provider.getBalance(player1.address);
+			expect(previousOwnerBalanceAfter).to.equal(previousOwnerBalanceBefore.add(price));
+		});
+
+		it('deposit and sell at the same time', async function () {
+			let type = 1;
+			await merals.addDelegate(escrowL1.address, true);
+			await merals.setAllowDelegates(true);
+			await merals.connect(player1).setAllowDelegates(true);
+
+			const tokenId = 11;
+			const price = 10;
+			await escrowL1.connect(player1).depositAndSellNft(type, tokenId, price);
+			let sellPrice = await escrowL1.getPrice(type, tokenId);
+			expect(sellPrice).to.equal(price);
+
+			let id = await escrowL1.getIdFromType(type, tokenId);
+			let ownerInEscrow = await escrowL1.allDeposits(id);
+			expect(ownerInEscrow).to.equal(player1.address);
+
+			let ownerInMeral = await merals.ownerOf(tokenId);
+			expect(ownerInMeral).to.equal(escrowL1.address);
 		});
 	});
 });
