@@ -1,6 +1,6 @@
 const hre = require('hardhat');
 
-const deployedAddress = '0xC271208b180f572d002f249A092f5DdEdE233b46';
+const deployedAddress = '0x6eB5E38b2ecAD8759575a3C59254b32FAA84A257';
 
 async function main() {
 	let admin;

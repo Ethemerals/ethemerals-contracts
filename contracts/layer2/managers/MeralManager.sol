@@ -9,11 +9,12 @@ import "../../interfaces/IERC721.sol";
 
 contract MeralManager is ERC721Holder, MeralParser {
 
-  event ChangeHP(uint id, uint16 hp, bool add, uint32 xp);
+  event ChangeHP(uint id, uint16 hp, bool add);
   event ChangeXP(uint id, uint32 xp, bool add);
+  event ChangeELF(uint id, uint32 elf, bool add);
   event ChangeStats(uint id, uint16 atk, uint16 def, uint16 spd);
   event ChangeElement(uint id, uint8 element);
-  event InitMeral(uint meralType, uint tokenId, uint32 xp, uint16 hp, uint16 maxHp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass);
+  event InitMeral(uint meralType, uint tokenId, uint32 elf, uint16 hp, uint16 maxHp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass);
   event AuthChange(address auth, bool add);
 
 
@@ -40,6 +41,7 @@ contract MeralManager is ERC721Holder, MeralParser {
   address public register;
 
   struct Meral {
+    uint32 elf;
     uint32 xp;
     uint16 hp;
     uint16 maxHp;
@@ -109,7 +111,7 @@ contract MeralManager is ERC721Holder, MeralParser {
     uint8 _element,
     uint8 _subclass
   ) external onlyGM {
-    allMerals[getIdFromType(1, _tokenId)] = Meral(_rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
+    allMerals[getIdFromType(1, _tokenId)] = Meral(_rewards, 0, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
     emit InitMeral(1, _tokenId, _rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
   }
 
@@ -122,7 +124,7 @@ contract MeralManager is ERC721Holder, MeralParser {
   //   require(success, "need success");
   // }
 
-  function changeHP(uint _id, uint16 offset, bool add, uint32 xp) external onlyGM {
+  function changeHP(uint _id, uint16 offset, bool add) external onlyGM {
     Meral storage _meral = allMerals[_id];
 
     uint16 _HP = _meral.hp;
@@ -142,12 +144,7 @@ contract MeralManager is ERC721Holder, MeralParser {
 
     _meral.hp = newHP;
 
-    if(xp > 0) {
-      uint32 sumXP = _meral.xp + xp;
-      _meral.xp = sumXP > 100000 ? 100000 : sumXP;
-    }
-
-    emit ChangeHP(_id, newHP, add, _meral.xp);
+    emit ChangeHP(_id, newHP, add);
   }
 
   function changeXP(uint _id, uint32 offset, bool add) external onlyGM {
@@ -172,6 +169,29 @@ contract MeralManager is ERC721Holder, MeralParser {
     _meral.xp = newXP;
 
     emit ChangeXP(_id, newXP, add);
+  }
+
+  function changeELF(uint _id, uint32 offset, bool add) external onlyGM {
+    Meral storage _meral = allMerals[_id];
+
+    uint _ELF = uint32(_meral.elf);
+    uint newELF;
+
+    // safe
+    if (add) {
+      uint sum = _ELF + offset;
+      newELF = sum > 4000000000 ? 4000000000 : sum;
+    } else {
+      if (_ELF <= offset) {
+        newELF = 0;
+      } else {
+        newELF = _ELF - offset;
+      }
+    }
+
+    _meral.elf = uint32(newELF);
+
+    emit ChangeELF(_id, uint32(newELF), add);
   }
 
   function changeStats(uint _id, uint16 _atk, uint16 _def, uint16 _spd) external onlyGM {

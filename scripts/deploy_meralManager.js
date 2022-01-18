@@ -1,6 +1,4 @@
 const hre = require('hardhat');
-const { MeralsL1Data, minMaxAvg, getRandomInt } = require('../test/utils');
-let allMeralStats = MeralsL1Data();
 
 async function main() {
 	async function sleep(millis) {

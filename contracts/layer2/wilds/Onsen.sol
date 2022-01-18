@@ -16,8 +16,9 @@ contract Onsen is ERC721Holder {
   IMeralManager merals;
   address public admin;
 
-  uint16 private scoreMod; // lower = more
-  uint16 private rewardsMod; // lower = more
+  uint16 public hpMod; // lower = more
+  uint16 public xpMod; // lower = more
+  uint16 public elfMod; // lower = more
 
   // MERALS => STAKES
   mapping (uint => Stake) public stakes;
@@ -34,8 +35,9 @@ contract Onsen is ERC721Holder {
   constructor(address _meralManager) {
     admin = msg.sender;
     merals = IMeralManager(_meralManager);
-    scoreMod = 10000;
-    rewardsMod = 7200;
+    hpMod = 10000;
+    xpMod = 7200;
+    elfMod = 10000;
   }
 
   function adminUnstake(uint _Id) external {
@@ -44,10 +46,11 @@ contract Onsen is ERC721Holder {
     merals.transfer(address(this), _stake.owner, _Id);
   }
 
-  function setMods(uint16 _scoreMod, uint16 _rewardsMod) external {
+  function setMods(uint16 _hpMod, uint16 _xpMod, uint16 _elfMod) external {
     require(msg.sender == admin, "admin only");
-    scoreMod = _scoreMod;
-    rewardsMod = _rewardsMod;
+    hpMod = _hpMod;
+    xpMod = _xpMod;
+    elfMod = _elfMod;
   }
 
   function setMeralManager(address _meralManager) external {
@@ -70,8 +73,10 @@ contract Onsen is ERC721Holder {
     merals.transfer(address(this), _stake.owner, _Id);
 
     // CALCULATE CHANGE
-    (uint16 _scoreChange, uint32 _rewardsChange) = calculateChange(_Id);
-    merals.changeHP(_Id, _scoreChange, true, _rewardsChange);
+    (uint16 _hpChange, uint32 _xpChange, uint32 _elfChange) = calculateChange(_Id);
+    merals.changeHP(_Id, _hpChange, true);
+    merals.changeXP(_Id, _xpChange, true);
+    merals.changeELF(_Id, _elfChange, true);
   }
 
 
@@ -79,15 +84,16 @@ contract Onsen is ERC721Holder {
                   PUBLIC VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function calculateChange(uint _Id) public view returns (uint16 score, uint32 rewards) {
+  function calculateChange(uint _Id) public view returns (uint16 hp, uint32 xp, uint32 elf) {
     IMeralManager.Meral memory _meral = merals.getMeralById(_Id); // TODO USE INVENTORY
     uint start = stakes[_Id].timestamp;
     uint end = block.timestamp;
     uint change = end - start;
     uint scaled = safeScale(_meral.spd, 2000, 14, 22);
-    uint _score = (change * scaled) / scoreMod;
-    uint _rewards = change / rewardsMod;
-    return (uint16(_score), uint32(_rewards));
+    uint _hp = (change * scaled) / hpMod;
+    uint _xp = change / xpMod;
+    uint _elf = change / elfMod;
+    return (uint16(_hp), uint32(_xp), uint32(_elf));
   }
 
 

@@ -36,6 +36,8 @@ contract EthemeralsOnL2 is ERC721, Ownable {
     meralManager = meralManagerAddress;
   }
 
+  // TODO ADD MULTIPLE CALLERS
+
   /**
     * @dev migrates (mints) an Ethemeral
     * ment to be used during transfer from L1 to L2 when the meral does not exist in this chain yet

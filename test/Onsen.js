@@ -152,6 +152,10 @@ describe('Onsen', function () {
 		return parseInt((now - start) / mod);
 	};
 
+	const getElf = (now, start, mod) => {
+		return parseInt((now - start) / mod);
+	};
+
 	const gethp = (now, start, stat, mod) => {
 		let scaled = safeScale(stat, 2000, 14, 22);
 		return parseInt(((now - start) * parseInt(scaled)) / mod);
@@ -165,8 +169,11 @@ describe('Onsen', function () {
 			let meral = await meralManager.getMeralById(id);
 			let hp = meral.hp;
 			let xp = meral.xp;
-			let xpMod = 7200;
-			let hpMod = 10000;
+			let elf = meral.elf;
+
+			let xpMod = await onsen.xpMod();
+			let hpMod = await onsen.hpMod();
+			let elfMod = await onsen.elfMod();
 
 			await onsen.stake(id);
 			let blockNumBefore = await ethers.provider.getBlockNumber();
@@ -181,26 +188,31 @@ describe('Onsen', function () {
 			let _now = blockBefore.timestamp;
 
 			let change = await onsen.calculateChange(id);
+
 			await onsen.unstake(id);
 			let value = await meralManager.getMeral(type, tokenId);
 
 			expect(value.xp - xp).to.equal(getXp(_now, _start, xpMod));
+			expect(parseInt(value.elf) - elf).to.equal(getElf(_now, _start, elfMod));
 			expect(value.hp - hp).to.equal(gethp(_now, _start, value.spd, hpMod));
 
 			xpMod = 3600;
 			hpMod = 5000;
-			await onsen.setMods(hpMod, xpMod);
+			elfMod = 5000;
+			await onsen.setMods(hpMod, xpMod, elfMod);
 			await onsen.stake(id);
-			await expect(onsen.connect(player1).setMods(100, 100)).to.be.revertedWith('admin only');
+			await expect(onsen.connect(player1).setMods(100, 100, 100)).to.be.revertedWith('admin only');
 			await expect(onsen.connect(player1).unstake(id)).to.be.revertedWith('owner only');
 			await expect(onsen.connect(player1).stake(id)).to.be.revertedWith('ERC721: transfer of token that is not own');
 
 			await network.provider.send('evm_increaseTime', [day * 2]);
 			await network.provider.send('evm_mine');
 
-			change = await onsen.calculateChange(id);
-			await onsen.unstake(id);
-			value = await meralManager.getMeralById(id);
+			// change = await onsen.calculateChange(id);
+			// console.log(change);
+			// await onsen.unstake(id);
+			// value = await meralManager.getMeralById(id);
+			// console.log(value);
 		});
 	});
 });

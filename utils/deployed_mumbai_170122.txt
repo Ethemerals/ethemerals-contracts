@@ -1,0 +1,9 @@
+--network mumbai
+admin 0x6b013Cfe4b23Ee60668400D2D64aC15034dFDf68
+meralManager deployed to: 0x6eB5E38b2ecAD8759575a3C59254b32FAA84A257
+meralsL2 deployed to: 0xe79c5EcAC5aA829b5E6082C42915B5a430c0A9F2
+register meralL2 contract
+add admin gm
+add meralsL2 gm
+
+0x8d3Ebf0213C44Caac6CC06646e8445CD2985D767

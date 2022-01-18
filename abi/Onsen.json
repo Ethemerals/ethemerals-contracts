@@ -48,13 +48,44 @@
     "outputs": [
       {
         "internalType": "uint16",
-        "name": "score",
+        "name": "hp",
         "type": "uint16"
       },
       {
         "internalType": "uint32",
-        "name": "rewards",
+        "name": "xp",
         "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "elf",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "elfMod",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "hpMod",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
       }
     ],
     "stateMutability": "view",
@@ -111,12 +142,17 @@
     "inputs": [
       {
         "internalType": "uint16",
-        "name": "_scoreMod",
+        "name": "_hpMod",
         "type": "uint16"
       },
       {
         "internalType": "uint16",
-        "name": "_rewardsMod",
+        "name": "_xpMod",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_elfMod",
         "type": "uint16"
       }
     ],
@@ -173,6 +209,19 @@
     "name": "unstake",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "xpMod",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

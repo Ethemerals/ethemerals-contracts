@@ -1,7 +1,7 @@
 const hre = require('hardhat');
 
-const meralsL2Address = '0x15FdA876f5d2B43a71daE62c5F285fcC4A872982';
-const meralManagerAddress = '0xC271208b180f572d002f249A092f5DdEdE233b46';
+const meralsL2Address = '0xe79c5EcAC5aA829b5E6082C42915B5a430c0A9F2';
+const meralManagerAddress = '0x8d3Ebf0213C44Caac6CC06646e8445CD2985D767';
 
 async function main() {
 	let admin;

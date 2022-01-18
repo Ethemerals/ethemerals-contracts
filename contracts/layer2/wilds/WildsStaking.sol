@@ -145,12 +145,12 @@ contract WildsStaking is WildsCalculate {
   }
 
   function unloot(uint16 _landId, uint _id) external {
-    merals.changeHP(uint(_id), uint16(calculateDamage(_id)), false, 0);
+    merals.changeHP(uint(_id), uint16(calculateDamage(_id)), false);
     _unstake(_landId, _id, StakeAction.LOOT);
   }
 
   function unbirth(uint16 _landId, uint _id) external {
-    merals.changeHP(uint(_id), uint16(calculateDamage(_id)), false, 0);
+    merals.changeHP(uint(_id), uint16(calculateDamage(_id)), false);
     _unstake(_landId, _id, StakeAction.BIRTH);
   }
 
@@ -229,7 +229,7 @@ contract WildsStaking is WildsCalculate {
     _registerEvent(_landId, timestamp);
 
     if(!add) {
-      merals.changeHP(_id, uint16(calculateDamage(_id)), false, 0);
+      merals.changeHP(_id, uint16(calculateDamage(_id)), false);
       // ADD LCP
       uint change = timestamp - stakeEvents[_landId][stakes[_id].entryPointer].timestamp;
       landClaimPoints[_landId][_id] += change;
@@ -243,7 +243,7 @@ contract WildsStaking is WildsCalculate {
     landPlots[_landId].baseDefence = add ? landPlots[_landId].baseDefence - uint16(scaledDamage) : landPlots[_landId].baseDefence + uint16(scaledDamage);
     _registerEvent(_landId, timestamp);
     if(!add) {
-      merals.changeHP(uint(_id), uint16(calculateDamage(_id)), false, 0);
+      merals.changeHP(uint(_id), uint16(calculateDamage(_id)), false);
     }
   }
 

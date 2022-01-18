@@ -34,6 +34,31 @@
       },
       {
         "indexed": false,
+        "internalType": "uint32",
+        "name": "elf",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "add",
+        "type": "bool"
+      }
+    ],
+    "name": "ChangeELF",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "internalType": "uint8",
         "name": "element",
         "type": "uint8"
@@ -62,12 +87,6 @@
         "internalType": "bool",
         "name": "add",
         "type": "bool"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint32",
-        "name": "xp",
-        "type": "uint32"
       }
     ],
     "name": "ChangeHP",
@@ -147,7 +166,7 @@
       {
         "indexed": false,
         "internalType": "uint32",
-        "name": "xp",
+        "name": "elf",
         "type": "uint32"
       },
       {
@@ -263,6 +282,11 @@
     "outputs": [
       {
         "internalType": "uint32",
+        "name": "elf",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
         "name": "xp",
         "type": "uint32"
       },
@@ -318,6 +342,29 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint32",
+        "name": "offset",
+        "type": "uint32"
+      },
+      {
+        "internalType": "bool",
+        "name": "add",
+        "type": "bool"
+      }
+    ],
+    "name": "changeELF",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
         "internalType": "uint8",
         "name": "_element",
         "type": "uint8"
@@ -344,11 +391,6 @@
         "internalType": "bool",
         "name": "add",
         "type": "bool"
-      },
-      {
-        "internalType": "uint32",
-        "name": "xp",
-        "type": "uint32"
       }
     ],
     "name": "changeHP",
@@ -450,6 +492,11 @@
         "components": [
           {
             "internalType": "uint32",
+            "name": "elf",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
             "name": "xp",
             "type": "uint32"
           },
@@ -514,6 +561,11 @@
     "outputs": [
       {
         "components": [
+          {
+            "internalType": "uint32",
+            "name": "elf",
+            "type": "uint32"
+          },
           {
             "internalType": "uint32",
             "name": "xp",

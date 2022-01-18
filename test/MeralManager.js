@@ -3,7 +3,7 @@ const { ethers } = require('hardhat');
 const { MeralsL1Data, minMaxAvg, getRandomInt } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe('Meral Manager', function () {
+describe.only('Meral Manager', function () {
 	let merals;
 	let meralsL2;
 	let escrowL1;
@@ -27,7 +27,7 @@ describe('Meral Manager', function () {
 		const landId = 1;
 		for (let i = 1; i <= 5; i++) {
 			let id = await getOGMeralId(i);
-			await meralManager.changeHP(id, 1000, true, 0);
+			await meralManager.changeHP(id, 1000, true);
 			await wilds.stake(landId, id, 1);
 			await network.provider.send('evm_increaseTime', [hour]);
 			await network.provider.send('evm_mine');
@@ -147,14 +147,14 @@ describe('Meral Manager', function () {
 			let hp = meral.hp;
 			let xp = meral.xp;
 
-			await meralManager.changeHP(id, offset, true, 0);
+			await meralManager.changeHP(id, offset, true);
 			meral = await meralManager.getMeralById(id);
 			let hpAfter = meral.hp;
 
 			expect(hp + offset).to.equal(hpAfter);
 			expect(meral.xp).to.equal(xp);
 
-			await meralManager.changeHP(id, 1000, false, 0);
+			await meralManager.changeHP(id, 1000, false);
 			meral = await meralManager.getMeral(1, tokenId);
 			hpAfter = meral.hp;
 
@@ -183,6 +183,30 @@ describe('Meral Manager', function () {
 			xpAfter = meral.xp;
 
 			expect(xpAfter).to.equal(0);
+		});
+
+		it('Should change elf', async function () {
+			await meralManager.addGM(admin.address, true);
+			let offset = 300;
+			let tokenId = 1;
+			let type = 1;
+			let id = await meralManager.getIdFromType(type, tokenId);
+
+			let meral = await meralManager.getMeral(type, tokenId);
+			let elf = meral.elf;
+			console.log(elf);
+
+			await meralManager.changeELF(id, offset, true);
+			meral = await meralManager.getMeral(1, tokenId);
+			let elfAfter = meral.elf;
+
+			expect(elf + offset).to.equal(elfAfter);
+
+			// await meralManager.changeELF(id, 5000, false);
+			// meral = await meralManager.getMeral(type, tokenId);
+			// elfAfter = meral.elf;
+
+			// expect(elfAfter).to.equal(0);
 		});
 
 		it('Should change stats', async function () {

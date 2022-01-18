@@ -4,6 +4,7 @@ pragma solidity ^0.8.3;
 interface IMeralManager {
 
   struct Meral {
+    uint32 elf;
     uint32 xp;
     uint16 hp;
     uint16 maxHp;
@@ -17,8 +18,9 @@ interface IMeralManager {
 
   function transfer(address from, address to, uint _id) external;
   function ownerOf(uint _id) external returns (address);
-  function changeHP(uint _id, uint16 offset, bool add, uint32 _xp) external;
+  function changeHP(uint _id, uint16 offset, bool add) external;
   function changeXP(uint _id, uint32 offset, bool add) external;
+  function changeELF(uint _id, uint32 offset, bool add) external;
   function changeStats(uint _id, uint16 _atk, uint16 _def, uint16 _spd) external;
   function changeElement(uint _id, uint8 _element) external;
   function getMeralById(uint _id) external view returns (Meral memory);

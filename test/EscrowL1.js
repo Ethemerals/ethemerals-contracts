@@ -3,7 +3,7 @@ const { ethers, network, waffle } = require('hardhat');
 const { MeralsL1Data, minMaxAvg, getRandomInt } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe.only('Escrow Migration', function () {
+describe('Escrow Migration', function () {
 	let merals;
 	let meralsL2;
 	let escrowL1;
@@ -402,8 +402,7 @@ describe.only('Escrow Migration', function () {
 
 			const provider = waffle.provider;
 			let previousOwnerBalanceBefore = await provider.getBalance(player1.address);
-			await expect(escrowL1.connect(player2).buyNft(type, tokenId, { value: price }))
-				.to.emit(escrowL1, "TokenOwnerChange");
+			await expect(escrowL1.connect(player2).buyNft(type, tokenId, { value: price })).to.emit(escrowL1, 'TokenOwnerChange');
 
 			sellPrice = await escrowL1.getPrice(type, tokenId);
 			expect(sellPrice).to.equal(0);
@@ -483,8 +482,7 @@ describe.only('Escrow Migration', function () {
 
 			const provider = waffle.provider;
 			let previousOwnerBalanceBefore = await provider.getBalance(player1.address);
-			await expect(escrowL1.connect(player2).buyAndWithdrawNft(type, tokenId, { value: price }))
-				.to.emit(escrowL1, "TokenOwnerChange");
+			await expect(escrowL1.connect(player2).buyAndWithdrawNft(type, tokenId, { value: price })).to.emit(escrowL1, 'TokenOwnerChange');
 
 			sellPrice = await escrowL1.getPrice(type, tokenId);
 			expect(sellPrice).to.equal(0);
