@@ -36,8 +36,6 @@ contract EthemeralsOnL2 is ERC721, Ownable {
     meralManager = meralManagerAddress;
   }
 
-  // TODO ADD MULTIPLE CALLERS
-
   /**
     * @dev migrates (mints) an Ethemeral
     * ment to be used during transfer from L1 to L2 when the meral does not exist in this chain yet
@@ -53,7 +51,8 @@ contract EthemeralsOnL2 is ERC721, Ownable {
     uint16 _spd,
     uint8 _element,
     uint8 _subclass
-  ) external onlyOwner {
+  ) external {
+    require(delegates[msg.sender] == true, "delegates only");
     require(!_exists(_tokenId), "Token already exists");
     require(meralManager != address(0), "cannot be zero address");
     _safeMint(meralManager, _tokenId);
@@ -72,18 +71,6 @@ contract EthemeralsOnL2 is ERC721, Ownable {
 
   function setMeralManager(address meralManagerAddress) external onlyOwner {
     meralManager = meralManagerAddress;
-  }
-
-  function setBaseURI(string memory newuri) external onlyOwner {
-    // ADMIN
-    _uri = newuri;
-  }
-
-  /*///////////////////////////////////////////////////////////////
-                  ADMIN FUNCTIONS
-  //////////////////////////////////////////////////////////////*/
-  function _baseURI() internal view override returns (string memory) {
-    return _uri;
   }
 
 

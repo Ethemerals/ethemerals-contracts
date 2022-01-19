@@ -23,24 +23,6 @@ describe('Escrow Migration', function () {
 		return id;
 	};
 
-	const makeRaid = async () => {
-		const landId = 1;
-		for (let i = 1; i <= 5; i++) {
-			let id = await getOGMeralId(i);
-			await meralManager.changeHP(id, 1000, true, 0);
-			await wilds.stake(landId, id, 1);
-			await network.provider.send('evm_increaseTime', [hour]);
-			await network.provider.send('evm_mine');
-		}
-
-		for (let i = 11; i <= 15; i++) {
-			let id = getOGMeralId(i);
-			await wilds.connect(player1).stake(landId, id, 4);
-			await network.provider.send('evm_increaseTime', [hour]);
-			await network.provider.send('evm_mine');
-		}
-	};
-
 	beforeEach(async function () {
 		[admin, player1, player2, player3] = await ethers.getSigners();
 
@@ -97,9 +79,11 @@ describe('Escrow Migration', function () {
 
 		// register MeralL1 Address
 		await escrowL1.addContract(1, merals.address);
+		// add admin as delegate and game master BRIDGE ADMIN
+		await meralsL2.addDelegate(admin.address, true);
+		await meralManager.addGM(admin.address, true);
 
 		// NODE BACKEND MINT (MIGRATE) TO L2
-		await meralManager.addGM(admin.address, true);
 		await meralManager.addGM(meralsL2.address, true);
 		await meralManager.addMeralContract(1, meralsL2.address);
 

@@ -46,8 +46,12 @@ module.exports = {
 			url: `https://mainnet.infura.io/v3/${process.env.INFURAID}`, // or any other JSON-RPC provider
 			accounts: [`0x${process.env.PRIV_KEY}`],
 		},
+		// mumbai: {
+		// 	url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMYID}`,
+		// 	accounts: [`0x${process.env.PRIV_KEY_MATIC}`],
+		// },
 		mumbai: {
-			url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMYID}`,
+			url: `https://polygon-mumbai.infura.io/v3/${process.env.INFURAID}`,
 			accounts: [`0x${process.env.PRIV_KEY_MATIC}`],
 		},
 		matic: {

@@ -180,7 +180,7 @@ contract MeralManager is ERC721Holder, MeralParser {
     // safe
     if (add) {
       uint sum = _ELF + offset;
-      newELF = sum > 4000000000 ? 4000000000 : sum;
+      newELF = sum > 1000000 ? 1000000 : sum;
     } else {
       if (_ELF <= offset) {
         newELF = 0;

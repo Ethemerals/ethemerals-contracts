@@ -1,0 +1,5 @@
+
+Compilation finished successfully
+escrowL1 deployed to: 0x52AD83F0aE762622eab23BF9A15508195d404ef5
+add ethemerals contract
+

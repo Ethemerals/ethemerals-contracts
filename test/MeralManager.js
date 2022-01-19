@@ -3,7 +3,7 @@ const { ethers } = require('hardhat');
 const { MeralsL1Data, minMaxAvg, getRandomInt } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe.only('Meral Manager', function () {
+describe('Meral Manager', function () {
 	let merals;
 	let meralsL2;
 	let escrowL1;
@@ -16,30 +16,6 @@ describe.only('Meral Manager', function () {
 	let player3;
 	let [min, hour, day, week] = [60, 3600, 86400, 604800];
 	let allMeralStats = MeralsL1Data();
-
-	const getOGMeralId = async (tokenId) => {
-		let type = 1;
-		let id = await meralManager.getIdFromType(type, tokenId);
-		return id;
-	};
-
-	const makeRaid = async () => {
-		const landId = 1;
-		for (let i = 1; i <= 5; i++) {
-			let id = await getOGMeralId(i);
-			await meralManager.changeHP(id, 1000, true);
-			await wilds.stake(landId, id, 1);
-			await network.provider.send('evm_increaseTime', [hour]);
-			await network.provider.send('evm_mine');
-		}
-
-		for (let i = 11; i <= 15; i++) {
-			let id = getOGMeralId(i);
-			await wilds.connect(player1).stake(landId, id, 4);
-			await network.provider.send('evm_increaseTime', [hour]);
-			await network.provider.send('evm_mine');
-		}
-	};
 
 	beforeEach(async function () {
 		[admin, player1, player2, player3] = await ethers.getSigners();
@@ -96,16 +72,19 @@ describe.only('Meral Manager', function () {
 		await merals.mintMeralsAdmin(player2.address, 10); // ID starts at 21
 		await merals.mintMeralsAdmin(player3.address, 10); // ID starts at 31
 
-		// set and allow delegates
-		await merals.addDelegate(escrowL1.address, true);
-		await merals.connect(admin).setAllowDelegates(true);
-		await merals.connect(player1).setAllowDelegates(true);
-		await merals.connect(player2).setAllowDelegates(true);
-		await merals.connect(player3).setAllowDelegates(true);
+		// set approvals for bridge
+		await merals.connect(admin).setApprovalForAll(escrowL1.address, true);
+		await merals.connect(player1).setApprovalForAll(escrowL1.address, true);
+		await merals.connect(player2).setApprovalForAll(escrowL1.address, true);
+		await merals.connect(player3).setApprovalForAll(escrowL1.address, true);
 
 		// register Meral Addresses
 		await escrowL1.addContract(1, merals.address);
 		await meralManager.addMeralContract(1, meralsL2.address);
+
+		// add admin as delegate and game master BRIDGE ADMIN
+		await meralsL2.addDelegate(admin.address, true);
+		await meralManager.addGM(admin.address, true);
 
 		// DO ESCROW ON L1
 		let type = 1;

@@ -23,24 +23,6 @@ describe('Wilds XP', function () {
 		return id;
 	};
 
-	const makeRaid = async () => {
-		const landId = 1;
-		for (let i = 1; i <= 5; i++) {
-			let id = await getOGMeralId(i);
-			await meralManager.changeHP(id, 1000, true, 0);
-			await wilds.stake(landId, id, 1);
-			await network.provider.send('evm_increaseTime', [hour]);
-			await network.provider.send('evm_mine');
-		}
-
-		for (let i = 11; i <= 15; i++) {
-			let id = getOGMeralId(i);
-			await wilds.connect(player1).stake(landId, id, 4);
-			await network.provider.send('evm_increaseTime', [hour]);
-			await network.provider.send('evm_mine');
-		}
-	};
-
 	beforeEach(async function () {
 		[admin, player1, player2, player3] = await ethers.getSigners();
 
@@ -96,16 +78,19 @@ describe('Wilds XP', function () {
 		await merals.mintMeralsAdmin(player2.address, 10); // ID starts at 21
 		await merals.mintMeralsAdmin(player3.address, 10); // ID starts at 31
 
-		// set and allow delegates
-		await merals.addDelegate(escrowL1.address, true);
-		await merals.connect(admin).setAllowDelegates(true);
-		await merals.connect(player1).setAllowDelegates(true);
-		await merals.connect(player2).setAllowDelegates(true);
-		await merals.connect(player3).setAllowDelegates(true);
+		// set approvals for bridge
+		await merals.connect(admin).setApprovalForAll(escrowL1.address, true);
+		await merals.connect(player1).setApprovalForAll(escrowL1.address, true);
+		await merals.connect(player2).setApprovalForAll(escrowL1.address, true);
+		await merals.connect(player3).setApprovalForAll(escrowL1.address, true);
 
 		// register Meral Addresses
 		await escrowL1.addContract(1, merals.address);
 		await meralManager.addMeralContract(1, meralsL2.address);
+
+		// add admin as delegate and game master BRIDGE ADMIN
+		await meralsL2.addDelegate(admin.address, true);
+		await meralManager.addGM(admin.address, true);
 
 		// DO ESCROW ON L1
 		let type = 1;
@@ -125,7 +110,6 @@ describe('Wilds XP', function () {
 		// NODE BACKEND MINT (MIGRATE) TO L2
 
 		// // set and allow delegates
-		await meralManager.addGM(admin.address, true);
 		await meralManager.addGM(onsen.address, true);
 		await meralManager.addGM(wilds.address, true);
 		await meralManager.addGM(meralsL2.address, true);
@@ -155,9 +139,9 @@ describe('Wilds XP', function () {
 				let id = getOGMeralId(i);
 				let id_b = getOGMeralId(i + 10);
 				let id_c = getOGMeralId(i + 20);
-				await meralManager.changeHP(id, 1000, true, 0);
-				await meralManager.changeHP(id_b, 1000, true, 0);
-				await meralManager.changeHP(id_c, 1000, true, 0);
+				await meralManager.changeHP(id, 1000, true);
+				await meralManager.changeHP(id_b, 1000, true);
+				await meralManager.changeHP(id_c, 1000, true);
 				await network.provider.send('evm_increaseTime', [hour]);
 				await network.provider.send('evm_mine');
 				await wilds.stake(landId, id, 1);
@@ -179,7 +163,7 @@ describe('Wilds XP', function () {
 
 				await wilds.unstake(id);
 				let value = await meralManager.getMeralById(id);
-				expect(value.xp - 2000).to.equal(getXp(timestamp, event.timestamp));
+				expect(value.xp).to.equal(getXp(timestamp, event.timestamp));
 			}
 
 			for (let i = 1; i <= 5; i++) {
@@ -205,7 +189,7 @@ describe('Wilds XP', function () {
 
 			for (let i = 1; i <= 5; i++) {
 				let id = getOGMeralId(i);
-				await meralManager.changeHP(id, 1000, true, 0);
+				await meralManager.changeHP(id, 1000, true);
 				await network.provider.send('evm_increaseTime', [day]);
 				await network.provider.send('evm_mine');
 				await wilds.stake(landId, id, 1);
@@ -225,7 +209,7 @@ describe('Wilds XP', function () {
 
 				await wilds.unstake(id);
 				let value = await meralManager.getMeralById(id);
-				expect(value.xp - 2000).to.equal(getXp(timestamp, event.timestamp));
+				expect(value.xp).to.equal(getXp(timestamp, event.timestamp));
 			}
 		});
 
@@ -236,7 +220,7 @@ describe('Wilds XP', function () {
 				let id = getOGMeralId(i);
 				let id_b = getOGMeralId(i + 10);
 				let id_c = getOGMeralId(i + 20);
-				await meralManager.changeHP(id, 1000, true, 0);
+				await meralManager.changeHP(id, 1000, true);
 				await network.provider.send('evm_increaseTime', [day]);
 				await network.provider.send('evm_mine');
 				await wilds.stake(landId, id, 1);
@@ -258,7 +242,7 @@ describe('Wilds XP', function () {
 
 				await wilds.unstake(id);
 				let value = await meralManager.getMeralById(id);
-				expect(value.xp - 2000).to.equal(getXp(timestamp, event.timestamp));
+				expect(value.xp).to.equal(getXp(timestamp, event.timestamp));
 			}
 
 			for (let i = 21; i <= 25; i++) {
@@ -272,7 +256,7 @@ describe('Wilds XP', function () {
 
 				await wilds.unstake(id);
 				let value = await meralManager.getMeralById(id);
-				expect(value.xp - 2000).to.equal(getXp(timestamp, event.timestamp));
+				expect(value.xp).to.equal(getXp(timestamp, event.timestamp));
 			}
 		});
 
@@ -282,7 +266,7 @@ describe('Wilds XP', function () {
 
 			for (let i = 1; i <= 5; i++) {
 				let id = getOGMeralId(i);
-				await meralManager.changeHP(id, 1000, true, 0);
+				await meralManager.changeHP(id, 1000, true);
 				await wilds.stake(landId, id, 1);
 			}
 
@@ -322,7 +306,7 @@ describe('Wilds XP', function () {
 
 				await wilds.connect(player1).unstake(id);
 				let value = await meralManager.getMeralById(id);
-				expect(value.xp - 2000).to.equal(elapsedTime / 3600);
+				expect(value.xp).to.equal(elapsedTime / 3600);
 			}
 		});
 
@@ -331,7 +315,7 @@ describe('Wilds XP', function () {
 
 			for (let i = 1; i <= 5; i++) {
 				let id = getOGMeralId(i);
-				await meralManager.changeHP(id, 1000, true, 0);
+				await meralManager.changeHP(id, 1000, true);
 				await wilds.stake(landId, id, 1);
 			}
 
@@ -383,7 +367,7 @@ describe('Wilds XP', function () {
 
 				await wilds.unstake(id);
 				let value = await meralManager.getMeralById(id);
-				expect(value.xp - 2000).to.equal(getXp(timestamp, event.timestamp));
+				expect(value.xp).to.equal(getXp(timestamp, event.timestamp));
 			}
 		});
 	});

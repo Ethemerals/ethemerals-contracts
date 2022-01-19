@@ -1,13 +1,12 @@
 const hre = require('hardhat');
-
-const deployedAddress = '0x6eB5E38b2ecAD8759575a3C59254b32FAA84A257';
+const { meralManagerAddress } = require('../adminCalls/addresses');
 
 async function main() {
 	let admin;
 	[admin, player1, player2, player3] = await ethers.getSigners();
 
 	await hre.run('verify:verify', {
-		address: deployedAddress,
+		address: meralManagerAddress,
 		constructorArguments: [],
 	});
 }

@@ -22,11 +22,11 @@ async function main() {
 	console.log('add ethemerals contract');
 	await sleep(4000);
 
-	const Ethemerals = await ethers.getContractFactory('Ethemerals');
-	const merals = await Ethemerals.attach(EthemeralsAddress_4);
+	// const Ethemerals = await ethers.getContractFactory('Ethemerals');
+	// const merals = await Ethemerals.attach(EthemeralsAddress_4);
 
-	await merals.addDelegate(escrowL1.address, true);
-	console.log('add escrow to delegates');
+	// await merals.addDelegate(escrowL1.address, true);
+	// console.log('add escrow to delegates');
 }
 
 main()
