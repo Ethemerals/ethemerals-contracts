@@ -1,5 +1,7 @@
 const hre = require('hardhat');
+const { getAddresses } = require('./adminCalls/addresses');
 
+let chain = 4;
 async function main() {
 	async function sleep(millis) {
 		return new Promise((resolve) => setTimeout(resolve, millis));
@@ -11,9 +13,8 @@ async function main() {
 	// L2 Contracts
 	console.log(admin.address);
 
-	const meralManagerAddress = '0xCbaAabB391140833419b3Adade77220084b84dB1';
 	const Onsen = await ethers.getContractFactory('Onsen');
-	onsen = await Onsen.deploy(meralManagerAddress);
+	onsen = await Onsen.deploy(getAddresses().meralManager);
 	await onsen.deployed();
 	console.log('onsen deployed to:', onsen.address);
 	await sleep(4000);

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const hre = require('hardhat');
-const { meralL1Address } = require('./addresses');
+const { meralsL1Address_1 } = require('./addresses');
 const metadata = require('../metadata/metadata.json');
 
 async function main() {
@@ -13,7 +13,7 @@ async function main() {
 	console.log(admin.address);
 
 	const EthemeralsL1 = await ethers.getContractFactory('Ethemerals');
-	const meralsL1 = await EthemeralsL1.attach(meralL1Address);
+	const meralsL1 = await EthemeralsL1.attach(meralsL1Address_1);
 
 	const allTokens = [];
 	for (let i = 0; i <= 1000; i++) {

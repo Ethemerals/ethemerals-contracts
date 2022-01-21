@@ -5,7 +5,6 @@ const addressZero = '0x0000000000000000000000000000000000000000';
 
 describe('Wilds Raiding', function () {
 	let merals;
-	let meralsL2;
 	let escrowL1;
 	let meralManager;
 	let wilds;
@@ -21,6 +20,20 @@ describe('Wilds Raiding', function () {
 		let type = 1;
 		let id = await meralManager.getIdFromType(type, tokenId);
 		return id;
+	};
+
+	const typeMult = 100000;
+	const getTypeFromId = (id) => {
+		return parseInt(parseInt(id) / typeMult);
+	};
+
+	const getTokenIdFromId = (id) => {
+		let type = getTypeFromId(id);
+		return parseInt(parseInt(id) - parseInt(type) * typeMult);
+	};
+
+	const getIdFromType = (type, tokenId) => {
+		return parseInt(parseInt(tokenId) + parseInt(type) * typeMult);
 	};
 
 	beforeEach(async function () {
@@ -39,10 +52,6 @@ describe('Wilds Raiding', function () {
 		const MeralManager = await ethers.getContractFactory('MeralManager');
 		meralManager = await MeralManager.deploy(); // TODO random register
 		await meralManager.deployed();
-
-		const EthemeralsL2 = await ethers.getContractFactory('EthemeralsOnL2');
-		meralsL2 = await EthemeralsL2.deploy(meralManager.address);
-		await meralsL2.deployed();
 
 		// L2 Wilds Contracts
 		const WildsAdminActions = await ethers.getContractFactory('WildsAdminActions');
@@ -86,10 +95,8 @@ describe('Wilds Raiding', function () {
 
 		// register Meral Addresses
 		await escrowL1.addContract(1, merals.address);
-		await meralManager.addMeralContract(1, meralsL2.address);
 
 		// add admin as delegate and game master BRIDGE ADMIN
-		await meralsL2.addDelegate(admin.address, true);
 		await meralManager.addGM(admin.address, true);
 
 		// DO ESCROW ON L1
@@ -108,22 +115,21 @@ describe('Wilds Raiding', function () {
 		}
 
 		// NODE BACKEND MINT (MIGRATE) TO L2
+		for (let i = 1; i <= 40; i++) {
+			let _id = await escrowL1.getIdFromType(type, i);
+			let deposits = await escrowL1.allDeposits(_id);
+			await meralManager.releaseFromPortal(deposits, _id);
+		}
 
 		// // set and allow delegates
 		await meralManager.addGM(onsen.address, true);
 		await meralManager.addGM(wilds.address, true);
-		await meralManager.addGM(meralsL2.address, true);
-
-		for (let i = 1; i <= 40; i++) {
-			let meralStats = allMeralStats[i];
-			await meralsL2.migrateMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
-		}
+		await meralManager.addGM(meralManager.address, true);
 
 		// ADMIN
 		for (let i = 1; i <= 40; i++) {
-			let deposits = await escrowL1.allDeposits(getOGMeralId(i));
-			let _id = await escrowL1.getIdFromType(type, i);
-			await meralManager.releaseFromPortal(deposits, _id);
+			let meralStats = allMeralStats[i];
+			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
 		}
 	});
 
@@ -219,7 +225,7 @@ describe('Wilds Raiding', function () {
 				let id = getOGMeralId(i);
 				let value = await wilds.stakes(id);
 				expect(value.stakeAction).to.equal(0);
-				expect(await meralsL2.ownerOf(i)).to.equal(admin.address);
+				expect(await meralManager.ownerOf(getIdFromType(1, i))).to.equal(admin.address);
 			}
 
 			for (let i = 11; i <= 15; i++) {
@@ -283,8 +289,8 @@ describe('Wilds Raiding', function () {
 
 				await wilds.connect(player1).swapDefenders(id, id_b);
 
-				expect(await meralsL2.ownerOf(i)).to.equal(player1.address);
-				expect(await meralsL2.ownerOf(i + 5)).to.equal(wilds.address);
+				expect(await meralManager.ownerOf(getIdFromType(1, i))).to.equal(player1.address);
+				expect(await meralManager.ownerOf(getIdFromType(1, i + 5))).to.equal(wilds.address);
 				value = await wilds.stakes(id);
 				expect(value.stakeAction).to.equal(0);
 				value = await wilds.stakes(id_b);

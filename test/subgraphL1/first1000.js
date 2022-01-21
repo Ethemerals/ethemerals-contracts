@@ -2,6 +2,7 @@ const tokens = [
 	{
 		atk: '563',
 		atkBonus: '45',
+		bgId: '12',
 		def: '214',
 		defBonus: '47',
 		id: '1',
@@ -12,6 +13,7 @@ const tokens = [
 	{
 		atk: '784',
 		atkBonus: '9',
+		bgId: '21',
 		def: '276',
 		defBonus: '108',
 		id: '10',
@@ -20,8 +22,1021 @@ const tokens = [
 		subClass: 'Druid',
 	},
 	{
+		atk: '396',
+		atkBonus: '5',
+		bgId: '19',
+		def: '640',
+		defBonus: '91',
+		id: '2',
+		spd: '377',
+		spdBonus: '117',
+		subClass: 'Monk',
+	},
+	{
+		atk: '605',
+		atkBonus: '99',
+		bgId: '14',
+		def: '653',
+		defBonus: '121',
+		id: '3',
+		spd: '219',
+		spdBonus: '57',
+		subClass: 'Cleric',
+	},
+	{
+		atk: '659',
+		atkBonus: '67',
+		bgId: '1',
+		def: '247',
+		defBonus: '118',
+		id: '4',
+		spd: '568',
+		spdBonus: '89',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '619',
+		atkBonus: '125',
+		bgId: '15',
+		def: '486',
+		defBonus: '62',
+		id: '5',
+		spd: '393',
+		spdBonus: '111',
+		subClass: 'Monk',
+	},
+	{
+		atk: '663',
+		atkBonus: '22',
+		bgId: '20',
+		def: '568',
+		defBonus: '131',
+		id: '6',
+		spd: '227',
+		spdBonus: '105',
+		subClass: 'Sorcerer',
+	},
+	{
+		atk: '318',
+		atkBonus: '103',
+		bgId: '24',
+		def: '465',
+		defBonus: '101',
+		id: '7',
+		spd: '700',
+		spdBonus: '79',
+		subClass: 'Druid',
+	},
+	{
+		atk: '720',
+		atkBonus: '62',
+		bgId: '14',
+		def: '413',
+		defBonus: '21',
+		id: '8',
+		spd: '185',
+		spdBonus: '35',
+		subClass: 'Paladin',
+	},
+	{
+		atk: '533',
+		atkBonus: '109',
+		bgId: '0',
+		def: '637',
+		defBonus: '27',
+		id: '9',
+		spd: '199',
+		spdBonus: '33',
+		subClass: 'Dark Knight',
+	},
+	{
+		atk: '863',
+		atkBonus: '101',
+		bgId: '2',
+		def: '303',
+		defBonus: '82',
+		id: '11',
+		spd: '247',
+		spdBonus: '30',
+		subClass: 'Berserker',
+	},
+	{
+		atk: '603',
+		atkBonus: '62',
+		bgId: '24',
+		def: '212',
+		defBonus: '97',
+		id: '12',
+		spd: '599',
+		spdBonus: '55',
+		subClass: 'Ranger',
+	},
+	{
+		atk: '327',
+		atkBonus: '104',
+		bgId: '23',
+		def: '362',
+		defBonus: '97',
+		id: '13',
+		spd: '843',
+		spdBonus: '131',
+		subClass: 'Summoner',
+	},
+	{
+		atk: '622',
+		atkBonus: '50',
+		bgId: '7',
+		def: '372',
+		defBonus: '96',
+		id: '14',
+		spd: '456',
+		spdBonus: '104',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '470',
+		atkBonus: '69',
+		bgId: '21',
+		def: '718',
+		defBonus: '21',
+		id: '15',
+		spd: '208',
+		spdBonus: '106',
+		subClass: 'Sorcerer',
+	},
+	{
+		atk: '643',
+		atkBonus: '35',
+		bgId: '10',
+		def: '289',
+		defBonus: '37',
+		id: '16',
+		spd: '342',
+		spdBonus: '2',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '601',
+		atkBonus: '111',
+		bgId: '11',
+		def: '394',
+		defBonus: '110',
+		id: '17',
+		spd: '434',
+		spdBonus: '8',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '804',
+		atkBonus: '6',
+		bgId: '4',
+		def: '266',
+		defBonus: '60',
+		id: '18',
+		spd: '268',
+		spdBonus: '72',
+		subClass: 'Sorcerer',
+	},
+	{
+		atk: '565',
+		atkBonus: '21',
+		bgId: '23',
+		def: '359',
+		defBonus: '67',
+		id: '19',
+		spd: '380',
+		spdBonus: '16',
+		subClass: 'Druid',
+	},
+	{
+		atk: '253',
+		atkBonus: '63',
+		bgId: '20',
+		def: '445',
+		defBonus: '123',
+		id: '20',
+		spd: '770',
+		spdBonus: '82',
+		subClass: 'Knight',
+	},
+	{
+		atk: '412',
+		atkBonus: '113',
+		bgId: '14',
+		def: '470',
+		defBonus: '43',
+		id: '21',
+		spd: '543',
+		spdBonus: '69',
+		subClass: 'Druid',
+	},
+	{
+		atk: '834',
+		atkBonus: '46',
+		bgId: '15',
+		def: '325',
+		defBonus: '95',
+		id: '22',
+		spd: '182',
+		spdBonus: '0',
+		subClass: 'Summoner',
+	},
+	{
+		atk: '430',
+		atkBonus: '62',
+		bgId: '9',
+		def: '671',
+		defBonus: '55',
+		id: '23',
+		spd: '244',
+		spdBonus: '28',
+		subClass: 'Cleric',
+	},
+	{
+		atk: '670',
+		atkBonus: '3',
+		bgId: '4',
+		def: '310',
+		defBonus: '105',
+		id: '24',
+		spd: '421',
+		spdBonus: '93',
+		subClass: 'Summoner',
+	},
+	{
+		atk: '871',
+		atkBonus: '53',
+		bgId: '1',
+		def: '252',
+		defBonus: '117',
+		id: '25',
+		spd: '248',
+		spdBonus: '1',
+		subClass: 'Sorcerer',
+	},
+	{
+		atk: '411',
+		atkBonus: '91',
+		bgId: '24',
+		def: '172',
+		defBonus: '52',
+		id: '26',
+		spd: '863',
+		spdBonus: '103',
+		subClass: 'Berserker',
+	},
+	{
+		atk: '332',
+		atkBonus: '28',
+		bgId: '14',
+		def: '584',
+		defBonus: '78',
+		id: '27',
+		spd: '402',
+		spdBonus: '12',
+		subClass: 'Knight',
+	},
+	{
+		atk: '839',
+		atkBonus: '57',
+		bgId: '21',
+		def: '237',
+		defBonus: '16',
+		id: '28',
+		spd: '247',
+		spdBonus: '50',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '663',
+		atkBonus: '97',
+		bgId: '18',
+		def: '387',
+		defBonus: '105',
+		id: '29',
+		spd: '398',
+		spdBonus: '46',
+		subClass: 'Knight',
+	},
+	{
+		atk: '341',
+		atkBonus: '49',
+		bgId: '6',
+		def: '148',
+		defBonus: '37',
+		id: '30',
+		spd: '801',
+		spdBonus: '4',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '662',
+		atkBonus: '29',
+		bgId: '8',
+		def: '451',
+		defBonus: '67',
+		id: '31',
+		spd: '274',
+		spdBonus: '91',
+		subClass: 'Knight',
+	},
+	{
+		atk: '231',
+		atkBonus: '65',
+		bgId: '23',
+		def: '568',
+		defBonus: '79',
+		id: '32',
+		spd: '646',
+		spdBonus: '101',
+		subClass: 'Paladin',
+	},
+	{
+		atk: '297',
+		atkBonus: '41',
+		bgId: '20',
+		def: '844',
+		defBonus: '121',
+		id: '33',
+		spd: '280',
+		spdBonus: '59',
+		subClass: 'Knight',
+	},
+	{
+		atk: '659',
+		atkBonus: '28',
+		bgId: '19',
+		def: '366',
+		defBonus: '15',
+		id: '34',
+		spd: '280',
+		spdBonus: '62',
+		subClass: 'Monk',
+	},
+	{
+		atk: '632',
+		atkBonus: '118',
+		bgId: '14',
+		def: '395',
+		defBonus: '4',
+		id: '35',
+		spd: '370',
+		spdBonus: '75',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '498',
+		atkBonus: '-25',
+		bgId: '14',
+		def: '186',
+		defBonus: '-15',
+		id: '36',
+		spd: '779',
+		spdBonus: '303',
+		subClass: 'Summoner',
+	},
+	{
+		atk: '854',
+		atkBonus: '102',
+		bgId: '0',
+		def: '166',
+		defBonus: '44',
+		id: '37',
+		spd: '351',
+		spdBonus: '25',
+		subClass: 'Berserker',
+	},
+	{
+		atk: '333',
+		atkBonus: '22',
+		bgId: '16',
+		def: '407',
+		defBonus: '42',
+		id: '38',
+		spd: '648',
+		spdBonus: '124',
+		subClass: 'Berserker',
+	},
+	{
+		atk: '573',
+		atkBonus: '80',
+		bgId: '18',
+		def: '375',
+		defBonus: '67',
+		id: '39',
+		spd: '454',
+		spdBonus: '55',
+		subClass: 'Knight',
+	},
+	{
+		atk: '703',
+		atkBonus: '97',
+		bgId: '22',
+		def: '328',
+		defBonus: '18',
+		id: '40',
+		spd: '288',
+		spdBonus: '4',
+		subClass: 'Dragoon',
+	},
+	{
+		atk: '570',
+		atkBonus: '37',
+		bgId: '19',
+		def: '236',
+		defBonus: '66',
+		id: '41',
+		spd: '556',
+		spdBonus: '59',
+		subClass: 'Ranger',
+	},
+	{
+		atk: '606',
+		atkBonus: '51',
+		bgId: '16',
+		def: '532',
+		defBonus: '50',
+		id: '42',
+		spd: '255',
+		spdBonus: '92',
+		subClass: 'Sorcerer',
+	},
+	{
+		atk: '750',
+		atkBonus: '25',
+		bgId: '23',
+		def: '358',
+		defBonus: '24',
+		id: '43',
+		spd: '237',
+		spdBonus: '96',
+		subClass: 'Knight',
+	},
+	{
+		atk: '574',
+		atkBonus: '12',
+		bgId: '3',
+		def: '512',
+		defBonus: '79',
+		id: '44',
+		spd: '314',
+		spdBonus: '109',
+		subClass: 'Monk',
+	},
+	{
+		atk: '925',
+		atkBonus: '120',
+		bgId: '11',
+		def: '281',
+		defBonus: '67',
+		id: '45',
+		spd: '230',
+		spdBonus: '49',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '236',
+		atkBonus: '128',
+		bgId: '11',
+		def: '788',
+		defBonus: '56',
+		id: '46',
+		spd: '392',
+		spdBonus: '32',
+		subClass: 'Cleric',
+	},
+	{
+		atk: '547',
+		atkBonus: '80',
+		bgId: '9',
+		def: '448',
+		defBonus: '68',
+		id: '47',
+		spd: '413',
+		spdBonus: '60',
+		subClass: 'Druid',
+	},
+	{
+		atk: '568',
+		atkBonus: '11',
+		bgId: '3',
+		def: '401',
+		defBonus: '115',
+		id: '48',
+		spd: '410',
+		spdBonus: '53',
+		subClass: 'Sorcerer',
+	},
+	{
+		atk: '274',
+		atkBonus: '107',
+		bgId: '3',
+		def: '865',
+		defBonus: '65',
+		id: '49',
+		spd: '240',
+		spdBonus: '7',
+		subClass: 'Cleric',
+	},
+	{
+		atk: '832',
+		atkBonus: '4',
+		bgId: '12',
+		def: '134',
+		defBonus: '0',
+		id: '50',
+		spd: '269',
+		spdBonus: '31',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '800',
+		atkBonus: '57',
+		bgId: '8',
+		def: '391',
+		defBonus: '87',
+		id: '51',
+		spd: '189',
+		spdBonus: '36',
+		subClass: 'Sorcerer',
+	},
+	{
+		atk: '455',
+		atkBonus: '50',
+		bgId: '2',
+		def: '785',
+		defBonus: '130',
+		id: '52',
+		spd: '166',
+		spdBonus: '26',
+		subClass: 'Dark Knight',
+	},
+	{
+		atk: '348',
+		atkBonus: '12',
+		bgId: '20',
+		def: '415',
+		defBonus: '102',
+		id: '53',
+		spd: '614',
+		spdBonus: '63',
+		subClass: 'Summoner',
+	},
+	{
+		atk: '574',
+		atkBonus: '100',
+		bgId: '6',
+		def: '172',
+		defBonus: '36',
+		id: '54',
+		spd: '630',
+		spdBonus: '40',
+		subClass: 'Ranger',
+	},
+	{
+		atk: '442',
+		atkBonus: '1',
+		bgId: '14',
+		def: '371',
+		defBonus: '73',
+		id: '55',
+		spd: '466',
+		spdBonus: '5',
+		subClass: 'Monk',
+	},
+	{
+		atk: '847',
+		atkBonus: '129',
+		bgId: '15',
+		def: '291',
+		defBonus: '119',
+		id: '56',
+		spd: '383',
+		spdBonus: '73',
+		subClass: 'Dark Knight',
+	},
+	{
+		atk: '635',
+		atkBonus: '34',
+		bgId: '7',
+		def: '305',
+		defBonus: '7',
+		id: '57',
+		spd: '367',
+		spdBonus: '66',
+		subClass: 'Summoner',
+	},
+	{
+		atk: '786',
+		atkBonus: '99',
+		bgId: '5',
+		def: '389',
+		defBonus: '40',
+		id: '58',
+		spd: '280',
+		spdBonus: '116',
+		subClass: 'Dragoon',
+	},
+	{
+		atk: '711',
+		atkBonus: '24',
+		bgId: '18',
+		def: '209',
+		defBonus: '104',
+		id: '59',
+		spd: '509',
+		spdBonus: '101',
+		subClass: 'Ranger',
+	},
+	{
+		atk: '474',
+		atkBonus: '20',
+		bgId: '7',
+		def: '328',
+		defBonus: '128',
+		id: '60',
+		spd: '674',
+		spdBonus: '128',
+		subClass: 'Summoner',
+	},
+	{
+		atk: '694',
+		atkBonus: '17',
+		bgId: '6',
+		def: '387',
+		defBonus: '32',
+		id: '61',
+		spd: '297',
+		spdBonus: '129',
+		subClass: 'Paladin',
+	},
+	{
+		atk: '178',
+		atkBonus: '58',
+		bgId: '3',
+		def: '426',
+		defBonus: '11',
+		id: '62',
+		spd: '788',
+		spdBonus: '123',
+		subClass: 'Ranger',
+	},
+	{
+		atk: '380',
+		atkBonus: '72',
+		bgId: '19',
+		def: '537',
+		defBonus: '120',
+		id: '63',
+		spd: '504',
+		spdBonus: '29',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '627',
+		atkBonus: '61',
+		bgId: '22',
+		def: '254',
+		defBonus: '82',
+		id: '64',
+		spd: '578',
+		spdBonus: '116',
+		subClass: 'Berserker',
+	},
+	{
+		atk: '750',
+		atkBonus: '105',
+		bgId: '5',
+		def: '424',
+		defBonus: '114',
+		id: '65',
+		spd: '280',
+		spdBonus: '35',
+		subClass: 'Sorcerer',
+	},
+	{
+		atk: '320',
+		atkBonus: '70',
+		bgId: '3',
+		def: '507',
+		defBonus: '56',
+		id: '66',
+		spd: '599',
+		spdBonus: '100',
+		subClass: 'Dark Knight',
+	},
+	{
+		atk: '503',
+		atkBonus: '123',
+		bgId: '20',
+		def: '605',
+		defBonus: '2',
+		id: '67',
+		spd: '217',
+		spdBonus: '0',
+		subClass: 'Cleric',
+	},
+	{
+		atk: '800',
+		atkBonus: '55',
+		bgId: '10',
+		def: '190',
+		defBonus: '62',
+		id: '68',
+		spd: '359',
+		spdBonus: '32',
+		subClass: 'Berserker',
+	},
+	{
+		atk: '816',
+		atkBonus: '63',
+		bgId: '2',
+		def: '242',
+		defBonus: '71',
+		id: '69',
+		spd: '333',
+		spdBonus: '57',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '797',
+		atkBonus: '32',
+		bgId: '11',
+		def: '330',
+		defBonus: '46',
+		id: '70',
+		spd: '281',
+		spdBonus: '130',
+		subClass: 'Summoner',
+	},
+	{
+		atk: '679',
+		atkBonus: '129',
+		bgId: '4',
+		def: '285',
+		defBonus: '116',
+		id: '71',
+		spd: '521',
+		spdBonus: '40',
+		subClass: 'Druid',
+	},
+	{
+		atk: '462',
+		atkBonus: '125',
+		bgId: '21',
+		def: '653',
+		defBonus: '125',
+		id: '72',
+		spd: '375',
+		spdBonus: '40',
+		subClass: 'Knight',
+	},
+	{
+		atk: '632',
+		atkBonus: '68',
+		bgId: '8',
+		def: '344',
+		defBonus: '112',
+		id: '73',
+		spd: '465',
+		spdBonus: '61',
+		subClass: 'Sorcerer',
+	},
+	{
+		atk: '346',
+		atkBonus: '43',
+		bgId: '5',
+		def: '188',
+		defBonus: '86',
+		id: '74',
+		spd: '806',
+		spdBonus: '11',
+		subClass: 'Ranger',
+	},
+	{
+		atk: '933',
+		atkBonus: '42',
+		bgId: '13',
+		def: '205',
+		defBonus: '10',
+		id: '75',
+		spd: '197',
+		spdBonus: '83',
+		subClass: 'Sorcerer',
+	},
+	{
+		atk: '245',
+		atkBonus: '34',
+		bgId: '9',
+		def: '810',
+		defBonus: '39',
+		id: '76',
+		spd: '337',
+		spdBonus: '119',
+		subClass: 'Cleric',
+	},
+	{
+		atk: '661',
+		atkBonus: '85',
+		bgId: '2',
+		def: '389',
+		defBonus: '68',
+		id: '77',
+		spd: '374',
+		spdBonus: '71',
+		subClass: 'Summoner',
+	},
+	{
+		atk: '778',
+		atkBonus: '107',
+		bgId: '7',
+		def: '158',
+		defBonus: '24',
+		id: '78',
+		spd: '501',
+		spdBonus: '106',
+		subClass: 'Ranger',
+	},
+	{
+		atk: '842',
+		atkBonus: '105',
+		bgId: '11',
+		def: '317',
+		defBonus: '41',
+		id: '79',
+		spd: '230',
+		spdBonus: '43',
+		subClass: 'Dark Knight',
+	},
+	{
+		atk: '798',
+		atkBonus: '103',
+		bgId: '22',
+		def: '282',
+		defBonus: '16',
+		id: '80',
+		spd: '343',
+		spdBonus: '104',
+		subClass: 'Druid',
+	},
+	{
+		atk: '328',
+		atkBonus: '9',
+		bgId: '12',
+		def: '743',
+		defBonus: '114',
+		id: '81',
+		spd: '276',
+		spdBonus: '24',
+		subClass: 'Monk',
+	},
+	{
+		atk: '708',
+		atkBonus: '17',
+		bgId: '16',
+		def: '379',
+		defBonus: '69',
+		id: '82',
+		spd: '255',
+		spdBonus: '56',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '385',
+		atkBonus: '11',
+		bgId: '12',
+		def: '260',
+		defBonus: '131',
+		id: '83',
+		spd: '813',
+		spdBonus: '116',
+		subClass: 'Sorcerer',
+	},
+	{
+		atk: '580',
+		atkBonus: '119',
+		bgId: '1',
+		def: '379',
+		defBonus: '0',
+		id: '84',
+		spd: '426',
+		spdBonus: '66',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '335',
+		atkBonus: '-8',
+		bgId: '11',
+		def: '730',
+		defBonus: '146',
+		id: '85',
+		spd: '305',
+		spdBonus: '32',
+		subClass: 'Sorcerer',
+	},
+	{
+		atk: '399',
+		atkBonus: '284',
+		bgId: '5',
+		def: '252',
+		defBonus: '-156',
+		id: '86',
+		spd: '665',
+		spdBonus: '-12',
+		subClass: 'Cleric',
+	},
+	{
+		atk: '644',
+		atkBonus: '-36',
+		bgId: '21',
+		def: '372',
+		defBonus: '80',
+		id: '87',
+		spd: '284',
+		spdBonus: '56',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '242',
+		atkBonus: '3',
+		bgId: '18',
+		def: '642',
+		defBonus: '128',
+		id: '88',
+		spd: '463',
+		spdBonus: '16',
+		subClass: 'Ranger',
+	},
+	{
+		atk: '781',
+		atkBonus: '55',
+		bgId: '8',
+		def: '304',
+		defBonus: '4',
+		id: '89',
+		spd: '278',
+		spdBonus: '104',
+		subClass: 'Dragoon',
+	},
+	{
+		atk: '404',
+		atkBonus: '-44',
+		bgId: '15',
+		def: '680',
+		defBonus: '185',
+		id: '90',
+		spd: '263',
+		spdBonus: '6',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '498',
+		atkBonus: '197',
+		bgId: '22',
+		def: '416',
+		defBonus: '22',
+		id: '91',
+		spd: '537',
+		spdBonus: '32',
+		subClass: 'Cleric',
+	},
+	{
+		atk: '221',
+		atkBonus: '-17',
+		bgId: '18',
+		def: '576',
+		defBonus: '-53',
+		id: '92',
+		spd: '528',
+		spdBonus: '195',
+		subClass: 'Monk',
+	},
+	{
+		atk: '230',
+		atkBonus: '1',
+		bgId: '9',
+		def: '393',
+		defBonus: '100',
+		id: '93',
+		spd: '781',
+		spdBonus: '103',
+		subClass: 'Berserker',
+	},
+	{
+		atk: '330',
+		atkBonus: '42',
+		bgId: '2',
+		def: '505',
+		defBonus: '53',
+		id: '94',
+		spd: '549',
+		spdBonus: '89',
+		subClass: 'Cleric',
+	},
+	{
 		atk: '606',
 		atkBonus: '14',
+		bgId: '18',
 		def: '502',
 		defBonus: '313',
 		id: '100',
@@ -30,18 +1045,9 @@ const tokens = [
 		subClass: 'Berserker',
 	},
 	{
-		atk: '647',
-		atkBonus: '117',
-		def: '425',
-		defBonus: '127',
-		id: '1000',
-		spd: '432',
-		spdBonus: '60',
-		subClass: 'Knight',
-	},
-	{
 		atk: '771',
 		atkBonus: '27',
+		bgId: '5',
 		def: '339',
 		defBonus: '78',
 		id: '101',
@@ -52,6 +1058,7 @@ const tokens = [
 	{
 		atk: '711',
 		atkBonus: '47',
+		bgId: '9',
 		def: '245',
 		defBonus: '25',
 		id: '102',
@@ -62,6 +1069,7 @@ const tokens = [
 	{
 		atk: '541',
 		atkBonus: '69',
+		bgId: '16',
 		def: '304',
 		defBonus: '127',
 		id: '103',
@@ -72,6 +1080,7 @@ const tokens = [
 	{
 		atk: '623',
 		atkBonus: '83',
+		bgId: '15',
 		def: '570',
 		defBonus: '93',
 		id: '104',
@@ -82,6 +1091,7 @@ const tokens = [
 	{
 		atk: '781',
 		atkBonus: '66',
+		bgId: '17',
 		def: '262',
 		defBonus: '82',
 		id: '105',
@@ -92,6 +1102,7 @@ const tokens = [
 	{
 		atk: '695',
 		atkBonus: '79',
+		bgId: '6',
 		def: '362',
 		defBonus: '119',
 		id: '106',
@@ -102,6 +1113,7 @@ const tokens = [
 	{
 		atk: '684',
 		atkBonus: '112',
+		bgId: '2',
 		def: '298',
 		defBonus: '94',
 		id: '107',
@@ -112,6 +1124,7 @@ const tokens = [
 	{
 		atk: '253',
 		atkBonus: '-2',
+		bgId: '22',
 		def: '473',
 		defBonus: '234',
 		id: '108',
@@ -122,6 +1135,7 @@ const tokens = [
 	{
 		atk: '820',
 		atkBonus: '130',
+		bgId: '24',
 		def: '355',
 		defBonus: '62',
 		id: '109',
@@ -130,18 +1144,9 @@ const tokens = [
 		subClass: 'Knight',
 	},
 	{
-		atk: '863',
-		atkBonus: '101',
-		def: '303',
-		defBonus: '82',
-		id: '11',
-		spd: '247',
-		spdBonus: '30',
-		subClass: 'Berserker',
-	},
-	{
 		atk: '596',
 		atkBonus: '51',
+		bgId: '21',
 		def: '248',
 		defBonus: '120',
 		id: '110',
@@ -152,6 +1157,7 @@ const tokens = [
 	{
 		atk: '499',
 		atkBonus: '-40',
+		bgId: '22',
 		def: '439',
 		defBonus: '35',
 		id: '111',
@@ -160,8 +1166,64 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
+		atk: '526',
+		atkBonus: '-5',
+		bgId: '1',
+		def: '393',
+		defBonus: '123',
+		id: '95',
+		spd: '538',
+		spdBonus: '139',
+		subClass: 'Summoner',
+	},
+	{
+		atk: '487',
+		atkBonus: '58',
+		bgId: '19',
+		def: '476',
+		defBonus: '32',
+		id: '96',
+		spd: '369',
+		spdBonus: '42',
+		subClass: 'Assassin',
+	},
+	{
+		atk: '585',
+		atkBonus: '62',
+		bgId: '23',
+		def: '209',
+		defBonus: '60',
+		id: '97',
+		spd: '568',
+		spdBonus: '40',
+		subClass: 'Berserker',
+	},
+	{
+		atk: '757',
+		atkBonus: '144',
+		bgId: '0',
+		def: '509',
+		defBonus: '110',
+		id: '98',
+		spd: '260',
+		spdBonus: '72',
+		subClass: 'Monk',
+	},
+	{
+		atk: '781',
+		atkBonus: '84',
+		bgId: '6',
+		def: '263',
+		defBonus: '33',
+		id: '99',
+		spd: '265',
+		spdBonus: '-8',
+		subClass: 'Druid',
+	},
+	{
 		atk: '661',
 		atkBonus: '116',
+		bgId: '21',
 		def: '367',
 		defBonus: '34',
 		id: '112',
@@ -172,6 +1234,7 @@ const tokens = [
 	{
 		atk: '781',
 		atkBonus: '8',
+		bgId: '10',
 		def: '258',
 		defBonus: '90',
 		id: '113',
@@ -182,6 +1245,7 @@ const tokens = [
 	{
 		atk: '622',
 		atkBonus: '119',
+		bgId: '22',
 		def: '432',
 		defBonus: '45',
 		id: '114',
@@ -192,6 +1256,7 @@ const tokens = [
 	{
 		atk: '774',
 		atkBonus: '97',
+		bgId: '11',
 		def: '355',
 		defBonus: '123',
 		id: '115',
@@ -202,6 +1267,7 @@ const tokens = [
 	{
 		atk: '701',
 		atkBonus: '8',
+		bgId: '19',
 		def: '363',
 		defBonus: '36',
 		id: '116',
@@ -212,6 +1278,7 @@ const tokens = [
 	{
 		atk: '327',
 		atkBonus: '95',
+		bgId: '23',
 		def: '193',
 		defBonus: '43',
 		id: '117',
@@ -222,6 +1289,7 @@ const tokens = [
 	{
 		atk: '547',
 		atkBonus: '39',
+		bgId: '0',
 		def: '410',
 		defBonus: '73',
 		id: '118',
@@ -232,6 +1300,7 @@ const tokens = [
 	{
 		atk: '348',
 		atkBonus: '52',
+		bgId: '6',
 		def: '556',
 		defBonus: '7',
 		id: '119',
@@ -240,18 +1309,9 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
-		atk: '603',
-		atkBonus: '62',
-		def: '212',
-		defBonus: '97',
-		id: '12',
-		spd: '599',
-		spdBonus: '55',
-		subClass: 'Ranger',
-	},
-	{
 		atk: '769',
 		atkBonus: '88',
+		bgId: '18',
 		def: '354',
 		defBonus: '17',
 		id: '120',
@@ -262,6 +1322,7 @@ const tokens = [
 	{
 		atk: '428',
 		atkBonus: '100',
+		bgId: '21',
 		def: '643',
 		defBonus: '106',
 		id: '121',
@@ -272,6 +1333,7 @@ const tokens = [
 	{
 		atk: '401',
 		atkBonus: '12',
+		bgId: '14',
 		def: '479',
 		defBonus: '119',
 		id: '122',
@@ -282,6 +1344,7 @@ const tokens = [
 	{
 		atk: '490',
 		atkBonus: '-99',
+		bgId: '7',
 		def: '585',
 		defBonus: '125',
 		id: '123',
@@ -292,6 +1355,7 @@ const tokens = [
 	{
 		atk: '713',
 		atkBonus: '29',
+		bgId: '17',
 		def: '217',
 		defBonus: '28',
 		id: '124',
@@ -302,6 +1366,7 @@ const tokens = [
 	{
 		atk: '395',
 		atkBonus: '27',
+		bgId: '18',
 		def: '219',
 		defBonus: '74',
 		id: '125',
@@ -312,6 +1377,7 @@ const tokens = [
 	{
 		atk: '375',
 		atkBonus: '113',
+		bgId: '15',
 		def: '342',
 		defBonus: '88',
 		id: '126',
@@ -322,6 +1388,7 @@ const tokens = [
 	{
 		atk: '835',
 		atkBonus: '124',
+		bgId: '5',
 		def: '338',
 		defBonus: '77',
 		id: '127',
@@ -332,6 +1399,7 @@ const tokens = [
 	{
 		atk: '723',
 		atkBonus: '96',
+		bgId: '14',
 		def: '372',
 		defBonus: '123',
 		id: '128',
@@ -342,6 +1410,7 @@ const tokens = [
 	{
 		atk: '275',
 		atkBonus: '100',
+		bgId: '16',
 		def: '885',
 		defBonus: '67',
 		id: '129',
@@ -350,18 +1419,9 @@ const tokens = [
 		subClass: 'Knight',
 	},
 	{
-		atk: '327',
-		atkBonus: '104',
-		def: '362',
-		defBonus: '97',
-		id: '13',
-		spd: '843',
-		spdBonus: '131',
-		subClass: 'Summoner',
-	},
-	{
 		atk: '735',
 		atkBonus: '-32',
+		bgId: '21',
 		def: '314',
 		defBonus: '120',
 		id: '130',
@@ -372,6 +1432,7 @@ const tokens = [
 	{
 		atk: '517',
 		atkBonus: '44',
+		bgId: '24',
 		def: '602',
 		defBonus: '74',
 		id: '131',
@@ -382,6 +1443,7 @@ const tokens = [
 	{
 		atk: '571',
 		atkBonus: '101',
+		bgId: '18',
 		def: '644',
 		defBonus: '124',
 		id: '132',
@@ -392,6 +1454,7 @@ const tokens = [
 	{
 		atk: '276',
 		atkBonus: '114',
+		bgId: '15',
 		def: '379',
 		defBonus: '105',
 		id: '133',
@@ -402,6 +1465,7 @@ const tokens = [
 	{
 		atk: '915',
 		atkBonus: '120',
+		bgId: '3',
 		def: '304',
 		defBonus: '41',
 		id: '134',
@@ -412,6 +1476,7 @@ const tokens = [
 	{
 		atk: '406',
 		atkBonus: '40',
+		bgId: '15',
 		def: '523',
 		defBonus: '109',
 		id: '135',
@@ -422,6 +1487,7 @@ const tokens = [
 	{
 		atk: '838',
 		atkBonus: '72',
+		bgId: '10',
 		def: '296',
 		defBonus: '104',
 		id: '136',
@@ -432,6 +1498,7 @@ const tokens = [
 	{
 		atk: '496',
 		atkBonus: '14',
+		bgId: '19',
 		def: '297',
 		defBonus: '59',
 		id: '137',
@@ -442,6 +1509,7 @@ const tokens = [
 	{
 		atk: '270',
 		atkBonus: '65',
+		bgId: '15',
 		def: '616',
 		defBonus: '98',
 		id: '138',
@@ -452,6 +1520,7 @@ const tokens = [
 	{
 		atk: '535',
 		atkBonus: '91',
+		bgId: '1',
 		def: '301',
 		defBonus: '15',
 		id: '139',
@@ -460,18 +1529,9 @@ const tokens = [
 		subClass: 'Druid',
 	},
 	{
-		atk: '622',
-		atkBonus: '50',
-		def: '372',
-		defBonus: '96',
-		id: '14',
-		spd: '456',
-		spdBonus: '104',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '711',
 		atkBonus: '6',
+		bgId: '23',
 		def: '280',
 		defBonus: '-75',
 		id: '140',
@@ -482,6 +1542,7 @@ const tokens = [
 	{
 		atk: '763',
 		atkBonus: '96',
+		bgId: '16',
 		def: '111',
 		defBonus: '2',
 		id: '141',
@@ -492,6 +1553,7 @@ const tokens = [
 	{
 		atk: '421',
 		atkBonus: '34',
+		bgId: '0',
 		def: '479',
 		defBonus: '3',
 		id: '142',
@@ -502,6 +1564,7 @@ const tokens = [
 	{
 		atk: '494',
 		atkBonus: '89',
+		bgId: '9',
 		def: '697',
 		defBonus: '10',
 		id: '143',
@@ -512,6 +1575,7 @@ const tokens = [
 	{
 		atk: '684',
 		atkBonus: '123',
+		bgId: '3',
 		def: '456',
 		defBonus: '15',
 		id: '144',
@@ -522,6 +1586,7 @@ const tokens = [
 	{
 		atk: '371',
 		atkBonus: '88',
+		bgId: '22',
 		def: '638',
 		defBonus: '59',
 		id: '145',
@@ -532,6 +1597,7 @@ const tokens = [
 	{
 		atk: '206',
 		atkBonus: '69',
+		bgId: '12',
 		def: '729',
 		defBonus: '89',
 		id: '146',
@@ -542,6 +1608,7 @@ const tokens = [
 	{
 		atk: '369',
 		atkBonus: '27',
+		bgId: '7',
 		def: '624',
 		defBonus: '67',
 		id: '147',
@@ -552,6 +1619,7 @@ const tokens = [
 	{
 		atk: '295',
 		atkBonus: '50',
+		bgId: '19',
 		def: '359',
 		defBonus: '53',
 		id: '148',
@@ -562,6 +1630,7 @@ const tokens = [
 	{
 		atk: '646',
 		atkBonus: '59',
+		bgId: '3',
 		def: '243',
 		defBonus: '40',
 		id: '149',
@@ -570,18 +1639,9 @@ const tokens = [
 		subClass: 'Sorcerer',
 	},
 	{
-		atk: '470',
-		atkBonus: '69',
-		def: '718',
-		defBonus: '21',
-		id: '15',
-		spd: '208',
-		spdBonus: '106',
-		subClass: 'Sorcerer',
-	},
-	{
 		atk: '692',
 		atkBonus: '83',
+		bgId: '15',
 		def: '197',
 		defBonus: '8',
 		id: '150',
@@ -592,6 +1652,7 @@ const tokens = [
 	{
 		atk: '410',
 		atkBonus: '59',
+		bgId: '20',
 		def: '438',
 		defBonus: '42',
 		id: '151',
@@ -602,6 +1663,7 @@ const tokens = [
 	{
 		atk: '634',
 		atkBonus: '36',
+		bgId: '13',
 		def: '128',
 		defBonus: '14',
 		id: '152',
@@ -612,6 +1674,7 @@ const tokens = [
 	{
 		atk: '533',
 		atkBonus: '-42',
+		bgId: '12',
 		def: '458',
 		defBonus: '176',
 		id: '153',
@@ -622,6 +1685,7 @@ const tokens = [
 	{
 		atk: '353',
 		atkBonus: '96',
+		bgId: '1',
 		def: '762',
 		defBonus: '94',
 		id: '154',
@@ -632,6 +1696,7 @@ const tokens = [
 	{
 		atk: '491',
 		atkBonus: '117',
+		bgId: '1',
 		def: '684',
 		defBonus: '42',
 		id: '155',
@@ -642,6 +1707,7 @@ const tokens = [
 	{
 		atk: '263',
 		atkBonus: '59',
+		bgId: '20',
 		def: '323',
 		defBonus: '52',
 		id: '156',
@@ -652,6 +1718,7 @@ const tokens = [
 	{
 		atk: '649',
 		atkBonus: '99',
+		bgId: '4',
 		def: '414',
 		defBonus: '38',
 		id: '157',
@@ -662,6 +1729,7 @@ const tokens = [
 	{
 		atk: '644',
 		atkBonus: '62',
+		bgId: '24',
 		def: '507',
 		defBonus: '103',
 		id: '158',
@@ -672,6 +1740,7 @@ const tokens = [
 	{
 		atk: '313',
 		atkBonus: '207',
+		bgId: '10',
 		def: '210',
 		defBonus: '-124',
 		id: '159',
@@ -680,18 +1749,9 @@ const tokens = [
 		subClass: 'Cleric',
 	},
 	{
-		atk: '643',
-		atkBonus: '35',
-		def: '289',
-		defBonus: '37',
-		id: '16',
-		spd: '342',
-		spdBonus: '2',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '853',
 		atkBonus: '79',
+		bgId: '5',
 		def: '317',
 		defBonus: '107',
 		id: '160',
@@ -702,6 +1762,7 @@ const tokens = [
 	{
 		atk: '432',
 		atkBonus: '44',
+		bgId: '14',
 		def: '432',
 		defBonus: '78',
 		id: '161',
@@ -712,6 +1773,7 @@ const tokens = [
 	{
 		atk: '864',
 		atkBonus: '106',
+		bgId: '1',
 		def: '270',
 		defBonus: '42',
 		id: '162',
@@ -722,6 +1784,7 @@ const tokens = [
 	{
 		atk: '646',
 		atkBonus: '8',
+		bgId: '22',
 		def: '265',
 		defBonus: '107',
 		id: '163',
@@ -732,6 +1795,7 @@ const tokens = [
 	{
 		atk: '881',
 		atkBonus: '31',
+		bgId: '20',
 		def: '204',
 		defBonus: '103',
 		id: '164',
@@ -742,6 +1806,7 @@ const tokens = [
 	{
 		atk: '190',
 		atkBonus: '18',
+		bgId: '2',
 		def: '589',
 		defBonus: '16',
 		id: '165',
@@ -752,6 +1817,7 @@ const tokens = [
 	{
 		atk: '783',
 		atkBonus: '69',
+		bgId: '4',
 		def: '245',
 		defBonus: '86',
 		id: '166',
@@ -762,6 +1828,7 @@ const tokens = [
 	{
 		atk: '745',
 		atkBonus: '112',
+		bgId: '13',
 		def: '374',
 		defBonus: '22',
 		id: '167',
@@ -772,6 +1839,7 @@ const tokens = [
 	{
 		atk: '260',
 		atkBonus: '24',
+		bgId: '10',
 		def: '365',
 		defBonus: '76',
 		id: '168',
@@ -782,6 +1850,7 @@ const tokens = [
 	{
 		atk: '579',
 		atkBonus: '230',
+		bgId: '18',
 		def: '749',
 		defBonus: '49',
 		id: '169',
@@ -790,18 +1859,9 @@ const tokens = [
 		subClass: 'Cleric',
 	},
 	{
-		atk: '601',
-		atkBonus: '111',
-		def: '394',
-		defBonus: '110',
-		id: '17',
-		spd: '434',
-		spdBonus: '8',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '778',
 		atkBonus: '119',
+		bgId: '1',
 		def: '337',
 		defBonus: '3',
 		id: '170',
@@ -812,6 +1872,7 @@ const tokens = [
 	{
 		atk: '645',
 		atkBonus: '111',
+		bgId: '1',
 		def: '172',
 		defBonus: '57',
 		id: '171',
@@ -822,6 +1883,7 @@ const tokens = [
 	{
 		atk: '577',
 		atkBonus: '89',
+		bgId: '21',
 		def: '631',
 		defBonus: '107',
 		id: '172',
@@ -832,6 +1894,7 @@ const tokens = [
 	{
 		atk: '658',
 		atkBonus: '131',
+		bgId: '10',
 		def: '283',
 		defBonus: '59',
 		id: '173',
@@ -842,6 +1905,7 @@ const tokens = [
 	{
 		atk: '861',
 		atkBonus: '55',
+		bgId: '10',
 		def: '304',
 		defBonus: '126',
 		id: '174',
@@ -852,6 +1916,7 @@ const tokens = [
 	{
 		atk: '472',
 		atkBonus: '88',
+		bgId: '19',
 		def: '509',
 		defBonus: '5',
 		id: '175',
@@ -862,6 +1927,7 @@ const tokens = [
 	{
 		atk: '458',
 		atkBonus: '95',
+		bgId: '12',
 		def: '715',
 		defBonus: '126',
 		id: '176',
@@ -872,6 +1938,7 @@ const tokens = [
 	{
 		atk: '473',
 		atkBonus: '58',
+		bgId: '21',
 		def: '646',
 		defBonus: '53',
 		id: '177',
@@ -882,6 +1949,7 @@ const tokens = [
 	{
 		atk: '809',
 		atkBonus: '102',
+		bgId: '5',
 		def: '341',
 		defBonus: '61',
 		id: '178',
@@ -892,6 +1960,7 @@ const tokens = [
 	{
 		atk: '816',
 		atkBonus: '40',
+		bgId: '5',
 		def: '218',
 		defBonus: '41',
 		id: '179',
@@ -900,18 +1969,9 @@ const tokens = [
 		subClass: 'Druid',
 	},
 	{
-		atk: '804',
-		atkBonus: '6',
-		def: '266',
-		defBonus: '60',
-		id: '18',
-		spd: '268',
-		spdBonus: '72',
-		subClass: 'Sorcerer',
-	},
-	{
 		atk: '419',
 		atkBonus: '90',
+		bgId: '5',
 		def: '641',
 		defBonus: '103',
 		id: '180',
@@ -922,6 +1982,7 @@ const tokens = [
 	{
 		atk: '656',
 		atkBonus: '114',
+		bgId: '7',
 		def: '535',
 		defBonus: '54',
 		id: '181',
@@ -932,6 +1993,7 @@ const tokens = [
 	{
 		atk: '438',
 		atkBonus: '48',
+		bgId: '4',
 		def: '476',
 		defBonus: '79',
 		id: '182',
@@ -942,6 +2004,7 @@ const tokens = [
 	{
 		atk: '178',
 		atkBonus: '17',
+		bgId: '2',
 		def: '373',
 		defBonus: '122',
 		id: '183',
@@ -952,6 +2015,7 @@ const tokens = [
 	{
 		atk: '255',
 		atkBonus: '28',
+		bgId: '6',
 		def: '505',
 		defBonus: '63',
 		id: '184',
@@ -962,6 +2026,7 @@ const tokens = [
 	{
 		atk: '776',
 		atkBonus: '76',
+		bgId: '21',
 		def: '264',
 		defBonus: '42',
 		id: '185',
@@ -972,6 +2037,7 @@ const tokens = [
 	{
 		atk: '305',
 		atkBonus: '16',
+		bgId: '5',
 		def: '584',
 		defBonus: '35',
 		id: '186',
@@ -982,6 +2048,7 @@ const tokens = [
 	{
 		atk: '336',
 		atkBonus: '10',
+		bgId: '15',
 		def: '662',
 		defBonus: '132',
 		id: '187',
@@ -992,6 +2059,7 @@ const tokens = [
 	{
 		atk: '531',
 		atkBonus: '26',
+		bgId: '24',
 		def: '589',
 		defBonus: '19',
 		id: '188',
@@ -1002,6 +2070,7 @@ const tokens = [
 	{
 		atk: '600',
 		atkBonus: '45',
+		bgId: '2',
 		def: '232',
 		defBonus: '41',
 		id: '189',
@@ -1010,18 +2079,9 @@ const tokens = [
 		subClass: 'Ranger',
 	},
 	{
-		atk: '565',
-		atkBonus: '21',
-		def: '359',
-		defBonus: '67',
-		id: '19',
-		spd: '380',
-		spdBonus: '16',
-		subClass: 'Druid',
-	},
-	{
 		atk: '547',
 		atkBonus: '22',
+		bgId: '11',
 		def: '540',
 		defBonus: '224',
 		id: '190',
@@ -1032,6 +2092,7 @@ const tokens = [
 	{
 		atk: '320',
 		atkBonus: '23',
+		bgId: '0',
 		def: '679',
 		defBonus: '114',
 		id: '191',
@@ -1042,6 +2103,7 @@ const tokens = [
 	{
 		atk: '201',
 		atkBonus: '34',
+		bgId: '18',
 		def: '642',
 		defBonus: '41',
 		id: '192',
@@ -1052,6 +2114,7 @@ const tokens = [
 	{
 		atk: '756',
 		atkBonus: '109',
+		bgId: '8',
 		def: '241',
 		defBonus: '100',
 		id: '193',
@@ -1062,6 +2125,7 @@ const tokens = [
 	{
 		atk: '691',
 		atkBonus: '9',
+		bgId: '7',
 		def: '498',
 		defBonus: '103',
 		id: '194',
@@ -1072,6 +2136,7 @@ const tokens = [
 	{
 		atk: '809',
 		atkBonus: '101',
+		bgId: '20',
 		def: '224',
 		defBonus: '69',
 		id: '195',
@@ -1082,6 +2147,7 @@ const tokens = [
 	{
 		atk: '765',
 		atkBonus: '80',
+		bgId: '13',
 		def: '397',
 		defBonus: '101',
 		id: '196',
@@ -1092,6 +2158,7 @@ const tokens = [
 	{
 		atk: '453',
 		atkBonus: '20',
+		bgId: '20',
 		def: '619',
 		defBonus: '112',
 		id: '197',
@@ -1102,6 +2169,7 @@ const tokens = [
 	{
 		atk: '531',
 		atkBonus: '98',
+		bgId: '5',
 		def: '501',
 		defBonus: '113',
 		id: '198',
@@ -1112,6 +2180,7 @@ const tokens = [
 	{
 		atk: '537',
 		atkBonus: '30',
+		bgId: '22',
 		def: '405',
 		defBonus: '20',
 		id: '199',
@@ -1120,28 +2189,9 @@ const tokens = [
 		subClass: 'Ranger',
 	},
 	{
-		atk: '396',
-		atkBonus: '5',
-		def: '640',
-		defBonus: '91',
-		id: '2',
-		spd: '377',
-		spdBonus: '117',
-		subClass: 'Monk',
-	},
-	{
-		atk: '253',
-		atkBonus: '63',
-		def: '445',
-		defBonus: '123',
-		id: '20',
-		spd: '770',
-		spdBonus: '82',
-		subClass: 'Knight',
-	},
-	{
 		atk: '361',
 		atkBonus: '-53',
+		bgId: '12',
 		def: '707',
 		defBonus: '165',
 		id: '200',
@@ -1152,6 +2202,7 @@ const tokens = [
 	{
 		atk: '437',
 		atkBonus: '126',
+		bgId: '1',
 		def: '294',
 		defBonus: '108',
 		id: '201',
@@ -1162,6 +2213,7 @@ const tokens = [
 	{
 		atk: '649',
 		atkBonus: '123',
+		bgId: '15',
 		def: '473',
 		defBonus: '111',
 		id: '202',
@@ -1172,6 +2224,7 @@ const tokens = [
 	{
 		atk: '604',
 		atkBonus: '128',
+		bgId: '12',
 		def: '407',
 		defBonus: '35',
 		id: '203',
@@ -1182,6 +2235,7 @@ const tokens = [
 	{
 		atk: '752',
 		atkBonus: '-64',
+		bgId: '16',
 		def: '467',
 		defBonus: '275',
 		id: '204',
@@ -1192,6 +2246,7 @@ const tokens = [
 	{
 		atk: '496',
 		atkBonus: '60',
+		bgId: '12',
 		def: '469',
 		defBonus: '27',
 		id: '205',
@@ -1202,6 +2257,7 @@ const tokens = [
 	{
 		atk: '572',
 		atkBonus: '41',
+		bgId: '14',
 		def: '596',
 		defBonus: '85',
 		id: '206',
@@ -1212,6 +2268,7 @@ const tokens = [
 	{
 		atk: '851',
 		atkBonus: '63',
+		bgId: '7',
 		def: '364',
 		defBonus: '114',
 		id: '207',
@@ -1222,6 +2279,7 @@ const tokens = [
 	{
 		atk: '533',
 		atkBonus: '15',
+		bgId: '24',
 		def: '274',
 		defBonus: '17',
 		id: '208',
@@ -1232,6 +2290,7 @@ const tokens = [
 	{
 		atk: '781',
 		atkBonus: '31',
+		bgId: '16',
 		def: '117',
 		defBonus: '9',
 		id: '209',
@@ -1240,18 +2299,9 @@ const tokens = [
 		subClass: 'Assassin',
 	},
 	{
-		atk: '412',
-		atkBonus: '113',
-		def: '470',
-		defBonus: '43',
-		id: '21',
-		spd: '543',
-		spdBonus: '69',
-		subClass: 'Druid',
-	},
-	{
 		atk: '562',
 		atkBonus: '121',
+		bgId: '21',
 		def: '431',
 		defBonus: '2',
 		id: '210',
@@ -1262,6 +2312,7 @@ const tokens = [
 	{
 		atk: '703',
 		atkBonus: '62',
+		bgId: '10',
 		def: '328',
 		defBonus: '62',
 		id: '211',
@@ -1272,6 +2323,7 @@ const tokens = [
 	{
 		atk: '270',
 		atkBonus: '85',
+		bgId: '16',
 		def: '827',
 		defBonus: '29',
 		id: '212',
@@ -1282,6 +2334,7 @@ const tokens = [
 	{
 		atk: '221',
 		atkBonus: '1',
+		bgId: '9',
 		def: '505',
 		defBonus: '48',
 		id: '213',
@@ -1292,6 +2345,7 @@ const tokens = [
 	{
 		atk: '686',
 		atkBonus: '61',
+		bgId: '1',
 		def: '432',
 		defBonus: '1',
 		id: '214',
@@ -1302,6 +2356,7 @@ const tokens = [
 	{
 		atk: '369',
 		atkBonus: '5',
+		bgId: '24',
 		def: '499',
 		defBonus: '86',
 		id: '215',
@@ -1312,6 +2367,7 @@ const tokens = [
 	{
 		atk: '518',
 		atkBonus: '71',
+		bgId: '0',
 		def: '602',
 		defBonus: '103',
 		id: '216',
@@ -1322,6 +2378,7 @@ const tokens = [
 	{
 		atk: '645',
 		atkBonus: '58',
+		bgId: '17',
 		def: '337',
 		defBonus: '85',
 		id: '217',
@@ -1332,6 +2389,7 @@ const tokens = [
 	{
 		atk: '490',
 		atkBonus: '43',
+		bgId: '13',
 		def: '326',
 		defBonus: '14',
 		id: '218',
@@ -1342,6 +2400,7 @@ const tokens = [
 	{
 		atk: '635',
 		atkBonus: '12',
+		bgId: '0',
 		def: '355',
 		defBonus: '4',
 		id: '219',
@@ -1350,18 +2409,9 @@ const tokens = [
 		subClass: 'Summoner',
 	},
 	{
-		atk: '834',
-		atkBonus: '46',
-		def: '325',
-		defBonus: '95',
-		id: '22',
-		spd: '182',
-		spdBonus: '0',
-		subClass: 'Summoner',
-	},
-	{
 		atk: '473',
 		atkBonus: '52',
+		bgId: '4',
 		def: '524',
 		defBonus: '88',
 		id: '220',
@@ -1372,6 +2422,7 @@ const tokens = [
 	{
 		atk: '210',
 		atkBonus: '40',
+		bgId: '8',
 		def: '1008',
 		defBonus: '86',
 		id: '221',
@@ -1382,6 +2433,7 @@ const tokens = [
 	{
 		atk: '566',
 		atkBonus: '8',
+		bgId: '0',
 		def: '246',
 		defBonus: '114',
 		id: '222',
@@ -1392,6 +2444,7 @@ const tokens = [
 	{
 		atk: '609',
 		atkBonus: '72',
+		bgId: '1',
 		def: '636',
 		defBonus: '115',
 		id: '223',
@@ -1402,6 +2455,7 @@ const tokens = [
 	{
 		atk: '767',
 		atkBonus: '21',
+		bgId: '17',
 		def: '380',
 		defBonus: '87',
 		id: '224',
@@ -1412,6 +2466,7 @@ const tokens = [
 	{
 		atk: '614',
 		atkBonus: '71',
+		bgId: '3',
 		def: '320',
 		defBonus: '1',
 		id: '225',
@@ -1422,6 +2477,7 @@ const tokens = [
 	{
 		atk: '775',
 		atkBonus: '122',
+		bgId: '9',
 		def: '407',
 		defBonus: '124',
 		id: '226',
@@ -1432,6 +2488,7 @@ const tokens = [
 	{
 		atk: '503',
 		atkBonus: '85',
+		bgId: '23',
 		def: '502',
 		defBonus: '64',
 		id: '227',
@@ -1442,6 +2499,7 @@ const tokens = [
 	{
 		atk: '292',
 		atkBonus: '131',
+		bgId: '22',
 		def: '869',
 		defBonus: '67',
 		id: '228',
@@ -1452,6 +2510,7 @@ const tokens = [
 	{
 		atk: '646',
 		atkBonus: '67',
+		bgId: '19',
 		def: '284',
 		defBonus: '42',
 		id: '229',
@@ -1460,18 +2519,9 @@ const tokens = [
 		subClass: 'Druid',
 	},
 	{
-		atk: '430',
-		atkBonus: '62',
-		def: '671',
-		defBonus: '55',
-		id: '23',
-		spd: '244',
-		spdBonus: '28',
-		subClass: 'Cleric',
-	},
-	{
 		atk: '258',
 		atkBonus: '117',
+		bgId: '20',
 		def: '920',
 		defBonus: '35',
 		id: '230',
@@ -1482,6 +2532,7 @@ const tokens = [
 	{
 		atk: '403',
 		atkBonus: '145',
+		bgId: '3',
 		def: '710',
 		defBonus: '85',
 		id: '231',
@@ -1492,6 +2543,7 @@ const tokens = [
 	{
 		atk: '738',
 		atkBonus: '125',
+		bgId: '22',
 		def: '383',
 		defBonus: '101',
 		id: '232',
@@ -1502,6 +2554,7 @@ const tokens = [
 	{
 		atk: '397',
 		atkBonus: '96',
+		bgId: '22',
 		def: '587',
 		defBonus: '58',
 		id: '233',
@@ -1512,6 +2565,7 @@ const tokens = [
 	{
 		atk: '445',
 		atkBonus: '12',
+		bgId: '12',
 		def: '417',
 		defBonus: '4',
 		id: '234',
@@ -1522,6 +2576,7 @@ const tokens = [
 	{
 		atk: '450',
 		atkBonus: '78',
+		bgId: '21',
 		def: '667',
 		defBonus: '25',
 		id: '235',
@@ -1532,6 +2587,7 @@ const tokens = [
 	{
 		atk: '379',
 		atkBonus: '44',
+		bgId: '10',
 		def: '306',
 		defBonus: '39',
 		id: '236',
@@ -1542,6 +2598,7 @@ const tokens = [
 	{
 		atk: '473',
 		atkBonus: '127',
+		bgId: '1',
 		def: '530',
 		defBonus: '14',
 		id: '237',
@@ -1552,6 +2609,7 @@ const tokens = [
 	{
 		atk: '706',
 		atkBonus: '126',
+		bgId: '1',
 		def: '235',
 		defBonus: '4',
 		id: '238',
@@ -1562,6 +2620,7 @@ const tokens = [
 	{
 		atk: '413',
 		atkBonus: '73',
+		bgId: '3',
 		def: '235',
 		defBonus: '131',
 		id: '239',
@@ -1570,18 +2629,9 @@ const tokens = [
 		subClass: 'Assassin',
 	},
 	{
-		atk: '670',
-		atkBonus: '3',
-		def: '310',
-		defBonus: '105',
-		id: '24',
-		spd: '421',
-		spdBonus: '93',
-		subClass: 'Summoner',
-	},
-	{
 		atk: '824',
 		atkBonus: '84',
+		bgId: '14',
 		def: '201',
 		defBonus: '26',
 		id: '240',
@@ -1592,6 +2642,7 @@ const tokens = [
 	{
 		atk: '461',
 		atkBonus: '83',
+		bgId: '1',
 		def: '595',
 		defBonus: '109',
 		id: '241',
@@ -1602,6 +2653,7 @@ const tokens = [
 	{
 		atk: '382',
 		atkBonus: '125',
+		bgId: '22',
 		def: '449',
 		defBonus: '12',
 		id: '242',
@@ -1612,6 +2664,7 @@ const tokens = [
 	{
 		atk: '834',
 		atkBonus: '85',
+		bgId: '16',
 		def: '333',
 		defBonus: '98',
 		id: '243',
@@ -1622,6 +2675,7 @@ const tokens = [
 	{
 		atk: '393',
 		atkBonus: '120',
+		bgId: '9',
 		def: '576',
 		defBonus: '49',
 		id: '244',
@@ -1632,6 +2686,7 @@ const tokens = [
 	{
 		atk: '406',
 		atkBonus: '73',
+		bgId: '24',
 		def: '511',
 		defBonus: '101',
 		id: '245',
@@ -1642,6 +2697,7 @@ const tokens = [
 	{
 		atk: '425',
 		atkBonus: '53',
+		bgId: '16',
 		def: '525',
 		defBonus: '42',
 		id: '246',
@@ -1652,6 +2708,7 @@ const tokens = [
 	{
 		atk: '852',
 		atkBonus: '226',
+		bgId: '22',
 		def: '351',
 		defBonus: '-72',
 		id: '247',
@@ -1662,6 +2719,7 @@ const tokens = [
 	{
 		atk: '599',
 		atkBonus: '58',
+		bgId: '16',
 		def: '400',
 		defBonus: '42',
 		id: '248',
@@ -1672,6 +2730,7 @@ const tokens = [
 	{
 		atk: '542',
 		atkBonus: '52',
+		bgId: '10',
 		def: '481',
 		defBonus: '118',
 		id: '249',
@@ -1680,18 +2739,9 @@ const tokens = [
 		subClass: 'Berserker',
 	},
 	{
-		atk: '871',
-		atkBonus: '53',
-		def: '252',
-		defBonus: '117',
-		id: '25',
-		spd: '248',
-		spdBonus: '1',
-		subClass: 'Sorcerer',
-	},
-	{
 		atk: '333',
 		atkBonus: '12',
+		bgId: '15',
 		def: '705',
 		defBonus: '115',
 		id: '250',
@@ -1702,6 +2752,7 @@ const tokens = [
 	{
 		atk: '817',
 		atkBonus: '66',
+		bgId: '16',
 		def: '382',
 		defBonus: '104',
 		id: '251',
@@ -1712,6 +2763,7 @@ const tokens = [
 	{
 		atk: '731',
 		atkBonus: '29',
+		bgId: '18',
 		def: '272',
 		defBonus: '8',
 		id: '252',
@@ -1722,6 +2774,7 @@ const tokens = [
 	{
 		atk: '872',
 		atkBonus: '200',
+		bgId: '5',
 		def: '383',
 		defBonus: '33',
 		id: '253',
@@ -1732,6 +2785,7 @@ const tokens = [
 	{
 		atk: '528',
 		atkBonus: '107',
+		bgId: '1',
 		def: '332',
 		defBonus: '100',
 		id: '254',
@@ -1742,6 +2796,7 @@ const tokens = [
 	{
 		atk: '284',
 		atkBonus: '-91',
+		bgId: '3',
 		def: '560',
 		defBonus: '0',
 		id: '255',
@@ -1752,6 +2807,7 @@ const tokens = [
 	{
 		atk: '372',
 		atkBonus: '77',
+		bgId: '11',
 		def: '683',
 		defBonus: '73',
 		id: '256',
@@ -1762,6 +2818,7 @@ const tokens = [
 	{
 		atk: '570',
 		atkBonus: '8',
+		bgId: '21',
 		def: '517',
 		defBonus: '24',
 		id: '257',
@@ -1772,6 +2829,7 @@ const tokens = [
 	{
 		atk: '589',
 		atkBonus: '114',
+		bgId: '21',
 		def: '389',
 		defBonus: '132',
 		id: '258',
@@ -1782,6 +2840,7 @@ const tokens = [
 	{
 		atk: '864',
 		atkBonus: '123',
+		bgId: '9',
 		def: '317',
 		defBonus: '114',
 		id: '259',
@@ -1790,18 +2849,9 @@ const tokens = [
 		subClass: 'Dragoon',
 	},
 	{
-		atk: '411',
-		atkBonus: '91',
-		def: '172',
-		defBonus: '52',
-		id: '26',
-		spd: '863',
-		spdBonus: '103',
-		subClass: 'Berserker',
-	},
-	{
 		atk: '471',
 		atkBonus: '67',
+		bgId: '3',
 		def: '425',
 		defBonus: '101',
 		id: '260',
@@ -1812,6 +2862,7 @@ const tokens = [
 	{
 		atk: '684',
 		atkBonus: '92',
+		bgId: '23',
 		def: '311',
 		defBonus: '68',
 		id: '261',
@@ -1822,6 +2873,7 @@ const tokens = [
 	{
 		atk: '766',
 		atkBonus: '119',
+		bgId: '11',
 		def: '427',
 		defBonus: '50',
 		id: '262',
@@ -1832,6 +2884,7 @@ const tokens = [
 	{
 		atk: '605',
 		atkBonus: '115',
+		bgId: '20',
 		def: '107',
 		defBonus: '3',
 		id: '263',
@@ -1842,6 +2895,7 @@ const tokens = [
 	{
 		atk: '420',
 		atkBonus: '87',
+		bgId: '23',
 		def: '294',
 		defBonus: '122',
 		id: '264',
@@ -1852,6 +2906,7 @@ const tokens = [
 	{
 		atk: '887',
 		atkBonus: '22',
+		bgId: '20',
 		def: '205',
 		defBonus: '55',
 		id: '265',
@@ -1862,6 +2917,7 @@ const tokens = [
 	{
 		atk: '930',
 		atkBonus: '110',
+		bgId: '4',
 		def: '237',
 		defBonus: '66',
 		id: '266',
@@ -1872,6 +2928,7 @@ const tokens = [
 	{
 		atk: '685',
 		atkBonus: '1',
+		bgId: '13',
 		def: '371',
 		defBonus: '8',
 		id: '267',
@@ -1882,6 +2939,7 @@ const tokens = [
 	{
 		atk: '413',
 		atkBonus: '-34',
+		bgId: '20',
 		def: '410',
 		defBonus: '189',
 		id: '268',
@@ -1892,6 +2950,7 @@ const tokens = [
 	{
 		atk: '374',
 		atkBonus: '104',
+		bgId: '3',
 		def: '588',
 		defBonus: '128',
 		id: '269',
@@ -1900,18 +2959,9 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
-		atk: '332',
-		atkBonus: '28',
-		def: '584',
-		defBonus: '78',
-		id: '27',
-		spd: '402',
-		spdBonus: '12',
-		subClass: 'Knight',
-	},
-	{
 		atk: '845',
 		atkBonus: '31',
+		bgId: '6',
 		def: '334',
 		defBonus: '58',
 		id: '270',
@@ -1922,6 +2972,7 @@ const tokens = [
 	{
 		atk: '608',
 		atkBonus: '-97',
+		bgId: '20',
 		def: '437',
 		defBonus: '69',
 		id: '271',
@@ -1932,6 +2983,7 @@ const tokens = [
 	{
 		atk: '441',
 		atkBonus: '55',
+		bgId: '14',
 		def: '307',
 		defBonus: '53',
 		id: '272',
@@ -1942,6 +2994,7 @@ const tokens = [
 	{
 		atk: '811',
 		atkBonus: '35',
+		bgId: '5',
 		def: '205',
 		defBonus: '26',
 		id: '273',
@@ -1952,6 +3005,7 @@ const tokens = [
 	{
 		atk: '508',
 		atkBonus: '47',
+		bgId: '1',
 		def: '700',
 		defBonus: '177',
 		id: '274',
@@ -1962,6 +3016,7 @@ const tokens = [
 	{
 		atk: '444',
 		atkBonus: '49',
+		bgId: '22',
 		def: '193',
 		defBonus: '81',
 		id: '275',
@@ -1972,6 +3027,7 @@ const tokens = [
 	{
 		atk: '774',
 		atkBonus: '52',
+		bgId: '2',
 		def: '181',
 		defBonus: '-45',
 		id: '276',
@@ -1982,6 +3038,7 @@ const tokens = [
 	{
 		atk: '486',
 		atkBonus: '48',
+		bgId: '17',
 		def: '601',
 		defBonus: '5',
 		id: '277',
@@ -1992,6 +3049,7 @@ const tokens = [
 	{
 		atk: '647',
 		atkBonus: '37',
+		bgId: '11',
 		def: '338',
 		defBonus: '64',
 		id: '278',
@@ -2002,6 +3060,7 @@ const tokens = [
 	{
 		atk: '475',
 		atkBonus: '2',
+		bgId: '14',
 		def: '656',
 		defBonus: '50',
 		id: '279',
@@ -2010,18 +3069,9 @@ const tokens = [
 		subClass: 'Knight',
 	},
 	{
-		atk: '839',
-		atkBonus: '57',
-		def: '237',
-		defBonus: '16',
-		id: '28',
-		spd: '247',
-		spdBonus: '50',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '631',
 		atkBonus: '69',
+		bgId: '3',
 		def: '551',
 		defBonus: '67',
 		id: '280',
@@ -2032,6 +3082,7 @@ const tokens = [
 	{
 		atk: '395',
 		atkBonus: '8',
+		bgId: '18',
 		def: '374',
 		defBonus: '128',
 		id: '281',
@@ -2042,6 +3093,7 @@ const tokens = [
 	{
 		atk: '364',
 		atkBonus: '64',
+		bgId: '14',
 		def: '407',
 		defBonus: '88',
 		id: '282',
@@ -2052,6 +3104,7 @@ const tokens = [
 	{
 		atk: '364',
 		atkBonus: '-58',
+		bgId: '24',
 		def: '787',
 		defBonus: '265',
 		id: '283',
@@ -2062,6 +3115,7 @@ const tokens = [
 	{
 		atk: '255',
 		atkBonus: '17',
+		bgId: '15',
 		def: '443',
 		defBonus: '1',
 		id: '284',
@@ -2072,6 +3126,7 @@ const tokens = [
 	{
 		atk: '349',
 		atkBonus: '60',
+		bgId: '20',
 		def: '526',
 		defBonus: '108',
 		id: '285',
@@ -2082,6 +3137,7 @@ const tokens = [
 	{
 		atk: '305',
 		atkBonus: '60',
+		bgId: '7',
 		def: '354',
 		defBonus: '126',
 		id: '286',
@@ -2092,6 +3148,7 @@ const tokens = [
 	{
 		atk: '908',
 		atkBonus: '40',
+		bgId: '19',
 		def: '245',
 		defBonus: '112',
 		id: '287',
@@ -2102,6 +3159,7 @@ const tokens = [
 	{
 		atk: '633',
 		atkBonus: '10',
+		bgId: '15',
 		def: '223',
 		defBonus: '36',
 		id: '288',
@@ -2112,6 +3170,7 @@ const tokens = [
 	{
 		atk: '497',
 		atkBonus: '70',
+		bgId: '24',
 		def: '288',
 		defBonus: '55',
 		id: '289',
@@ -2120,18 +3179,9 @@ const tokens = [
 		subClass: 'Berserker',
 	},
 	{
-		atk: '663',
-		atkBonus: '97',
-		def: '387',
-		defBonus: '105',
-		id: '29',
-		spd: '398',
-		spdBonus: '46',
-		subClass: 'Knight',
-	},
-	{
 		atk: '711',
 		atkBonus: '73',
+		bgId: '13',
 		def: '412',
 		defBonus: '129',
 		id: '290',
@@ -2142,6 +3192,7 @@ const tokens = [
 	{
 		atk: '723',
 		atkBonus: '33',
+		bgId: '23',
 		def: '201',
 		defBonus: '18',
 		id: '291',
@@ -2152,6 +3203,7 @@ const tokens = [
 	{
 		atk: '453',
 		atkBonus: '104',
+		bgId: '6',
 		def: '585',
 		defBonus: '73',
 		id: '292',
@@ -2162,6 +3214,7 @@ const tokens = [
 	{
 		atk: '384',
 		atkBonus: '15',
+		bgId: '1',
 		def: '743',
 		defBonus: '58',
 		id: '293',
@@ -2172,6 +3225,7 @@ const tokens = [
 	{
 		atk: '801',
 		atkBonus: '68',
+		bgId: '0',
 		def: '269',
 		defBonus: '114',
 		id: '294',
@@ -2182,6 +3236,7 @@ const tokens = [
 	{
 		atk: '715',
 		atkBonus: '47',
+		bgId: '6',
 		def: '375',
 		defBonus: '5',
 		id: '295',
@@ -2192,6 +3247,7 @@ const tokens = [
 	{
 		atk: '812',
 		atkBonus: '64',
+		bgId: '4',
 		def: '232',
 		defBonus: '89',
 		id: '296',
@@ -2202,6 +3258,7 @@ const tokens = [
 	{
 		atk: '435',
 		atkBonus: '4',
+		bgId: '0',
 		def: '515',
 		defBonus: '97',
 		id: '297',
@@ -2212,6 +3269,7 @@ const tokens = [
 	{
 		atk: '446',
 		atkBonus: '2',
+		bgId: '0',
 		def: '503',
 		defBonus: '12',
 		id: '298',
@@ -2222,6 +3280,7 @@ const tokens = [
 	{
 		atk: '208',
 		atkBonus: '42',
+		bgId: '1',
 		def: '279',
 		defBonus: '27',
 		id: '299',
@@ -2230,28 +3289,9 @@ const tokens = [
 		subClass: 'Ranger',
 	},
 	{
-		atk: '605',
-		atkBonus: '99',
-		def: '653',
-		defBonus: '121',
-		id: '3',
-		spd: '219',
-		spdBonus: '57',
-		subClass: 'Cleric',
-	},
-	{
-		atk: '341',
-		atkBonus: '49',
-		def: '148',
-		defBonus: '37',
-		id: '30',
-		spd: '801',
-		spdBonus: '4',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '291',
 		atkBonus: '132',
+		bgId: '17',
 		def: '841',
 		defBonus: '121',
 		id: '300',
@@ -2262,6 +3302,7 @@ const tokens = [
 	{
 		atk: '562',
 		atkBonus: '92',
+		bgId: '15',
 		def: '657',
 		defBonus: '132',
 		id: '301',
@@ -2272,6 +3313,7 @@ const tokens = [
 	{
 		atk: '427',
 		atkBonus: '32',
+		bgId: '21',
 		def: '279',
 		defBonus: '13',
 		id: '302',
@@ -2282,6 +3324,7 @@ const tokens = [
 	{
 		atk: '913',
 		atkBonus: '106',
+		bgId: '12',
 		def: '206',
 		defBonus: '48',
 		id: '303',
@@ -2292,6 +3335,7 @@ const tokens = [
 	{
 		atk: '599',
 		atkBonus: '18',
+		bgId: '11',
 		def: '436',
 		defBonus: '72',
 		id: '304',
@@ -2302,6 +3346,7 @@ const tokens = [
 	{
 		atk: '665',
 		atkBonus: '55',
+		bgId: '24',
 		def: '415',
 		defBonus: '91',
 		id: '305',
@@ -2312,6 +3357,7 @@ const tokens = [
 	{
 		atk: '647',
 		atkBonus: '50',
+		bgId: '17',
 		def: '528',
 		defBonus: '81',
 		id: '306',
@@ -2322,6 +3368,7 @@ const tokens = [
 	{
 		atk: '565',
 		atkBonus: '60',
+		bgId: '21',
 		def: '338',
 		defBonus: '62',
 		id: '307',
@@ -2332,6 +3379,7 @@ const tokens = [
 	{
 		atk: '890',
 		atkBonus: '64',
+		bgId: '19',
 		def: '268',
 		defBonus: '18',
 		id: '308',
@@ -2342,6 +3390,7 @@ const tokens = [
 	{
 		atk: '535',
 		atkBonus: '-56',
+		bgId: '19',
 		def: '383',
 		defBonus: '193',
 		id: '309',
@@ -2350,18 +3399,9 @@ const tokens = [
 		subClass: 'Assassin',
 	},
 	{
-		atk: '662',
-		atkBonus: '29',
-		def: '451',
-		defBonus: '67',
-		id: '31',
-		spd: '274',
-		spdBonus: '91',
-		subClass: 'Knight',
-	},
-	{
 		atk: '246',
 		atkBonus: '18',
+		bgId: '8',
 		def: '553',
 		defBonus: '81',
 		id: '310',
@@ -2372,6 +3412,7 @@ const tokens = [
 	{
 		atk: '358',
 		atkBonus: '77',
+		bgId: '9',
 		def: '615',
 		defBonus: '2',
 		id: '311',
@@ -2382,6 +3423,7 @@ const tokens = [
 	{
 		atk: '439',
 		atkBonus: '4',
+		bgId: '9',
 		def: '481',
 		defBonus: '45',
 		id: '312',
@@ -2392,6 +3434,7 @@ const tokens = [
 	{
 		atk: '373',
 		atkBonus: '67',
+		bgId: '9',
 		def: '302',
 		defBonus: '17',
 		id: '313',
@@ -2402,6 +3445,7 @@ const tokens = [
 	{
 		atk: '590',
 		atkBonus: '60',
+		bgId: '4',
 		def: '472',
 		defBonus: '99',
 		id: '314',
@@ -2412,6 +3456,7 @@ const tokens = [
 	{
 		atk: '829',
 		atkBonus: '60',
+		bgId: '11',
 		def: '301',
 		defBonus: '76',
 		id: '315',
@@ -2422,6 +3467,7 @@ const tokens = [
 	{
 		atk: '706',
 		atkBonus: '100',
+		bgId: '0',
 		def: '557',
 		defBonus: '111',
 		id: '316',
@@ -2432,6 +3478,7 @@ const tokens = [
 	{
 		atk: '404',
 		atkBonus: '89',
+		bgId: '20',
 		def: '366',
 		defBonus: '48',
 		id: '317',
@@ -2442,6 +3489,7 @@ const tokens = [
 	{
 		atk: '618',
 		atkBonus: '-52',
+		bgId: '23',
 		def: '349',
 		defBonus: '103',
 		id: '318',
@@ -2452,6 +3500,7 @@ const tokens = [
 	{
 		atk: '556',
 		atkBonus: '46',
+		bgId: '22',
 		def: '397',
 		defBonus: '90',
 		id: '319',
@@ -2460,18 +3509,9 @@ const tokens = [
 		subClass: 'Sorcerer',
 	},
 	{
-		atk: '231',
-		atkBonus: '65',
-		def: '568',
-		defBonus: '79',
-		id: '32',
-		spd: '646',
-		spdBonus: '101',
-		subClass: 'Paladin',
-	},
-	{
 		atk: '412',
 		atkBonus: '127',
+		bgId: '21',
 		def: '501',
 		defBonus: '35',
 		id: '320',
@@ -2482,6 +3522,7 @@ const tokens = [
 	{
 		atk: '796',
 		atkBonus: '120',
+		bgId: '2',
 		def: '153',
 		defBonus: '51',
 		id: '321',
@@ -2492,6 +3533,7 @@ const tokens = [
 	{
 		atk: '553',
 		atkBonus: '34',
+		bgId: '17',
 		def: '439',
 		defBonus: '128',
 		id: '322',
@@ -2502,6 +3544,7 @@ const tokens = [
 	{
 		atk: '834',
 		atkBonus: '96',
+		bgId: '8',
 		def: '264',
 		defBonus: '3',
 		id: '323',
@@ -2512,6 +3555,7 @@ const tokens = [
 	{
 		atk: '810',
 		atkBonus: '87',
+		bgId: '19',
 		def: '221',
 		defBonus: '-32',
 		id: '324',
@@ -2522,6 +3566,7 @@ const tokens = [
 	{
 		atk: '586',
 		atkBonus: '2',
+		bgId: '24',
 		def: '564',
 		defBonus: '130',
 		id: '325',
@@ -2532,6 +3577,7 @@ const tokens = [
 	{
 		atk: '346',
 		atkBonus: '12',
+		bgId: '4',
 		def: '746',
 		defBonus: '208',
 		id: '326',
@@ -2542,6 +3588,7 @@ const tokens = [
 	{
 		atk: '257',
 		atkBonus: '23',
+		bgId: '19',
 		def: '240',
 		defBonus: '50',
 		id: '327',
@@ -2552,6 +3599,7 @@ const tokens = [
 	{
 		atk: '311',
 		atkBonus: '45',
+		bgId: '7',
 		def: '539',
 		defBonus: '23',
 		id: '328',
@@ -2562,6 +3610,7 @@ const tokens = [
 	{
 		atk: '606',
 		atkBonus: '10',
+		bgId: '14',
 		def: '189',
 		defBonus: '45',
 		id: '329',
@@ -2570,18 +3619,9 @@ const tokens = [
 		subClass: 'Sorcerer',
 	},
 	{
-		atk: '297',
-		atkBonus: '41',
-		def: '844',
-		defBonus: '121',
-		id: '33',
-		spd: '280',
-		spdBonus: '59',
-		subClass: 'Knight',
-	},
-	{
 		atk: '887',
 		atkBonus: '127',
+		bgId: '23',
 		def: '206',
 		defBonus: '15',
 		id: '330',
@@ -2592,6 +3632,7 @@ const tokens = [
 	{
 		atk: '799',
 		atkBonus: '127',
+		bgId: '9',
 		def: '339',
 		defBonus: '36',
 		id: '331',
@@ -2602,6 +3643,7 @@ const tokens = [
 	{
 		atk: '544',
 		atkBonus: '26',
+		bgId: '21',
 		def: '569',
 		defBonus: '96',
 		id: '332',
@@ -2612,6 +3654,7 @@ const tokens = [
 	{
 		atk: '616',
 		atkBonus: '51',
+		bgId: '16',
 		def: '364',
 		defBonus: '25',
 		id: '333',
@@ -2622,6 +3665,7 @@ const tokens = [
 	{
 		atk: '272',
 		atkBonus: '130',
+		bgId: '22',
 		def: '358',
 		defBonus: '100',
 		id: '334',
@@ -2632,6 +3676,7 @@ const tokens = [
 	{
 		atk: '832',
 		atkBonus: '249',
+		bgId: '0',
 		def: '200',
 		defBonus: '-96',
 		id: '335',
@@ -2642,6 +3687,7 @@ const tokens = [
 	{
 		atk: '521',
 		atkBonus: '88',
+		bgId: '12',
 		def: '329',
 		defBonus: '129',
 		id: '336',
@@ -2652,6 +3698,7 @@ const tokens = [
 	{
 		atk: '572',
 		atkBonus: '70',
+		bgId: '20',
 		def: '422',
 		defBonus: '24',
 		id: '337',
@@ -2662,6 +3709,7 @@ const tokens = [
 	{
 		atk: '631',
 		atkBonus: '75',
+		bgId: '24',
 		def: '546',
 		defBonus: '40',
 		id: '338',
@@ -2672,6 +3720,7 @@ const tokens = [
 	{
 		atk: '310',
 		atkBonus: '9',
+		bgId: '20',
 		def: '273',
 		defBonus: '34',
 		id: '339',
@@ -2680,18 +3729,9 @@ const tokens = [
 		subClass: 'Dark Knight',
 	},
 	{
-		atk: '659',
-		atkBonus: '28',
-		def: '366',
-		defBonus: '15',
-		id: '34',
-		spd: '280',
-		spdBonus: '62',
-		subClass: 'Monk',
-	},
-	{
 		atk: '910',
 		atkBonus: '30',
+		bgId: '16',
 		def: '146',
 		defBonus: '35',
 		id: '340',
@@ -2702,6 +3742,7 @@ const tokens = [
 	{
 		atk: '500',
 		atkBonus: '100',
+		bgId: '4',
 		def: '441',
 		defBonus: '114',
 		id: '341',
@@ -2712,6 +3753,7 @@ const tokens = [
 	{
 		atk: '734',
 		atkBonus: '49',
+		bgId: '20',
 		def: '399',
 		defBonus: '123',
 		id: '342',
@@ -2722,6 +3764,7 @@ const tokens = [
 	{
 		atk: '667',
 		atkBonus: '27',
+		bgId: '15',
 		def: '442',
 		defBonus: '67',
 		id: '343',
@@ -2732,6 +3775,7 @@ const tokens = [
 	{
 		atk: '669',
 		atkBonus: '11',
+		bgId: '11',
 		def: '401',
 		defBonus: '108',
 		id: '344',
@@ -2742,6 +3786,7 @@ const tokens = [
 	{
 		atk: '639',
 		atkBonus: '37',
+		bgId: '5',
 		def: '468',
 		defBonus: '54',
 		id: '345',
@@ -2752,6 +3797,7 @@ const tokens = [
 	{
 		atk: '549',
 		atkBonus: '58',
+		bgId: '13',
 		def: '355',
 		defBonus: '36',
 		id: '346',
@@ -2762,6 +3808,7 @@ const tokens = [
 	{
 		atk: '499',
 		atkBonus: '132',
+		bgId: '4',
 		def: '650',
 		defBonus: '132',
 		id: '347',
@@ -2772,6 +3819,7 @@ const tokens = [
 	{
 		atk: '788',
 		atkBonus: '-13',
+		bgId: '2',
 		def: '160',
 		defBonus: '-55',
 		id: '348',
@@ -2782,6 +3830,7 @@ const tokens = [
 	{
 		atk: '761',
 		atkBonus: '86',
+		bgId: '6',
 		def: '211',
 		defBonus: '24',
 		id: '349',
@@ -2790,18 +3839,9 @@ const tokens = [
 		subClass: 'Druid',
 	},
 	{
-		atk: '632',
-		atkBonus: '118',
-		def: '395',
-		defBonus: '4',
-		id: '35',
-		spd: '370',
-		spdBonus: '75',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '677',
 		atkBonus: '100',
+		bgId: '20',
 		def: '236',
 		defBonus: '101',
 		id: '350',
@@ -2812,6 +3852,7 @@ const tokens = [
 	{
 		atk: '405',
 		atkBonus: '77',
+		bgId: '17',
 		def: '708',
 		defBonus: '21',
 		id: '351',
@@ -2822,6 +3863,7 @@ const tokens = [
 	{
 		atk: '640',
 		atkBonus: '8',
+		bgId: '9',
 		def: '324',
 		defBonus: '77',
 		id: '352',
@@ -2832,6 +3874,7 @@ const tokens = [
 	{
 		atk: '320',
 		atkBonus: '34',
+		bgId: '22',
 		def: '668',
 		defBonus: '100',
 		id: '353',
@@ -2842,6 +3885,7 @@ const tokens = [
 	{
 		atk: '399',
 		atkBonus: '123',
+		bgId: '7',
 		def: '647',
 		defBonus: '89',
 		id: '354',
@@ -2852,6 +3896,7 @@ const tokens = [
 	{
 		atk: '694',
 		atkBonus: '102',
+		bgId: '6',
 		def: '300',
 		defBonus: '16',
 		id: '355',
@@ -2862,6 +3907,7 @@ const tokens = [
 	{
 		atk: '708',
 		atkBonus: '114',
+		bgId: '15',
 		def: '326',
 		defBonus: '130',
 		id: '356',
@@ -2872,6 +3918,7 @@ const tokens = [
 	{
 		atk: '308',
 		atkBonus: '61',
+		bgId: '6',
 		def: '682',
 		defBonus: '1',
 		id: '357',
@@ -2882,6 +3929,7 @@ const tokens = [
 	{
 		atk: '910',
 		atkBonus: '55',
+		bgId: '5',
 		def: '201',
 		defBonus: '36',
 		id: '358',
@@ -2892,6 +3940,7 @@ const tokens = [
 	{
 		atk: '532',
 		atkBonus: '74',
+		bgId: '24',
 		def: '199',
 		defBonus: '59',
 		id: '359',
@@ -2900,18 +3949,9 @@ const tokens = [
 		subClass: 'Assassin',
 	},
 	{
-		atk: '498',
-		atkBonus: '-25',
-		def: '186',
-		defBonus: '-15',
-		id: '36',
-		spd: '779',
-		spdBonus: '303',
-		subClass: 'Summoner',
-	},
-	{
 		atk: '385',
 		atkBonus: '-21',
+		bgId: '21',
 		def: '475',
 		defBonus: '42',
 		id: '360',
@@ -2922,6 +3962,7 @@ const tokens = [
 	{
 		atk: '637',
 		atkBonus: '41',
+		bgId: '18',
 		def: '224',
 		defBonus: '103',
 		id: '361',
@@ -2932,6 +3973,7 @@ const tokens = [
 	{
 		atk: '307',
 		atkBonus: '87',
+		bgId: '4',
 		def: '297',
 		defBonus: '36',
 		id: '362',
@@ -2942,6 +3984,7 @@ const tokens = [
 	{
 		atk: '521',
 		atkBonus: '18',
+		bgId: '10',
 		def: '288',
 		defBonus: '85',
 		id: '363',
@@ -2952,6 +3995,7 @@ const tokens = [
 	{
 		atk: '722',
 		atkBonus: '22',
+		bgId: '6',
 		def: '294',
 		defBonus: '90',
 		id: '364',
@@ -2962,6 +4006,7 @@ const tokens = [
 	{
 		atk: '556',
 		atkBonus: '54',
+		bgId: '19',
 		def: '262',
 		defBonus: '47',
 		id: '365',
@@ -2972,6 +4017,7 @@ const tokens = [
 	{
 		atk: '755',
 		atkBonus: '18',
+		bgId: '24',
 		def: '189',
 		defBonus: '7',
 		id: '366',
@@ -2982,6 +4028,7 @@ const tokens = [
 	{
 		atk: '702',
 		atkBonus: '19',
+		bgId: '16',
 		def: '327',
 		defBonus: '186',
 		id: '367',
@@ -2992,6 +4039,7 @@ const tokens = [
 	{
 		atk: '663',
 		atkBonus: '122',
+		bgId: '0',
 		def: '470',
 		defBonus: '94',
 		id: '368',
@@ -3002,6 +4050,7 @@ const tokens = [
 	{
 		atk: '489',
 		atkBonus: '93',
+		bgId: '4',
 		def: '656',
 		defBonus: '52',
 		id: '369',
@@ -3010,18 +4059,9 @@ const tokens = [
 		subClass: 'Druid',
 	},
 	{
-		atk: '854',
-		atkBonus: '102',
-		def: '166',
-		defBonus: '44',
-		id: '37',
-		spd: '351',
-		spdBonus: '25',
-		subClass: 'Berserker',
-	},
-	{
 		atk: '289',
 		atkBonus: '15',
+		bgId: '1',
 		def: '682',
 		defBonus: '129',
 		id: '370',
@@ -3032,6 +4072,7 @@ const tokens = [
 	{
 		atk: '750',
 		atkBonus: '49',
+		bgId: '20',
 		def: '419',
 		defBonus: '115',
 		id: '371',
@@ -3042,6 +4083,7 @@ const tokens = [
 	{
 		atk: '533',
 		atkBonus: '46',
+		bgId: '0',
 		def: '124',
 		defBonus: '7',
 		id: '372',
@@ -3052,6 +4094,7 @@ const tokens = [
 	{
 		atk: '798',
 		atkBonus: '132',
+		bgId: '4',
 		def: '440',
 		defBonus: '21',
 		id: '373',
@@ -3062,6 +4105,7 @@ const tokens = [
 	{
 		atk: '595',
 		atkBonus: '43',
+		bgId: '0',
 		def: '210',
 		defBonus: '86',
 		id: '374',
@@ -3072,6 +4116,7 @@ const tokens = [
 	{
 		atk: '694',
 		atkBonus: '16',
+		bgId: '23',
 		def: '232',
 		defBonus: '23',
 		id: '375',
@@ -3082,6 +4127,7 @@ const tokens = [
 	{
 		atk: '589',
 		atkBonus: '118',
+		bgId: '13',
 		def: '363',
 		defBonus: '-35',
 		id: '376',
@@ -3092,6 +4138,7 @@ const tokens = [
 	{
 		atk: '618',
 		atkBonus: '25',
+		bgId: '21',
 		def: '123',
 		defBonus: '3',
 		id: '377',
@@ -3102,6 +4149,7 @@ const tokens = [
 	{
 		atk: '390',
 		atkBonus: '-24',
+		bgId: '8',
 		def: '531',
 		defBonus: '67',
 		id: '378',
@@ -3112,6 +4160,7 @@ const tokens = [
 	{
 		atk: '835',
 		atkBonus: '14',
+		bgId: '1',
 		def: '196',
 		defBonus: '18',
 		id: '379',
@@ -3120,18 +4169,9 @@ const tokens = [
 		subClass: 'Assassin',
 	},
 	{
-		atk: '333',
-		atkBonus: '22',
-		def: '407',
-		defBonus: '42',
-		id: '38',
-		spd: '648',
-		spdBonus: '124',
-		subClass: 'Berserker',
-	},
-	{
 		atk: '374',
 		atkBonus: '88',
+		bgId: '15',
 		def: '677',
 		defBonus: '126',
 		id: '380',
@@ -3142,6 +4182,7 @@ const tokens = [
 	{
 		atk: '555',
 		atkBonus: '128',
+		bgId: '15',
 		def: '577',
 		defBonus: '31',
 		id: '381',
@@ -3152,6 +4193,7 @@ const tokens = [
 	{
 		atk: '729',
 		atkBonus: '-51',
+		bgId: '13',
 		def: '260',
 		defBonus: '130',
 		id: '382',
@@ -3162,6 +4204,7 @@ const tokens = [
 	{
 		atk: '200',
 		atkBonus: '-30',
+		bgId: '14',
 		def: '778',
 		defBonus: '295',
 		id: '383',
@@ -3172,6 +4215,7 @@ const tokens = [
 	{
 		atk: '625',
 		atkBonus: '109',
+		bgId: '21',
 		def: '238',
 		defBonus: '105',
 		id: '384',
@@ -3182,6 +4226,7 @@ const tokens = [
 	{
 		atk: '858',
 		atkBonus: '70',
+		bgId: '8',
 		def: '269',
 		defBonus: '35',
 		id: '385',
@@ -3192,6 +4237,7 @@ const tokens = [
 	{
 		atk: '620',
 		atkBonus: '79',
+		bgId: '10',
 		def: '487',
 		defBonus: '29',
 		id: '386',
@@ -3202,6 +4248,7 @@ const tokens = [
 	{
 		atk: '730',
 		atkBonus: '51',
+		bgId: '4',
 		def: '393',
 		defBonus: '52',
 		id: '387',
@@ -3212,6 +4259,7 @@ const tokens = [
 	{
 		atk: '667',
 		atkBonus: '67',
+		bgId: '9',
 		def: '493',
 		defBonus: '116',
 		id: '388',
@@ -3222,6 +4270,7 @@ const tokens = [
 	{
 		atk: '501',
 		atkBonus: '14',
+		bgId: '23',
 		def: '558',
 		defBonus: '80',
 		id: '389',
@@ -3230,18 +4279,9 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
-		atk: '573',
-		atkBonus: '80',
-		def: '375',
-		defBonus: '67',
-		id: '39',
-		spd: '454',
-		spdBonus: '55',
-		subClass: 'Knight',
-	},
-	{
 		atk: '600',
 		atkBonus: '41',
+		bgId: '16',
 		def: '586',
 		defBonus: '53',
 		id: '390',
@@ -3252,6 +4292,7 @@ const tokens = [
 	{
 		atk: '590',
 		atkBonus: '67',
+		bgId: '5',
 		def: '334',
 		defBonus: '30',
 		id: '391',
@@ -3262,6 +4303,7 @@ const tokens = [
 	{
 		atk: '637',
 		atkBonus: '53',
+		bgId: '12',
 		def: '136',
 		defBonus: '6',
 		id: '392',
@@ -3272,6 +4314,7 @@ const tokens = [
 	{
 		atk: '636',
 		atkBonus: '120',
+		bgId: '2',
 		def: '314',
 		defBonus: '97',
 		id: '393',
@@ -3282,6 +4325,7 @@ const tokens = [
 	{
 		atk: '601',
 		atkBonus: '19',
+		bgId: '3',
 		def: '416',
 		defBonus: '96',
 		id: '394',
@@ -3292,6 +4336,7 @@ const tokens = [
 	{
 		atk: '686',
 		atkBonus: '70',
+		bgId: '1',
 		def: '269',
 		defBonus: '62',
 		id: '395',
@@ -3302,6 +4347,7 @@ const tokens = [
 	{
 		atk: '636',
 		atkBonus: '24',
+		bgId: '2',
 		def: '181',
 		defBonus: '72',
 		id: '396',
@@ -3312,6 +4358,7 @@ const tokens = [
 	{
 		atk: '551',
 		atkBonus: '111',
+		bgId: '4',
 		def: '409',
 		defBonus: '38',
 		id: '397',
@@ -3322,6 +4369,7 @@ const tokens = [
 	{
 		atk: '573',
 		atkBonus: '24',
+		bgId: '11',
 		def: '584',
 		defBonus: '98',
 		id: '398',
@@ -3332,6 +4380,7 @@ const tokens = [
 	{
 		atk: '540',
 		atkBonus: '92',
+		bgId: '16',
 		def: '392',
 		defBonus: '26',
 		id: '399',
@@ -3340,28 +4389,9 @@ const tokens = [
 		subClass: 'Paladin',
 	},
 	{
-		atk: '659',
-		atkBonus: '67',
-		def: '247',
-		defBonus: '118',
-		id: '4',
-		spd: '568',
-		spdBonus: '89',
-		subClass: 'Assassin',
-	},
-	{
-		atk: '703',
-		atkBonus: '97',
-		def: '328',
-		defBonus: '18',
-		id: '40',
-		spd: '288',
-		spdBonus: '4',
-		subClass: 'Dragoon',
-	},
-	{
 		atk: '822',
 		atkBonus: '93',
+		bgId: '4',
 		def: '198',
 		defBonus: '15',
 		id: '400',
@@ -3372,6 +4402,7 @@ const tokens = [
 	{
 		atk: '551',
 		atkBonus: '17',
+		bgId: '3',
 		def: '690',
 		defBonus: '307',
 		id: '401',
@@ -3382,6 +4413,7 @@ const tokens = [
 	{
 		atk: '945',
 		atkBonus: '104',
+		bgId: '11',
 		def: '284',
 		defBonus: '44',
 		id: '402',
@@ -3392,6 +4424,7 @@ const tokens = [
 	{
 		atk: '224',
 		atkBonus: '99',
+		bgId: '1',
 		def: '832',
 		defBonus: '118',
 		id: '403',
@@ -3402,6 +4435,7 @@ const tokens = [
 	{
 		atk: '590',
 		atkBonus: '130',
+		bgId: '22',
 		def: '620',
 		defBonus: '90',
 		id: '404',
@@ -3412,6 +4446,7 @@ const tokens = [
 	{
 		atk: '530',
 		atkBonus: '6',
+		bgId: '17',
 		def: '579',
 		defBonus: '110',
 		id: '405',
@@ -3422,6 +4457,7 @@ const tokens = [
 	{
 		atk: '390',
 		atkBonus: '122',
+		bgId: '10',
 		def: '913',
 		defBonus: '130',
 		id: '406',
@@ -3432,6 +4468,7 @@ const tokens = [
 	{
 		atk: '201',
 		atkBonus: '62',
+		bgId: '10',
 		def: '665',
 		defBonus: '80',
 		id: '407',
@@ -3442,6 +4479,7 @@ const tokens = [
 	{
 		atk: '780',
 		atkBonus: '127',
+		bgId: '6',
 		def: '229',
 		defBonus: '92',
 		id: '408',
@@ -3452,6 +4490,7 @@ const tokens = [
 	{
 		atk: '546',
 		atkBonus: '36',
+		bgId: '5',
 		def: '468',
 		defBonus: '99',
 		id: '409',
@@ -3460,18 +4499,9 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
-		atk: '570',
-		atkBonus: '37',
-		def: '236',
-		defBonus: '66',
-		id: '41',
-		spd: '556',
-		spdBonus: '59',
-		subClass: 'Ranger',
-	},
-	{
 		atk: '754',
 		atkBonus: '93',
+		bgId: '8',
 		def: '249',
 		defBonus: '64',
 		id: '410',
@@ -3482,6 +4512,7 @@ const tokens = [
 	{
 		atk: '376',
 		atkBonus: '114',
+		bgId: '22',
 		def: '695',
 		defBonus: '86',
 		id: '411',
@@ -3492,6 +4523,7 @@ const tokens = [
 	{
 		atk: '456',
 		atkBonus: '119',
+		bgId: '14',
 		def: '678',
 		defBonus: '60',
 		id: '412',
@@ -3502,6 +4534,7 @@ const tokens = [
 	{
 		atk: '628',
 		atkBonus: '98',
+		bgId: '2',
 		def: '263',
 		defBonus: '35',
 		id: '413',
@@ -3512,6 +4545,7 @@ const tokens = [
 	{
 		atk: '597',
 		atkBonus: '-29',
+		bgId: '9',
 		def: '396',
 		defBonus: '161',
 		id: '414',
@@ -3522,6 +4556,7 @@ const tokens = [
 	{
 		atk: '362',
 		atkBonus: '87',
+		bgId: '16',
 		def: '354',
 		defBonus: '18',
 		id: '415',
@@ -3532,6 +4567,7 @@ const tokens = [
 	{
 		atk: '806',
 		atkBonus: '20',
+		bgId: '2',
 		def: '166',
 		defBonus: '6',
 		id: '416',
@@ -3542,6 +4578,7 @@ const tokens = [
 	{
 		atk: '718',
 		atkBonus: '85',
+		bgId: '8',
 		def: '290',
 		defBonus: '72',
 		id: '417',
@@ -3552,6 +4589,7 @@ const tokens = [
 	{
 		atk: '597',
 		atkBonus: '98',
+		bgId: '20',
 		def: '429',
 		defBonus: '55',
 		id: '418',
@@ -3562,6 +4600,7 @@ const tokens = [
 	{
 		atk: '620',
 		atkBonus: '86',
+		bgId: '0',
 		def: '406',
 		defBonus: '34',
 		id: '419',
@@ -3570,18 +4609,9 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
-		atk: '606',
-		atkBonus: '51',
-		def: '532',
-		defBonus: '50',
-		id: '42',
-		spd: '255',
-		spdBonus: '92',
-		subClass: 'Sorcerer',
-	},
-	{
 		atk: '739',
 		atkBonus: '39',
+		bgId: '22',
 		def: '200',
 		defBonus: '77',
 		id: '420',
@@ -3592,6 +4622,7 @@ const tokens = [
 	{
 		atk: '473',
 		atkBonus: '11',
+		bgId: '16',
 		def: '419',
 		defBonus: '53',
 		id: '421',
@@ -3602,6 +4633,7 @@ const tokens = [
 	{
 		atk: '761',
 		atkBonus: '113',
+		bgId: '2',
 		def: '282',
 		defBonus: '54',
 		id: '422',
@@ -3612,6 +4644,7 @@ const tokens = [
 	{
 		atk: '664',
 		atkBonus: '8',
+		bgId: '4',
 		def: '358',
 		defBonus: '4',
 		id: '423',
@@ -3622,6 +4655,7 @@ const tokens = [
 	{
 		atk: '474',
 		atkBonus: '84',
+		bgId: '8',
 		def: '657',
 		defBonus: '75',
 		id: '424',
@@ -3632,6 +4666,7 @@ const tokens = [
 	{
 		atk: '670',
 		atkBonus: '122',
+		bgId: '13',
 		def: '313',
 		defBonus: '20',
 		id: '425',
@@ -3642,6 +4677,7 @@ const tokens = [
 	{
 		atk: '541',
 		atkBonus: '298',
+		bgId: '4',
 		def: '520',
 		defBonus: '-95',
 		id: '426',
@@ -3652,6 +4688,7 @@ const tokens = [
 	{
 		atk: '761',
 		atkBonus: '63',
+		bgId: '1',
 		def: '193',
 		defBonus: '92',
 		id: '427',
@@ -3662,6 +4699,7 @@ const tokens = [
 	{
 		atk: '388',
 		atkBonus: '131',
+		bgId: '12',
 		def: '538',
 		defBonus: '10',
 		id: '428',
@@ -3672,6 +4710,7 @@ const tokens = [
 	{
 		atk: '930',
 		atkBonus: '130',
+		bgId: '1',
 		def: '407',
 		defBonus: '130',
 		id: '429',
@@ -3680,18 +4719,9 @@ const tokens = [
 		subClass: 'Sorcerer',
 	},
 	{
-		atk: '750',
-		atkBonus: '25',
-		def: '358',
-		defBonus: '24',
-		id: '43',
-		spd: '237',
-		spdBonus: '96',
-		subClass: 'Knight',
-	},
-	{
 		atk: '448',
 		atkBonus: '34',
+		bgId: '1',
 		def: '344',
 		defBonus: '66',
 		id: '430',
@@ -3702,6 +4732,7 @@ const tokens = [
 	{
 		atk: '977',
 		atkBonus: '118',
+		bgId: '7',
 		def: '329',
 		defBonus: '96',
 		id: '431',
@@ -3712,6 +4743,7 @@ const tokens = [
 	{
 		atk: '403',
 		atkBonus: '69',
+		bgId: '21',
 		def: '836',
 		defBonus: '120',
 		id: '432',
@@ -3722,6 +4754,7 @@ const tokens = [
 	{
 		atk: '394',
 		atkBonus: '29',
+		bgId: '24',
 		def: '341',
 		defBonus: '31',
 		id: '433',
@@ -3732,6 +4765,7 @@ const tokens = [
 	{
 		atk: '603',
 		atkBonus: '82',
+		bgId: '21',
 		def: '378',
 		defBonus: '0',
 		id: '434',
@@ -3742,6 +4776,7 @@ const tokens = [
 	{
 		atk: '380',
 		atkBonus: '9',
+		bgId: '17',
 		def: '376',
 		defBonus: '-9',
 		id: '435',
@@ -3752,6 +4787,7 @@ const tokens = [
 	{
 		atk: '720',
 		atkBonus: '39',
+		bgId: '14',
 		def: '331',
 		defBonus: '128',
 		id: '436',
@@ -3762,6 +4798,7 @@ const tokens = [
 	{
 		atk: '634',
 		atkBonus: '56',
+		bgId: '7',
 		def: '405',
 		defBonus: '75',
 		id: '437',
@@ -3772,6 +4809,7 @@ const tokens = [
 	{
 		atk: '472',
 		atkBonus: '15',
+		bgId: '12',
 		def: '547',
 		defBonus: '99',
 		id: '438',
@@ -3782,6 +4820,7 @@ const tokens = [
 	{
 		atk: '442',
 		atkBonus: '129',
+		bgId: '7',
 		def: '545',
 		defBonus: '48',
 		id: '439',
@@ -3790,18 +4829,9 @@ const tokens = [
 		subClass: 'Dark Knight',
 	},
 	{
-		atk: '574',
-		atkBonus: '12',
-		def: '512',
-		defBonus: '79',
-		id: '44',
-		spd: '314',
-		spdBonus: '109',
-		subClass: 'Monk',
-	},
-	{
 		atk: '438',
 		atkBonus: '142',
+		bgId: '22',
 		def: '637',
 		defBonus: '-5',
 		id: '440',
@@ -3812,6 +4842,7 @@ const tokens = [
 	{
 		atk: '550',
 		atkBonus: '50',
+		bgId: '0',
 		def: '264',
 		defBonus: '97',
 		id: '441',
@@ -3822,6 +4853,7 @@ const tokens = [
 	{
 		atk: '232',
 		atkBonus: '43',
+		bgId: '0',
 		def: '801',
 		defBonus: '4',
 		id: '442',
@@ -3832,6 +4864,7 @@ const tokens = [
 	{
 		atk: '681',
 		atkBonus: '25',
+		bgId: '23',
 		def: '535',
 		defBonus: '125',
 		id: '443',
@@ -3842,6 +4875,7 @@ const tokens = [
 	{
 		atk: '811',
 		atkBonus: '36',
+		bgId: '14',
 		def: '253',
 		defBonus: '108',
 		id: '444',
@@ -3852,6 +4886,7 @@ const tokens = [
 	{
 		atk: '368',
 		atkBonus: '9',
+		bgId: '13',
 		def: '685',
 		defBonus: '19',
 		id: '445',
@@ -3862,6 +4897,7 @@ const tokens = [
 	{
 		atk: '291',
 		atkBonus: '-23',
+		bgId: '16',
 		def: '318',
 		defBonus: '117',
 		id: '446',
@@ -3872,6 +4908,7 @@ const tokens = [
 	{
 		atk: '883',
 		atkBonus: '129',
+		bgId: '15',
 		def: '394',
 		defBonus: '122',
 		id: '447',
@@ -3882,6 +4919,7 @@ const tokens = [
 	{
 		atk: '273',
 		atkBonus: '37',
+		bgId: '12',
 		def: '311',
 		defBonus: '97',
 		id: '448',
@@ -3892,6 +4930,7 @@ const tokens = [
 	{
 		atk: '828',
 		atkBonus: '118',
+		bgId: '8',
 		def: '433',
 		defBonus: '53',
 		id: '449',
@@ -3900,18 +4939,9 @@ const tokens = [
 		subClass: 'Knight',
 	},
 	{
-		atk: '925',
-		atkBonus: '120',
-		def: '281',
-		defBonus: '67',
-		id: '45',
-		spd: '230',
-		spdBonus: '49',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '224',
 		atkBonus: '26',
+		bgId: '0',
 		def: '881',
 		defBonus: '56',
 		id: '450',
@@ -3922,6 +4952,7 @@ const tokens = [
 	{
 		atk: '367',
 		atkBonus: '132',
+		bgId: '13',
 		def: '227',
 		defBonus: '46',
 		id: '451',
@@ -3932,6 +4963,7 @@ const tokens = [
 	{
 		atk: '581',
 		atkBonus: '44',
+		bgId: '10',
 		def: '321',
 		defBonus: '50',
 		id: '452',
@@ -3942,6 +4974,7 @@ const tokens = [
 	{
 		atk: '151',
 		atkBonus: '8',
+		bgId: '23',
 		def: '584',
 		defBonus: '75',
 		id: '453',
@@ -3952,6 +4985,7 @@ const tokens = [
 	{
 		atk: '378',
 		atkBonus: '126',
+		bgId: '18',
 		def: '384',
 		defBonus: '53',
 		id: '454',
@@ -3962,6 +4996,7 @@ const tokens = [
 	{
 		atk: '371',
 		atkBonus: '91',
+		bgId: '7',
 		def: '563',
 		defBonus: '121',
 		id: '455',
@@ -3972,6 +5007,7 @@ const tokens = [
 	{
 		atk: '320',
 		atkBonus: '18',
+		bgId: '7',
 		def: '495',
 		defBonus: '112',
 		id: '456',
@@ -3982,6 +5018,7 @@ const tokens = [
 	{
 		atk: '291',
 		atkBonus: '6',
+		bgId: '13',
 		def: '319',
 		defBonus: '26',
 		id: '457',
@@ -3992,6 +5029,7 @@ const tokens = [
 	{
 		atk: '568',
 		atkBonus: '115',
+		bgId: '18',
 		def: '563',
 		defBonus: '130',
 		id: '458',
@@ -4002,6 +5040,7 @@ const tokens = [
 	{
 		atk: '488',
 		atkBonus: '68',
+		bgId: '17',
 		def: '562',
 		defBonus: '37',
 		id: '459',
@@ -4010,18 +5049,9 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
-		atk: '236',
-		atkBonus: '128',
-		def: '788',
-		defBonus: '56',
-		id: '46',
-		spd: '392',
-		spdBonus: '32',
-		subClass: 'Cleric',
-	},
-	{
 		atk: '294',
 		atkBonus: '46',
+		bgId: '24',
 		def: '660',
 		defBonus: '198',
 		id: '460',
@@ -4032,6 +5062,7 @@ const tokens = [
 	{
 		atk: '631',
 		atkBonus: '9',
+		bgId: '13',
 		def: '232',
 		defBonus: '118',
 		id: '461',
@@ -4042,6 +5073,7 @@ const tokens = [
 	{
 		atk: '319',
 		atkBonus: '125',
+		bgId: '18',
 		def: '300',
 		defBonus: '24',
 		id: '462',
@@ -4052,6 +5084,7 @@ const tokens = [
 	{
 		atk: '688',
 		atkBonus: '111',
+		bgId: '17',
 		def: '490',
 		defBonus: '0',
 		id: '463',
@@ -4062,6 +5095,7 @@ const tokens = [
 	{
 		atk: '691',
 		atkBonus: '53',
+		bgId: '21',
 		def: '332',
 		defBonus: '45',
 		id: '464',
@@ -4072,6 +5106,7 @@ const tokens = [
 	{
 		atk: '676',
 		atkBonus: '7',
+		bgId: '2',
 		def: '358',
 		defBonus: '101',
 		id: '465',
@@ -4082,6 +5117,7 @@ const tokens = [
 	{
 		atk: '517',
 		atkBonus: '75',
+		bgId: '21',
 		def: '668',
 		defBonus: '13',
 		id: '466',
@@ -4092,6 +5128,7 @@ const tokens = [
 	{
 		atk: '710',
 		atkBonus: '30',
+		bgId: '7',
 		def: '440',
 		defBonus: '105',
 		id: '467',
@@ -4102,6 +5139,7 @@ const tokens = [
 	{
 		atk: '212',
 		atkBonus: '-90',
+		bgId: '6',
 		def: '217',
 		defBonus: '-47',
 		id: '468',
@@ -4112,6 +5150,7 @@ const tokens = [
 	{
 		atk: '447',
 		atkBonus: '2',
+		bgId: '14',
 		def: '325',
 		defBonus: '23',
 		id: '469',
@@ -4120,18 +5159,9 @@ const tokens = [
 		subClass: 'Cleric',
 	},
 	{
-		atk: '547',
-		atkBonus: '80',
-		def: '448',
-		defBonus: '68',
-		id: '47',
-		spd: '413',
-		spdBonus: '60',
-		subClass: 'Druid',
-	},
-	{
 		atk: '887',
 		atkBonus: '129',
+		bgId: '18',
 		def: '179',
 		defBonus: '3',
 		id: '470',
@@ -4142,6 +5172,7 @@ const tokens = [
 	{
 		atk: '866',
 		atkBonus: '79',
+		bgId: '24',
 		def: '179',
 		defBonus: '35',
 		id: '471',
@@ -4152,6 +5183,7 @@ const tokens = [
 	{
 		atk: '864',
 		atkBonus: '106',
+		bgId: '2',
 		def: '182',
 		defBonus: '78',
 		id: '472',
@@ -4162,6 +5194,7 @@ const tokens = [
 	{
 		atk: '532',
 		atkBonus: '87',
+		bgId: '4',
 		def: '370',
 		defBonus: '24',
 		id: '473',
@@ -4172,6 +5205,7 @@ const tokens = [
 	{
 		atk: '338',
 		atkBonus: '49',
+		bgId: '13',
 		def: '377',
 		defBonus: '23',
 		id: '474',
@@ -4182,6 +5216,7 @@ const tokens = [
 	{
 		atk: '535',
 		atkBonus: '1',
+		bgId: '15',
 		def: '170',
 		defBonus: '58',
 		id: '475',
@@ -4192,6 +5227,7 @@ const tokens = [
 	{
 		atk: '757',
 		atkBonus: '86',
+		bgId: '10',
 		def: '469',
 		defBonus: '44',
 		id: '476',
@@ -4202,6 +5238,7 @@ const tokens = [
 	{
 		atk: '696',
 		atkBonus: '39',
+		bgId: '4',
 		def: '226',
 		defBonus: '99',
 		id: '477',
@@ -4212,6 +5249,7 @@ const tokens = [
 	{
 		atk: '781',
 		atkBonus: '16',
+		bgId: '8',
 		def: '221',
 		defBonus: '0',
 		id: '478',
@@ -4222,6 +5260,7 @@ const tokens = [
 	{
 		atk: '547',
 		atkBonus: '85',
+		bgId: '4',
 		def: '310',
 		defBonus: '34',
 		id: '479',
@@ -4230,18 +5269,9 @@ const tokens = [
 		subClass: 'Ranger',
 	},
 	{
-		atk: '568',
-		atkBonus: '11',
-		def: '401',
-		defBonus: '115',
-		id: '48',
-		spd: '410',
-		spdBonus: '53',
-		subClass: 'Sorcerer',
-	},
-	{
 		atk: '612',
 		atkBonus: '27',
+		bgId: '22',
 		def: '322',
 		defBonus: '194',
 		id: '480',
@@ -4252,6 +5282,7 @@ const tokens = [
 	{
 		atk: '425',
 		atkBonus: '31',
+		bgId: '12',
 		def: '358',
 		defBonus: '94',
 		id: '481',
@@ -4262,6 +5293,7 @@ const tokens = [
 	{
 		atk: '385',
 		atkBonus: '15',
+		bgId: '11',
 		def: '310',
 		defBonus: '89',
 		id: '482',
@@ -4272,6 +5304,7 @@ const tokens = [
 	{
 		atk: '537',
 		atkBonus: '69',
+		bgId: '16',
 		def: '426',
 		defBonus: '-10',
 		id: '483',
@@ -4282,6 +5315,7 @@ const tokens = [
 	{
 		atk: '387',
 		atkBonus: '108',
+		bgId: '7',
 		def: '633',
 		defBonus: '44',
 		id: '484',
@@ -4292,6 +5326,7 @@ const tokens = [
 	{
 		atk: '529',
 		atkBonus: '22',
+		bgId: '0',
 		def: '506',
 		defBonus: '39',
 		id: '485',
@@ -4302,6 +5337,7 @@ const tokens = [
 	{
 		atk: '251',
 		atkBonus: '82',
+		bgId: '8',
 		def: '678',
 		defBonus: '107',
 		id: '486',
@@ -4312,6 +5348,7 @@ const tokens = [
 	{
 		atk: '363',
 		atkBonus: '46',
+		bgId: '5',
 		def: '600',
 		defBonus: '122',
 		id: '487',
@@ -4322,6 +5359,7 @@ const tokens = [
 	{
 		atk: '734',
 		atkBonus: '120',
+		bgId: '9',
 		def: '330',
 		defBonus: '49',
 		id: '488',
@@ -4332,6 +5370,7 @@ const tokens = [
 	{
 		atk: '363',
 		atkBonus: '25',
+		bgId: '5',
 		def: '547',
 		defBonus: '97',
 		id: '489',
@@ -4340,18 +5379,9 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
-		atk: '274',
-		atkBonus: '107',
-		def: '865',
-		defBonus: '65',
-		id: '49',
-		spd: '240',
-		spdBonus: '7',
-		subClass: 'Cleric',
-	},
-	{
 		atk: '601',
 		atkBonus: '48',
+		bgId: '18',
 		def: '304',
 		defBonus: '91',
 		id: '490',
@@ -4362,6 +5392,7 @@ const tokens = [
 	{
 		atk: '374',
 		atkBonus: '91',
+		bgId: '15',
 		def: '453',
 		defBonus: '79',
 		id: '491',
@@ -4372,6 +5403,7 @@ const tokens = [
 	{
 		atk: '173',
 		atkBonus: '0',
+		bgId: '0',
 		def: '900',
 		defBonus: '105',
 		id: '492',
@@ -4382,6 +5414,7 @@ const tokens = [
 	{
 		atk: '906',
 		atkBonus: '131',
+		bgId: '10',
 		def: '206',
 		defBonus: '85',
 		id: '493',
@@ -4392,6 +5425,7 @@ const tokens = [
 	{
 		atk: '635',
 		atkBonus: '83',
+		bgId: '7',
 		def: '221',
 		defBonus: '28',
 		id: '494',
@@ -4402,6 +5436,7 @@ const tokens = [
 	{
 		atk: '689',
 		atkBonus: '45',
+		bgId: '4',
 		def: '445',
 		defBonus: '89',
 		id: '495',
@@ -4412,6 +5447,7 @@ const tokens = [
 	{
 		atk: '295',
 		atkBonus: '-58',
+		bgId: '7',
 		def: '271',
 		defBonus: '163',
 		id: '496',
@@ -4422,6 +5458,7 @@ const tokens = [
 	{
 		atk: '774',
 		atkBonus: '125',
+		bgId: '23',
 		def: '275',
 		defBonus: '98',
 		id: '497',
@@ -4432,6 +5469,7 @@ const tokens = [
 	{
 		atk: '723',
 		atkBonus: '90',
+		bgId: '4',
 		def: '445',
 		defBonus: '30',
 		id: '498',
@@ -4442,6 +5480,7 @@ const tokens = [
 	{
 		atk: '811',
 		atkBonus: '81',
+		bgId: '10',
 		def: '262',
 		defBonus: '56',
 		id: '499',
@@ -4450,28 +5489,9 @@ const tokens = [
 		subClass: 'Druid',
 	},
 	{
-		atk: '619',
-		atkBonus: '125',
-		def: '486',
-		defBonus: '62',
-		id: '5',
-		spd: '393',
-		spdBonus: '111',
-		subClass: 'Monk',
-	},
-	{
-		atk: '832',
-		atkBonus: '4',
-		def: '134',
-		defBonus: '0',
-		id: '50',
-		spd: '269',
-		spdBonus: '31',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '663',
 		atkBonus: '35',
+		bgId: '0',
 		def: '376',
 		defBonus: '56',
 		id: '500',
@@ -4482,6 +5502,7 @@ const tokens = [
 	{
 		atk: '183',
 		atkBonus: '41',
+		bgId: '15',
 		def: '341',
 		defBonus: '77',
 		id: '501',
@@ -4492,6 +5513,7 @@ const tokens = [
 	{
 		atk: '700',
 		atkBonus: '54',
+		bgId: '7',
 		def: '346',
 		defBonus: '-14',
 		id: '502',
@@ -4502,6 +5524,7 @@ const tokens = [
 	{
 		atk: '380',
 		atkBonus: '13',
+		bgId: '1',
 		def: '817',
 		defBonus: '115',
 		id: '503',
@@ -4512,6 +5535,7 @@ const tokens = [
 	{
 		atk: '780',
 		atkBonus: '49',
+		bgId: '20',
 		def: '333',
 		defBonus: '111',
 		id: '504',
@@ -4522,6 +5546,7 @@ const tokens = [
 	{
 		atk: '903',
 		atkBonus: '123',
+		bgId: '14',
 		def: '290',
 		defBonus: '83',
 		id: '505',
@@ -4532,6 +5557,7 @@ const tokens = [
 	{
 		atk: '305',
 		atkBonus: '-5',
+		bgId: '22',
 		def: '610',
 		defBonus: '193',
 		id: '506',
@@ -4542,6 +5568,7 @@ const tokens = [
 	{
 		atk: '712',
 		atkBonus: '70',
+		bgId: '4',
 		def: '188',
 		defBonus: '24',
 		id: '507',
@@ -4552,6 +5579,7 @@ const tokens = [
 	{
 		atk: '148',
 		atkBonus: '26',
+		bgId: '22',
 		def: '499',
 		defBonus: '4',
 		id: '508',
@@ -4562,6 +5590,7 @@ const tokens = [
 	{
 		atk: '782',
 		atkBonus: '1',
+		bgId: '21',
 		def: '346',
 		defBonus: '69',
 		id: '509',
@@ -4570,18 +5599,9 @@ const tokens = [
 		subClass: 'Summoner',
 	},
 	{
-		atk: '800',
-		atkBonus: '57',
-		def: '391',
-		defBonus: '87',
-		id: '51',
-		spd: '189',
-		spdBonus: '36',
-		subClass: 'Sorcerer',
-	},
-	{
 		atk: '189',
 		atkBonus: '20',
+		bgId: '16',
 		def: '435',
 		defBonus: '96',
 		id: '510',
@@ -4592,6 +5612,7 @@ const tokens = [
 	{
 		atk: '790',
 		atkBonus: '80',
+		bgId: '10',
 		def: '306',
 		defBonus: '16',
 		id: '511',
@@ -4602,6 +5623,7 @@ const tokens = [
 	{
 		atk: '402',
 		atkBonus: '54',
+		bgId: '8',
 		def: '608',
 		defBonus: '63',
 		id: '512',
@@ -4612,6 +5634,7 @@ const tokens = [
 	{
 		atk: '581',
 		atkBonus: '13',
+		bgId: '5',
 		def: '270',
 		defBonus: '106',
 		id: '513',
@@ -4622,6 +5645,7 @@ const tokens = [
 	{
 		atk: '352',
 		atkBonus: '40',
+		bgId: '1',
 		def: '648',
 		defBonus: '65',
 		id: '514',
@@ -4632,6 +5656,7 @@ const tokens = [
 	{
 		atk: '381',
 		atkBonus: '82',
+		bgId: '6',
 		def: '381',
 		defBonus: '86',
 		id: '515',
@@ -4642,6 +5667,7 @@ const tokens = [
 	{
 		atk: '616',
 		atkBonus: '82',
+		bgId: '24',
 		def: '293',
 		defBonus: '91',
 		id: '516',
@@ -4652,6 +5678,7 @@ const tokens = [
 	{
 		atk: '383',
 		atkBonus: '71',
+		bgId: '18',
 		def: '740',
 		defBonus: '89',
 		id: '517',
@@ -4662,6 +5689,7 @@ const tokens = [
 	{
 		atk: '368',
 		atkBonus: '36',
+		bgId: '20',
 		def: '363',
 		defBonus: '58',
 		id: '518',
@@ -4672,6 +5700,7 @@ const tokens = [
 	{
 		atk: '473',
 		atkBonus: '54',
+		bgId: '21',
 		def: '399',
 		defBonus: '74',
 		id: '519',
@@ -4680,18 +5709,9 @@ const tokens = [
 		subClass: 'Berserker',
 	},
 	{
-		atk: '455',
-		atkBonus: '50',
-		def: '785',
-		defBonus: '130',
-		id: '52',
-		spd: '166',
-		spdBonus: '26',
-		subClass: 'Dark Knight',
-	},
-	{
 		atk: '641',
 		atkBonus: '10',
+		bgId: '10',
 		def: '472',
 		defBonus: '83',
 		id: '520',
@@ -4702,6 +5722,7 @@ const tokens = [
 	{
 		atk: '699',
 		atkBonus: '88',
+		bgId: '17',
 		def: '475',
 		defBonus: '34',
 		id: '521',
@@ -4712,6 +5733,7 @@ const tokens = [
 	{
 		atk: '829',
 		atkBonus: '21',
+		bgId: '11',
 		def: '170',
 		defBonus: '24',
 		id: '522',
@@ -4722,6 +5744,7 @@ const tokens = [
 	{
 		atk: '522',
 		atkBonus: '34',
+		bgId: '19',
 		def: '641',
 		defBonus: '119',
 		id: '523',
@@ -4732,6 +5755,7 @@ const tokens = [
 	{
 		atk: '479',
 		atkBonus: '-8',
+		bgId: '12',
 		def: '552',
 		defBonus: '206',
 		id: '524',
@@ -4742,6 +5766,7 @@ const tokens = [
 	{
 		atk: '552',
 		atkBonus: '80',
+		bgId: '6',
 		def: '305',
 		defBonus: '98',
 		id: '525',
@@ -4752,6 +5777,7 @@ const tokens = [
 	{
 		atk: '778',
 		atkBonus: '123',
+		bgId: '24',
 		def: '245',
 		defBonus: '7',
 		id: '526',
@@ -4762,6 +5788,7 @@ const tokens = [
 	{
 		atk: '477',
 		atkBonus: '86',
+		bgId: '1',
 		def: '595',
 		defBonus: '85',
 		id: '527',
@@ -4772,6 +5799,7 @@ const tokens = [
 	{
 		atk: '464',
 		atkBonus: '33',
+		bgId: '15',
 		def: '699',
 		defBonus: '100',
 		id: '528',
@@ -4782,6 +5810,7 @@ const tokens = [
 	{
 		atk: '926',
 		atkBonus: '24',
+		bgId: '19',
 		def: '210',
 		defBonus: '48',
 		id: '529',
@@ -4790,18 +5819,9 @@ const tokens = [
 		subClass: 'Sorcerer',
 	},
 	{
-		atk: '348',
-		atkBonus: '12',
-		def: '415',
-		defBonus: '102',
-		id: '53',
-		spd: '614',
-		spdBonus: '63',
-		subClass: 'Summoner',
-	},
-	{
 		atk: '210',
 		atkBonus: '37',
+		bgId: '10',
 		def: '792',
 		defBonus: '110',
 		id: '530',
@@ -4812,6 +5832,7 @@ const tokens = [
 	{
 		atk: '743',
 		atkBonus: '96',
+		bgId: '22',
 		def: '365',
 		defBonus: '-36',
 		id: '531',
@@ -4822,6 +5843,7 @@ const tokens = [
 	{
 		atk: '511',
 		atkBonus: '112',
+		bgId: '18',
 		def: '604',
 		defBonus: '83',
 		id: '532',
@@ -4832,6 +5854,7 @@ const tokens = [
 	{
 		atk: '484',
 		atkBonus: '98',
+		bgId: '1',
 		def: '331',
 		defBonus: '85',
 		id: '533',
@@ -4842,6 +5865,7 @@ const tokens = [
 	{
 		atk: '599',
 		atkBonus: '107',
+		bgId: '16',
 		def: '305',
 		defBonus: '96',
 		id: '534',
@@ -4852,6 +5876,7 @@ const tokens = [
 	{
 		atk: '428',
 		atkBonus: '113',
+		bgId: '16',
 		def: '804',
 		defBonus: '112',
 		id: '535',
@@ -4862,6 +5887,7 @@ const tokens = [
 	{
 		atk: '838',
 		atkBonus: '93',
+		bgId: '12',
 		def: '325',
 		defBonus: '107',
 		id: '536',
@@ -4872,6 +5898,7 @@ const tokens = [
 	{
 		atk: '486',
 		atkBonus: '84',
+		bgId: '7',
 		def: '253',
 		defBonus: '92',
 		id: '537',
@@ -4882,6 +5909,7 @@ const tokens = [
 	{
 		atk: '578',
 		atkBonus: '29',
+		bgId: '14',
 		def: '321',
 		defBonus: '9',
 		id: '538',
@@ -4892,6 +5920,7 @@ const tokens = [
 	{
 		atk: '459',
 		atkBonus: '122',
+		bgId: '4',
 		def: '655',
 		defBonus: '33',
 		id: '539',
@@ -4900,18 +5929,9 @@ const tokens = [
 		subClass: 'Sorcerer',
 	},
 	{
-		atk: '574',
-		atkBonus: '100',
-		def: '172',
-		defBonus: '36',
-		id: '54',
-		spd: '630',
-		spdBonus: '40',
-		subClass: 'Ranger',
-	},
-	{
 		atk: '560',
 		atkBonus: '35',
+		bgId: '17',
 		def: '402',
 		defBonus: '48',
 		id: '540',
@@ -4922,6 +5942,7 @@ const tokens = [
 	{
 		atk: '414',
 		atkBonus: '84',
+		bgId: '9',
 		def: '713',
 		defBonus: '45',
 		id: '541',
@@ -4932,6 +5953,7 @@ const tokens = [
 	{
 		atk: '879',
 		atkBonus: '69',
+		bgId: '4',
 		def: '271',
 		defBonus: '104',
 		id: '542',
@@ -4942,6 +5964,7 @@ const tokens = [
 	{
 		atk: '694',
 		atkBonus: '45',
+		bgId: '19',
 		def: '324',
 		defBonus: '32',
 		id: '543',
@@ -4952,6 +5975,7 @@ const tokens = [
 	{
 		atk: '379',
 		atkBonus: '104',
+		bgId: '19',
 		def: '277',
 		defBonus: '6',
 		id: '544',
@@ -4962,6 +5986,7 @@ const tokens = [
 	{
 		atk: '774',
 		atkBonus: '31',
+		bgId: '13',
 		def: '236',
 		defBonus: '17',
 		id: '545',
@@ -4972,6 +5997,7 @@ const tokens = [
 	{
 		atk: '612',
 		atkBonus: '54',
+		bgId: '23',
 		def: '236',
 		defBonus: '38',
 		id: '546',
@@ -4982,6 +6008,7 @@ const tokens = [
 	{
 		atk: '827',
 		atkBonus: '87',
+		bgId: '3',
 		def: '182',
 		defBonus: '5',
 		id: '547',
@@ -4992,6 +6019,7 @@ const tokens = [
 	{
 		atk: '510',
 		atkBonus: '51',
+		bgId: '3',
 		def: '444',
 		defBonus: '17',
 		id: '548',
@@ -5002,6 +6030,7 @@ const tokens = [
 	{
 		atk: '706',
 		atkBonus: '77',
+		bgId: '24',
 		def: '519',
 		defBonus: '124',
 		id: '549',
@@ -5010,18 +6039,9 @@ const tokens = [
 		subClass: 'Summoner',
 	},
 	{
-		atk: '442',
-		atkBonus: '1',
-		def: '371',
-		defBonus: '73',
-		id: '55',
-		spd: '466',
-		spdBonus: '5',
-		subClass: 'Monk',
-	},
-	{
 		atk: '385',
 		atkBonus: '76',
+		bgId: '10',
 		def: '490',
 		defBonus: '1',
 		id: '550',
@@ -5032,6 +6052,7 @@ const tokens = [
 	{
 		atk: '535',
 		atkBonus: '-26',
+		bgId: '8',
 		def: '401',
 		defBonus: '231',
 		id: '551',
@@ -5042,6 +6063,7 @@ const tokens = [
 	{
 		atk: '382',
 		atkBonus: '72',
+		bgId: '9',
 		def: '623',
 		defBonus: '70',
 		id: '552',
@@ -5052,6 +6074,7 @@ const tokens = [
 	{
 		atk: '535',
 		atkBonus: '23',
+		bgId: '17',
 		def: '595',
 		defBonus: '124',
 		id: '553',
@@ -5062,6 +6085,7 @@ const tokens = [
 	{
 		atk: '385',
 		atkBonus: '49',
+		bgId: '1',
 		def: '508',
 		defBonus: '90',
 		id: '554',
@@ -5072,6 +6096,7 @@ const tokens = [
 	{
 		atk: '721',
 		atkBonus: '99',
+		bgId: '22',
 		def: '396',
 		defBonus: '49',
 		id: '555',
@@ -5082,6 +6107,7 @@ const tokens = [
 	{
 		atk: '836',
 		atkBonus: '113',
+		bgId: '2',
 		def: '321',
 		defBonus: '66',
 		id: '556',
@@ -5092,6 +6118,7 @@ const tokens = [
 	{
 		atk: '607',
 		atkBonus: '16',
+		bgId: '22',
 		def: '507',
 		defBonus: '88',
 		id: '557',
@@ -5102,6 +6129,7 @@ const tokens = [
 	{
 		atk: '529',
 		atkBonus: '66',
+		bgId: '4',
 		def: '371',
 		defBonus: '69',
 		id: '558',
@@ -5112,6 +6140,7 @@ const tokens = [
 	{
 		atk: '306',
 		atkBonus: '53',
+		bgId: '8',
 		def: '704',
 		defBonus: '81',
 		id: '559',
@@ -5120,18 +6149,9 @@ const tokens = [
 		subClass: 'Dark Knight',
 	},
 	{
-		atk: '847',
-		atkBonus: '129',
-		def: '291',
-		defBonus: '119',
-		id: '56',
-		spd: '383',
-		spdBonus: '73',
-		subClass: 'Dark Knight',
-	},
-	{
 		atk: '510',
 		atkBonus: '64',
+		bgId: '1',
 		def: '533',
 		defBonus: '59',
 		id: '560',
@@ -5142,6 +6162,7 @@ const tokens = [
 	{
 		atk: '821',
 		atkBonus: '108',
+		bgId: '17',
 		def: '296',
 		defBonus: '36',
 		id: '561',
@@ -5152,6 +6173,7 @@ const tokens = [
 	{
 		atk: '821',
 		atkBonus: '58',
+		bgId: '5',
 		def: '203',
 		defBonus: '66',
 		id: '562',
@@ -5162,6 +6184,7 @@ const tokens = [
 	{
 		atk: '660',
 		atkBonus: '85',
+		bgId: '7',
 		def: '340',
 		defBonus: '110',
 		id: '563',
@@ -5172,6 +6195,7 @@ const tokens = [
 	{
 		atk: '635',
 		atkBonus: '76',
+		bgId: '7',
 		def: '458',
 		defBonus: '106',
 		id: '564',
@@ -5182,6 +6206,7 @@ const tokens = [
 	{
 		atk: '751',
 		atkBonus: '80',
+		bgId: '8',
 		def: '488',
 		defBonus: '125',
 		id: '565',
@@ -5192,6 +6217,7 @@ const tokens = [
 	{
 		atk: '606',
 		atkBonus: '265',
+		bgId: '2',
 		def: '459',
 		defBonus: '-81',
 		id: '566',
@@ -5202,6 +6228,7 @@ const tokens = [
 	{
 		atk: '890',
 		atkBonus: '82',
+		bgId: '17',
 		def: '313',
 		defBonus: '117',
 		id: '567',
@@ -5212,6 +6239,7 @@ const tokens = [
 	{
 		atk: '248',
 		atkBonus: '0',
+		bgId: '24',
 		def: '780',
 		defBonus: '56',
 		id: '568',
@@ -5222,6 +6250,7 @@ const tokens = [
 	{
 		atk: '661',
 		atkBonus: '51',
+		bgId: '15',
 		def: '264',
 		defBonus: '31',
 		id: '569',
@@ -5230,18 +6259,9 @@ const tokens = [
 		subClass: 'Dark Knight',
 	},
 	{
-		atk: '635',
-		atkBonus: '34',
-		def: '305',
-		defBonus: '7',
-		id: '57',
-		spd: '367',
-		spdBonus: '66',
-		subClass: 'Summoner',
-	},
-	{
 		atk: '453',
 		atkBonus: '82',
+		bgId: '3',
 		def: '321',
 		defBonus: '85',
 		id: '570',
@@ -5252,6 +6272,7 @@ const tokens = [
 	{
 		atk: '911',
 		atkBonus: '90',
+		bgId: '19',
 		def: '186',
 		defBonus: '45',
 		id: '571',
@@ -5262,6 +6283,7 @@ const tokens = [
 	{
 		atk: '378',
 		atkBonus: '8',
+		bgId: '5',
 		def: '391',
 		defBonus: '118',
 		id: '572',
@@ -5272,6 +6294,7 @@ const tokens = [
 	{
 		atk: '555',
 		atkBonus: '65',
+		bgId: '10',
 		def: '329',
 		defBonus: '16',
 		id: '573',
@@ -5282,6 +6305,7 @@ const tokens = [
 	{
 		atk: '781',
 		atkBonus: '15',
+		bgId: '15',
 		def: '228',
 		defBonus: '-49',
 		id: '574',
@@ -5292,6 +6316,7 @@ const tokens = [
 	{
 		atk: '803',
 		atkBonus: '86',
+		bgId: '22',
 		def: '348',
 		defBonus: '84',
 		id: '575',
@@ -5302,6 +6327,7 @@ const tokens = [
 	{
 		atk: '788',
 		atkBonus: '13',
+		bgId: '3',
 		def: '452',
 		defBonus: '132',
 		id: '576',
@@ -5312,6 +6338,7 @@ const tokens = [
 	{
 		atk: '285',
 		atkBonus: '29',
+		bgId: '11',
 		def: '744',
 		defBonus: '120',
 		id: '577',
@@ -5322,6 +6349,7 @@ const tokens = [
 	{
 		atk: '472',
 		atkBonus: '110',
+		bgId: '2',
 		def: '391',
 		defBonus: '21',
 		id: '578',
@@ -5332,6 +6360,7 @@ const tokens = [
 	{
 		atk: '371',
 		atkBonus: '65',
+		bgId: '23',
 		def: '667',
 		defBonus: '65',
 		id: '579',
@@ -5340,18 +6369,9 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
-		atk: '786',
-		atkBonus: '99',
-		def: '389',
-		defBonus: '40',
-		id: '58',
-		spd: '280',
-		spdBonus: '116',
-		subClass: 'Dragoon',
-	},
-	{
 		atk: '232',
 		atkBonus: '4',
+		bgId: '2',
 		def: '628',
 		defBonus: '46',
 		id: '580',
@@ -5362,6 +6382,7 @@ const tokens = [
 	{
 		atk: '340',
 		atkBonus: '77',
+		bgId: '7',
 		def: '613',
 		defBonus: '120',
 		id: '581',
@@ -5372,6 +6393,7 @@ const tokens = [
 	{
 		atk: '420',
 		atkBonus: '34',
+		bgId: '17',
 		def: '302',
 		defBonus: '7',
 		id: '582',
@@ -5382,6 +6404,7 @@ const tokens = [
 	{
 		atk: '494',
 		atkBonus: '93',
+		bgId: '13',
 		def: '721',
 		defBonus: '63',
 		id: '583',
@@ -5392,6 +6415,7 @@ const tokens = [
 	{
 		atk: '531',
 		atkBonus: '100',
+		bgId: '10',
 		def: '232',
 		defBonus: '131',
 		id: '584',
@@ -5402,6 +6426,7 @@ const tokens = [
 	{
 		atk: '236',
 		atkBonus: '18',
+		bgId: '7',
 		def: '409',
 		defBonus: '23',
 		id: '585',
@@ -5412,6 +6437,7 @@ const tokens = [
 	{
 		atk: '226',
 		atkBonus: '114',
+		bgId: '12',
 		def: '919',
 		defBonus: '-8',
 		id: '586',
@@ -5422,6 +6448,7 @@ const tokens = [
 	{
 		atk: '669',
 		atkBonus: '32',
+		bgId: '20',
 		def: '297',
 		defBonus: '64',
 		id: '587',
@@ -5432,6 +6459,7 @@ const tokens = [
 	{
 		atk: '459',
 		atkBonus: '45',
+		bgId: '7',
 		def: '582',
 		defBonus: '95',
 		id: '588',
@@ -5442,6 +6470,7 @@ const tokens = [
 	{
 		atk: '601',
 		atkBonus: '22',
+		bgId: '24',
 		def: '244',
 		defBonus: '6',
 		id: '589',
@@ -5450,18 +6479,9 @@ const tokens = [
 		subClass: 'Dragoon',
 	},
 	{
-		atk: '711',
-		atkBonus: '24',
-		def: '209',
-		defBonus: '104',
-		id: '59',
-		spd: '509',
-		spdBonus: '101',
-		subClass: 'Ranger',
-	},
-	{
 		atk: '375',
 		atkBonus: '77',
+		bgId: '11',
 		def: '814',
 		defBonus: '106',
 		id: '590',
@@ -5472,6 +6492,7 @@ const tokens = [
 	{
 		atk: '682',
 		atkBonus: '45',
+		bgId: '19',
 		def: '429',
 		defBonus: '84',
 		id: '591',
@@ -5482,6 +6503,7 @@ const tokens = [
 	{
 		atk: '573',
 		atkBonus: '33',
+		bgId: '22',
 		def: '216',
 		defBonus: '17',
 		id: '592',
@@ -5492,6 +6514,7 @@ const tokens = [
 	{
 		atk: '692',
 		atkBonus: '20',
+		bgId: '23',
 		def: '491',
 		defBonus: '92',
 		id: '593',
@@ -5502,6 +6525,7 @@ const tokens = [
 	{
 		atk: '575',
 		atkBonus: '93',
+		bgId: '5',
 		def: '463',
 		defBonus: '73',
 		id: '594',
@@ -5512,6 +6536,7 @@ const tokens = [
 	{
 		atk: '233',
 		atkBonus: '82',
+		bgId: '4',
 		def: '643',
 		defBonus: '123',
 		id: '595',
@@ -5522,6 +6547,7 @@ const tokens = [
 	{
 		atk: '533',
 		atkBonus: '29',
+		bgId: '2',
 		def: '345',
 		defBonus: '84',
 		id: '596',
@@ -5532,6 +6558,7 @@ const tokens = [
 	{
 		atk: '491',
 		atkBonus: '107',
+		bgId: '8',
 		def: '506',
 		defBonus: '52',
 		id: '597',
@@ -5542,6 +6569,7 @@ const tokens = [
 	{
 		atk: '768',
 		atkBonus: '109',
+		bgId: '23',
 		def: '398',
 		defBonus: '130',
 		id: '598',
@@ -5552,6 +6580,7 @@ const tokens = [
 	{
 		atk: '480',
 		atkBonus: '2',
+		bgId: '17',
 		def: '516',
 		defBonus: '3',
 		id: '599',
@@ -5560,28 +6589,9 @@ const tokens = [
 		subClass: 'Knight',
 	},
 	{
-		atk: '663',
-		atkBonus: '22',
-		def: '568',
-		defBonus: '131',
-		id: '6',
-		spd: '227',
-		spdBonus: '105',
-		subClass: 'Sorcerer',
-	},
-	{
-		atk: '474',
-		atkBonus: '20',
-		def: '328',
-		defBonus: '128',
-		id: '60',
-		spd: '674',
-		spdBonus: '128',
-		subClass: 'Summoner',
-	},
-	{
 		atk: '497',
 		atkBonus: '87',
+		bgId: '14',
 		def: '293',
 		defBonus: '92',
 		id: '600',
@@ -5592,6 +6602,7 @@ const tokens = [
 	{
 		atk: '732',
 		atkBonus: '117',
+		bgId: '19',
 		def: '404',
 		defBonus: '93',
 		id: '601',
@@ -5602,6 +6613,7 @@ const tokens = [
 	{
 		atk: '274',
 		atkBonus: '125',
+		bgId: '3',
 		def: '736',
 		defBonus: '59',
 		id: '602',
@@ -5612,6 +6624,7 @@ const tokens = [
 	{
 		atk: '819',
 		atkBonus: '24',
+		bgId: '21',
 		def: '233',
 		defBonus: '54',
 		id: '603',
@@ -5622,6 +6635,7 @@ const tokens = [
 	{
 		atk: '704',
 		atkBonus: '116',
+		bgId: '1',
 		def: '373',
 		defBonus: '28',
 		id: '604',
@@ -5632,6 +6646,7 @@ const tokens = [
 	{
 		atk: '432',
 		atkBonus: '107',
+		bgId: '2',
 		def: '613',
 		defBonus: '112',
 		id: '605',
@@ -5642,6 +6657,7 @@ const tokens = [
 	{
 		atk: '584',
 		atkBonus: '55',
+		bgId: '3',
 		def: '189',
 		defBonus: '7',
 		id: '606',
@@ -5652,6 +6668,7 @@ const tokens = [
 	{
 		atk: '508',
 		atkBonus: '15',
+		bgId: '16',
 		def: '402',
 		defBonus: '36',
 		id: '607',
@@ -5662,6 +6679,7 @@ const tokens = [
 	{
 		atk: '393',
 		atkBonus: '34',
+		bgId: '20',
 		def: '223',
 		defBonus: '-5',
 		id: '608',
@@ -5672,6 +6690,7 @@ const tokens = [
 	{
 		atk: '246',
 		atkBonus: '113',
+		bgId: '4',
 		def: '487',
 		defBonus: '5',
 		id: '609',
@@ -5680,18 +6699,9 @@ const tokens = [
 		subClass: 'Ranger',
 	},
 	{
-		atk: '694',
-		atkBonus: '17',
-		def: '387',
-		defBonus: '32',
-		id: '61',
-		spd: '297',
-		spdBonus: '129',
-		subClass: 'Paladin',
-	},
-	{
 		atk: '772',
 		atkBonus: '74',
+		bgId: '13',
 		def: '456',
 		defBonus: '96',
 		id: '610',
@@ -5702,6 +6712,7 @@ const tokens = [
 	{
 		atk: '392',
 		atkBonus: '-32',
+		bgId: '0',
 		def: '415',
 		defBonus: '153',
 		id: '611',
@@ -5712,6 +6723,7 @@ const tokens = [
 	{
 		atk: '297',
 		atkBonus: '65',
+		bgId: '10',
 		def: '345',
 		defBonus: '71',
 		id: '612',
@@ -5722,6 +6734,7 @@ const tokens = [
 	{
 		atk: '823',
 		atkBonus: '74',
+		bgId: '16',
 		def: '421',
 		defBonus: '130',
 		id: '613',
@@ -5732,6 +6745,7 @@ const tokens = [
 	{
 		atk: '725',
 		atkBonus: '200',
+		bgId: '20',
 		def: '563',
 		defBonus: '65',
 		id: '614',
@@ -5742,6 +6756,7 @@ const tokens = [
 	{
 		atk: '590',
 		atkBonus: '114',
+		bgId: '7',
 		def: '403',
 		defBonus: '126',
 		id: '615',
@@ -5752,6 +6767,7 @@ const tokens = [
 	{
 		atk: '843',
 		atkBonus: '75',
+		bgId: '20',
 		def: '196',
 		defBonus: '32',
 		id: '616',
@@ -5762,6 +6778,7 @@ const tokens = [
 	{
 		atk: '473',
 		atkBonus: '100',
+		bgId: '4',
 		def: '558',
 		defBonus: '100',
 		id: '617',
@@ -5772,6 +6789,7 @@ const tokens = [
 	{
 		atk: '302',
 		atkBonus: '120',
+		bgId: '22',
 		def: '366',
 		defBonus: '13',
 		id: '618',
@@ -5782,6 +6800,7 @@ const tokens = [
 	{
 		atk: '829',
 		atkBonus: '72',
+		bgId: '14',
 		def: '258',
 		defBonus: '28',
 		id: '619',
@@ -5790,18 +6809,9 @@ const tokens = [
 		subClass: 'Druid',
 	},
 	{
-		atk: '178',
-		atkBonus: '58',
-		def: '426',
-		defBonus: '11',
-		id: '62',
-		spd: '788',
-		spdBonus: '123',
-		subClass: 'Ranger',
-	},
-	{
 		atk: '521',
 		atkBonus: '38',
+		bgId: '23',
 		def: '691',
 		defBonus: '90',
 		id: '620',
@@ -5812,6 +6822,7 @@ const tokens = [
 	{
 		atk: '505',
 		atkBonus: '124',
+		bgId: '6',
 		def: '408',
 		defBonus: '74',
 		id: '621',
@@ -5822,6 +6833,7 @@ const tokens = [
 	{
 		atk: '596',
 		atkBonus: '20',
+		bgId: '9',
 		def: '568',
 		defBonus: '95',
 		id: '622',
@@ -5832,6 +6844,7 @@ const tokens = [
 	{
 		atk: '693',
 		atkBonus: '90',
+		bgId: '13',
 		def: '262',
 		defBonus: '57',
 		id: '623',
@@ -5842,6 +6855,7 @@ const tokens = [
 	{
 		atk: '387',
 		atkBonus: '23',
+		bgId: '18',
 		def: '345',
 		defBonus: '21',
 		id: '624',
@@ -5852,6 +6866,7 @@ const tokens = [
 	{
 		atk: '319',
 		atkBonus: '60',
+		bgId: '20',
 		def: '854',
 		defBonus: '105',
 		id: '625',
@@ -5862,6 +6877,7 @@ const tokens = [
 	{
 		atk: '333',
 		atkBonus: '92',
+		bgId: '7',
 		def: '345',
 		defBonus: '-56',
 		id: '626',
@@ -5872,6 +6888,7 @@ const tokens = [
 	{
 		atk: '423',
 		atkBonus: '114',
+		bgId: '14',
 		def: '278',
 		defBonus: '39',
 		id: '627',
@@ -5882,6 +6899,7 @@ const tokens = [
 	{
 		atk: '594',
 		atkBonus: '129',
+		bgId: '8',
 		def: '573',
 		defBonus: '125',
 		id: '628',
@@ -5892,6 +6910,7 @@ const tokens = [
 	{
 		atk: '575',
 		atkBonus: '47',
+		bgId: '22',
 		def: '246',
 		defBonus: '98',
 		id: '629',
@@ -5900,18 +6919,9 @@ const tokens = [
 		subClass: 'Berserker',
 	},
 	{
-		atk: '380',
-		atkBonus: '72',
-		def: '537',
-		defBonus: '120',
-		id: '63',
-		spd: '504',
-		spdBonus: '29',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '302',
 		atkBonus: '38',
+		bgId: '6',
 		def: '853',
 		defBonus: '80',
 		id: '630',
@@ -5922,6 +6932,7 @@ const tokens = [
 	{
 		atk: '529',
 		atkBonus: '23',
+		bgId: '3',
 		def: '580',
 		defBonus: '84',
 		id: '631',
@@ -5932,6 +6943,7 @@ const tokens = [
 	{
 		atk: '583',
 		atkBonus: '96',
+		bgId: '21',
 		def: '473',
 		defBonus: '103',
 		id: '632',
@@ -5942,6 +6954,7 @@ const tokens = [
 	{
 		atk: '685',
 		atkBonus: '94',
+		bgId: '5',
 		def: '423',
 		defBonus: '127',
 		id: '633',
@@ -5952,6 +6965,7 @@ const tokens = [
 	{
 		atk: '675',
 		atkBonus: '112',
+		bgId: '15',
 		def: '125',
 		defBonus: '7',
 		id: '634',
@@ -5962,6 +6976,7 @@ const tokens = [
 	{
 		atk: '702',
 		atkBonus: '94',
+		bgId: '7',
 		def: '281',
 		defBonus: '58',
 		id: '635',
@@ -5972,6 +6987,7 @@ const tokens = [
 	{
 		atk: '500',
 		atkBonus: '79',
+		bgId: '16',
 		def: '663',
 		defBonus: '106',
 		id: '636',
@@ -5982,6 +6998,7 @@ const tokens = [
 	{
 		atk: '342',
 		atkBonus: '22',
+		bgId: '10',
 		def: '415',
 		defBonus: '107',
 		id: '637',
@@ -5992,6 +7009,7 @@ const tokens = [
 	{
 		atk: '453',
 		atkBonus: '-38',
+		bgId: '10',
 		def: '488',
 		defBonus: '177',
 		id: '638',
@@ -6002,6 +7020,7 @@ const tokens = [
 	{
 		atk: '538',
 		atkBonus: '34',
+		bgId: '24',
 		def: '238',
 		defBonus: '107',
 		id: '639',
@@ -6010,18 +7029,9 @@ const tokens = [
 		subClass: 'Assassin',
 	},
 	{
-		atk: '627',
-		atkBonus: '61',
-		def: '254',
-		defBonus: '82',
-		id: '64',
-		spd: '578',
-		spdBonus: '116',
-		subClass: 'Berserker',
-	},
-	{
 		atk: '341',
 		atkBonus: '114',
+		bgId: '1',
 		def: '351',
 		defBonus: '16',
 		id: '640',
@@ -6032,6 +7042,7 @@ const tokens = [
 	{
 		atk: '370',
 		atkBonus: '29',
+		bgId: '2',
 		def: '425',
 		defBonus: '122',
 		id: '641',
@@ -6042,6 +7053,7 @@ const tokens = [
 	{
 		atk: '416',
 		atkBonus: '59',
+		bgId: '5',
 		def: '501',
 		defBonus: '97',
 		id: '642',
@@ -6052,6 +7064,7 @@ const tokens = [
 	{
 		atk: '665',
 		atkBonus: '20',
+		bgId: '9',
 		def: '190',
 		defBonus: '19',
 		id: '643',
@@ -6062,6 +7075,7 @@ const tokens = [
 	{
 		atk: '399',
 		atkBonus: '90',
+		bgId: '19',
 		def: '501',
 		defBonus: '33',
 		id: '644',
@@ -6072,6 +7086,7 @@ const tokens = [
 	{
 		atk: '536',
 		atkBonus: '74',
+		bgId: '5',
 		def: '316',
 		defBonus: '124',
 		id: '645',
@@ -6082,6 +7097,7 @@ const tokens = [
 	{
 		atk: '409',
 		atkBonus: '47',
+		bgId: '11',
 		def: '644',
 		defBonus: '111',
 		id: '646',
@@ -6092,6 +7108,7 @@ const tokens = [
 	{
 		atk: '762',
 		atkBonus: '127',
+		bgId: '21',
 		def: '315',
 		defBonus: '61',
 		id: '647',
@@ -6102,6 +7119,7 @@ const tokens = [
 	{
 		atk: '823',
 		atkBonus: '101',
+		bgId: '19',
 		def: '221',
 		defBonus: '117',
 		id: '648',
@@ -6112,6 +7130,7 @@ const tokens = [
 	{
 		atk: '304',
 		atkBonus: '51',
+		bgId: '12',
 		def: '434',
 		defBonus: '66',
 		id: '649',
@@ -6120,18 +7139,9 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
-		atk: '750',
-		atkBonus: '105',
-		def: '424',
-		defBonus: '114',
-		id: '65',
-		spd: '280',
-		spdBonus: '35',
-		subClass: 'Sorcerer',
-	},
-	{
 		atk: '184',
 		atkBonus: '62',
+		bgId: '11',
 		def: '700',
 		defBonus: '5',
 		id: '650',
@@ -6142,6 +7152,7 @@ const tokens = [
 	{
 		atk: '462',
 		atkBonus: '129',
+		bgId: '19',
 		def: '483',
 		defBonus: '33',
 		id: '651',
@@ -6152,6 +7163,7 @@ const tokens = [
 	{
 		atk: '680',
 		atkBonus: '125',
+		bgId: '22',
 		def: '615',
 		defBonus: '127',
 		id: '652',
@@ -6162,6 +7174,7 @@ const tokens = [
 	{
 		atk: '768',
 		atkBonus: '115',
+		bgId: '13',
 		def: '434',
 		defBonus: '128',
 		id: '653',
@@ -6172,6 +7185,7 @@ const tokens = [
 	{
 		atk: '417',
 		atkBonus: '71',
+		bgId: '4',
 		def: '602',
 		defBonus: '92',
 		id: '654',
@@ -6182,6 +7196,7 @@ const tokens = [
 	{
 		atk: '377',
 		atkBonus: '62',
+		bgId: '7',
 		def: '600',
 		defBonus: '41',
 		id: '655',
@@ -6192,6 +7207,7 @@ const tokens = [
 	{
 		atk: '575',
 		atkBonus: '40',
+		bgId: '11',
 		def: '410',
 		defBonus: '53',
 		id: '656',
@@ -6202,6 +7218,7 @@ const tokens = [
 	{
 		atk: '409',
 		atkBonus: '100',
+		bgId: '22',
 		def: '283',
 		defBonus: '116',
 		id: '657',
@@ -6212,6 +7229,7 @@ const tokens = [
 	{
 		atk: '600',
 		atkBonus: '104',
+		bgId: '7',
 		def: '436',
 		defBonus: '117',
 		id: '658',
@@ -6222,6 +7240,7 @@ const tokens = [
 	{
 		atk: '853',
 		atkBonus: '131',
+		bgId: '24',
 		def: '237',
 		defBonus: '123',
 		id: '659',
@@ -6230,18 +7249,9 @@ const tokens = [
 		subClass: 'Assassin',
 	},
 	{
-		atk: '320',
-		atkBonus: '70',
-		def: '507',
-		defBonus: '56',
-		id: '66',
-		spd: '599',
-		spdBonus: '100',
-		subClass: 'Dark Knight',
-	},
-	{
 		atk: '574',
 		atkBonus: '40',
+		bgId: '4',
 		def: '261',
 		defBonus: '22',
 		id: '660',
@@ -6252,6 +7262,7 @@ const tokens = [
 	{
 		atk: '640',
 		atkBonus: '46',
+		bgId: '8',
 		def: '498',
 		defBonus: '36',
 		id: '661',
@@ -6262,6 +7273,7 @@ const tokens = [
 	{
 		atk: '426',
 		atkBonus: '98',
+		bgId: '4',
 		def: '335',
 		defBonus: '71',
 		id: '662',
@@ -6272,6 +7284,7 @@ const tokens = [
 	{
 		atk: '515',
 		atkBonus: '2',
+		bgId: '11',
 		def: '351',
 		defBonus: '2',
 		id: '663',
@@ -6282,6 +7295,7 @@ const tokens = [
 	{
 		atk: '686',
 		atkBonus: '58',
+		bgId: '19',
 		def: '222',
 		defBonus: '55',
 		id: '664',
@@ -6292,6 +7306,7 @@ const tokens = [
 	{
 		atk: '634',
 		atkBonus: '13',
+		bgId: '17',
 		def: '297',
 		defBonus: '119',
 		id: '665',
@@ -6302,6 +7317,7 @@ const tokens = [
 	{
 		atk: '293',
 		atkBonus: '70',
+		bgId: '15',
 		def: '441',
 		defBonus: '71',
 		id: '666',
@@ -6312,6 +7328,7 @@ const tokens = [
 	{
 		atk: '845',
 		atkBonus: '96',
+		bgId: '7',
 		def: '251',
 		defBonus: '42',
 		id: '667',
@@ -6322,6 +7339,7 @@ const tokens = [
 	{
 		atk: '725',
 		atkBonus: '48',
+		bgId: '20',
 		def: '248',
 		defBonus: '45',
 		id: '668',
@@ -6332,6 +7350,7 @@ const tokens = [
 	{
 		atk: '686',
 		atkBonus: '129',
+		bgId: '22',
 		def: '597',
 		defBonus: '120',
 		id: '669',
@@ -6340,18 +7359,9 @@ const tokens = [
 		subClass: 'Paladin',
 	},
 	{
-		atk: '503',
-		atkBonus: '123',
-		def: '605',
-		defBonus: '2',
-		id: '67',
-		spd: '217',
-		spdBonus: '0',
-		subClass: 'Cleric',
-	},
-	{
 		atk: '598',
 		atkBonus: '22',
+		bgId: '22',
 		def: '564',
 		defBonus: '125',
 		id: '670',
@@ -6362,6 +7372,7 @@ const tokens = [
 	{
 		atk: '414',
 		atkBonus: '59',
+		bgId: '15',
 		def: '603',
 		defBonus: '86',
 		id: '671',
@@ -6372,6 +7383,7 @@ const tokens = [
 	{
 		atk: '557',
 		atkBonus: '87',
+		bgId: '11',
 		def: '641',
 		defBonus: '132',
 		id: '672',
@@ -6382,6 +7394,7 @@ const tokens = [
 	{
 		atk: '346',
 		atkBonus: '30',
+		bgId: '3',
 		def: '529',
 		defBonus: '58',
 		id: '673',
@@ -6392,6 +7405,7 @@ const tokens = [
 	{
 		atk: '352',
 		atkBonus: '31',
+		bgId: '19',
 		def: '786',
 		defBonus: '34',
 		id: '674',
@@ -6402,6 +7416,7 @@ const tokens = [
 	{
 		atk: '221',
 		atkBonus: '39',
+		bgId: '18',
 		def: '929',
 		defBonus: '13',
 		id: '675',
@@ -6412,6 +7427,7 @@ const tokens = [
 	{
 		atk: '582',
 		atkBonus: '26',
+		bgId: '3',
 		def: '188',
 		defBonus: '22',
 		id: '676',
@@ -6422,6 +7438,7 @@ const tokens = [
 	{
 		atk: '516',
 		atkBonus: '-13',
+		bgId: '13',
 		def: '628',
 		defBonus: '76',
 		id: '677',
@@ -6432,6 +7449,7 @@ const tokens = [
 	{
 		atk: '819',
 		atkBonus: '88',
+		bgId: '8',
 		def: '301',
 		defBonus: '87',
 		id: '678',
@@ -6442,6 +7460,7 @@ const tokens = [
 	{
 		atk: '901',
 		atkBonus: '48',
+		bgId: '14',
 		def: '239',
 		defBonus: '46',
 		id: '679',
@@ -6450,18 +7469,9 @@ const tokens = [
 		subClass: 'Dark Knight',
 	},
 	{
-		atk: '800',
-		atkBonus: '55',
-		def: '190',
-		defBonus: '62',
-		id: '68',
-		spd: '359',
-		spdBonus: '32',
-		subClass: 'Berserker',
-	},
-	{
 		atk: '229',
 		atkBonus: '0',
+		bgId: '16',
 		def: '773',
 		defBonus: '5',
 		id: '680',
@@ -6472,6 +7482,7 @@ const tokens = [
 	{
 		atk: '357',
 		atkBonus: '109',
+		bgId: '13',
 		def: '450',
 		defBonus: '20',
 		id: '681',
@@ -6482,6 +7493,7 @@ const tokens = [
 	{
 		atk: '167',
 		atkBonus: '37',
+		bgId: '0',
 		def: '581',
 		defBonus: '123',
 		id: '682',
@@ -6492,6 +7504,7 @@ const tokens = [
 	{
 		atk: '868',
 		atkBonus: '15',
+		bgId: '9',
 		def: '167',
 		defBonus: '19',
 		id: '683',
@@ -6502,6 +7515,7 @@ const tokens = [
 	{
 		atk: '550',
 		atkBonus: '130',
+		bgId: '20',
 		def: '512',
 		defBonus: '70',
 		id: '684',
@@ -6512,6 +7526,7 @@ const tokens = [
 	{
 		atk: '547',
 		atkBonus: '69',
+		bgId: '2',
 		def: '511',
 		defBonus: '28',
 		id: '685',
@@ -6522,6 +7537,7 @@ const tokens = [
 	{
 		atk: '299',
 		atkBonus: '88',
+		bgId: '5',
 		def: '694',
 		defBonus: '77',
 		id: '686',
@@ -6532,6 +7548,7 @@ const tokens = [
 	{
 		atk: '845',
 		atkBonus: '91',
+		bgId: '7',
 		def: '237',
 		defBonus: '0',
 		id: '687',
@@ -6542,6 +7559,7 @@ const tokens = [
 	{
 		atk: '321',
 		atkBonus: '4',
+		bgId: '14',
 		def: '693',
 		defBonus: '99',
 		id: '688',
@@ -6552,6 +7570,7 @@ const tokens = [
 	{
 		atk: '194',
 		atkBonus: '33',
+		bgId: '23',
 		def: '764',
 		defBonus: '109',
 		id: '689',
@@ -6560,18 +7579,9 @@ const tokens = [
 		subClass: 'Cleric',
 	},
 	{
-		atk: '816',
-		atkBonus: '63',
-		def: '242',
-		defBonus: '71',
-		id: '69',
-		spd: '333',
-		spdBonus: '57',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '574',
 		atkBonus: '55',
+		bgId: '15',
 		def: '423',
 		defBonus: '71',
 		id: '690',
@@ -6582,6 +7592,7 @@ const tokens = [
 	{
 		atk: '422',
 		atkBonus: '48',
+		bgId: '24',
 		def: '334',
 		defBonus: '34',
 		id: '691',
@@ -6592,6 +7603,7 @@ const tokens = [
 	{
 		atk: '724',
 		atkBonus: '111',
+		bgId: '15',
 		def: '441',
 		defBonus: '33',
 		id: '692',
@@ -6602,6 +7614,7 @@ const tokens = [
 	{
 		atk: '625',
 		atkBonus: '-4',
+		bgId: '14',
 		def: '363',
 		defBonus: '211',
 		id: '693',
@@ -6612,6 +7625,7 @@ const tokens = [
 	{
 		atk: '437',
 		atkBonus: '41',
+		bgId: '5',
 		def: '392',
 		defBonus: '16',
 		id: '694',
@@ -6622,6 +7636,7 @@ const tokens = [
 	{
 		atk: '770',
 		atkBonus: '114',
+		bgId: '7',
 		def: '274',
 		defBonus: '52',
 		id: '695',
@@ -6632,6 +7647,7 @@ const tokens = [
 	{
 		atk: '854',
 		atkBonus: '232',
+		bgId: '6',
 		def: '377',
 		defBonus: '-35',
 		id: '696',
@@ -6642,6 +7658,7 @@ const tokens = [
 	{
 		atk: '280',
 		atkBonus: '59',
+		bgId: '8',
 		def: '809',
 		defBonus: '24',
 		id: '697',
@@ -6652,6 +7669,7 @@ const tokens = [
 	{
 		atk: '946',
 		atkBonus: '126',
+		bgId: '21',
 		def: '217',
 		defBonus: '39',
 		id: '698',
@@ -6662,6 +7680,7 @@ const tokens = [
 	{
 		atk: '329',
 		atkBonus: '-90',
+		bgId: '15',
 		def: '655',
 		defBonus: '250',
 		id: '699',
@@ -6670,28 +7689,9 @@ const tokens = [
 		subClass: 'Berserker',
 	},
 	{
-		atk: '318',
-		atkBonus: '103',
-		def: '465',
-		defBonus: '101',
-		id: '7',
-		spd: '700',
-		spdBonus: '79',
-		subClass: 'Druid',
-	},
-	{
-		atk: '797',
-		atkBonus: '32',
-		def: '330',
-		defBonus: '46',
-		id: '70',
-		spd: '281',
-		spdBonus: '130',
-		subClass: 'Summoner',
-	},
-	{
 		atk: '494',
 		atkBonus: '105',
+		bgId: '17',
 		def: '280',
 		defBonus: '35',
 		id: '700',
@@ -6702,6 +7702,7 @@ const tokens = [
 	{
 		atk: '291',
 		atkBonus: '83',
+		bgId: '17',
 		def: '835',
 		defBonus: '69',
 		id: '701',
@@ -6712,6 +7713,7 @@ const tokens = [
 	{
 		atk: '343',
 		atkBonus: '33',
+		bgId: '7',
 		def: '371',
 		defBonus: '81',
 		id: '702',
@@ -6722,6 +7724,7 @@ const tokens = [
 	{
 		atk: '649',
 		atkBonus: '67',
+		bgId: '14',
 		def: '443',
 		defBonus: '20',
 		id: '703',
@@ -6732,6 +7735,7 @@ const tokens = [
 	{
 		atk: '740',
 		atkBonus: '32',
+		bgId: '1',
 		def: '331',
 		defBonus: '1',
 		id: '704',
@@ -6742,6 +7746,7 @@ const tokens = [
 	{
 		atk: '404',
 		atkBonus: '-100',
+		bgId: '20',
 		def: '513',
 		defBonus: '206',
 		id: '705',
@@ -6752,6 +7757,7 @@ const tokens = [
 	{
 		atk: '373',
 		atkBonus: '37',
+		bgId: '19',
 		def: '620',
 		defBonus: '170',
 		id: '706',
@@ -6762,6 +7768,7 @@ const tokens = [
 	{
 		atk: '671',
 		atkBonus: '43',
+		bgId: '2',
 		def: '385',
 		defBonus: '111',
 		id: '707',
@@ -6772,6 +7779,7 @@ const tokens = [
 	{
 		atk: '783',
 		atkBonus: '123',
+		bgId: '4',
 		def: '300',
 		defBonus: '75',
 		id: '708',
@@ -6782,6 +7790,7 @@ const tokens = [
 	{
 		atk: '476',
 		atkBonus: '35',
+		bgId: '18',
 		def: '641',
 		defBonus: '34',
 		id: '709',
@@ -6790,18 +7799,9 @@ const tokens = [
 		subClass: 'Dark Knight',
 	},
 	{
-		atk: '679',
-		atkBonus: '129',
-		def: '285',
-		defBonus: '116',
-		id: '71',
-		spd: '521',
-		spdBonus: '40',
-		subClass: 'Druid',
-	},
-	{
 		atk: '820',
 		atkBonus: '58',
+		bgId: '11',
 		def: '286',
 		defBonus: '16',
 		id: '710',
@@ -6812,6 +7812,7 @@ const tokens = [
 	{
 		atk: '567',
 		atkBonus: '26',
+		bgId: '14',
 		def: '462',
 		defBonus: '55',
 		id: '711',
@@ -6822,6 +7823,7 @@ const tokens = [
 	{
 		atk: '463',
 		atkBonus: '17',
+		bgId: '12',
 		def: '517',
 		defBonus: '38',
 		id: '712',
@@ -6832,6 +7834,7 @@ const tokens = [
 	{
 		atk: '627',
 		atkBonus: '91',
+		bgId: '23',
 		def: '512',
 		defBonus: '28',
 		id: '713',
@@ -6842,6 +7845,7 @@ const tokens = [
 	{
 		atk: '391',
 		atkBonus: '16',
+		bgId: '24',
 		def: '454',
 		defBonus: '60',
 		id: '714',
@@ -6852,6 +7856,7 @@ const tokens = [
 	{
 		atk: '715',
 		atkBonus: '81',
+		bgId: '8',
 		def: '169',
 		defBonus: '51',
 		id: '715',
@@ -6862,6 +7867,7 @@ const tokens = [
 	{
 		atk: '549',
 		atkBonus: '3',
+		bgId: '2',
 		def: '424',
 		defBonus: '96',
 		id: '716',
@@ -6872,6 +7878,7 @@ const tokens = [
 	{
 		atk: '623',
 		atkBonus: '59',
+		bgId: '18',
 		def: '473',
 		defBonus: '78',
 		id: '717',
@@ -6882,6 +7889,7 @@ const tokens = [
 	{
 		atk: '812',
 		atkBonus: '25',
+		bgId: '19',
 		def: '334',
 		defBonus: '72',
 		id: '718',
@@ -6892,6 +7900,7 @@ const tokens = [
 	{
 		atk: '558',
 		atkBonus: '24',
+		bgId: '0',
 		def: '249',
 		defBonus: '105',
 		id: '719',
@@ -6900,18 +7909,9 @@ const tokens = [
 		subClass: 'Assassin',
 	},
 	{
-		atk: '462',
-		atkBonus: '125',
-		def: '653',
-		defBonus: '125',
-		id: '72',
-		spd: '375',
-		spdBonus: '40',
-		subClass: 'Knight',
-	},
-	{
 		atk: '836',
 		atkBonus: '77',
+		bgId: '24',
 		def: '381',
 		defBonus: '123',
 		id: '720',
@@ -6922,6 +7922,7 @@ const tokens = [
 	{
 		atk: '466',
 		atkBonus: '12',
+		bgId: '17',
 		def: '664',
 		defBonus: '79',
 		id: '721',
@@ -6932,6 +7933,7 @@ const tokens = [
 	{
 		atk: '468',
 		atkBonus: '110',
+		bgId: '24',
 		def: '661',
 		defBonus: '58',
 		id: '722',
@@ -6942,6 +7944,7 @@ const tokens = [
 	{
 		atk: '752',
 		atkBonus: '85',
+		bgId: '18',
 		def: '296',
 		defBonus: '66',
 		id: '723',
@@ -6952,6 +7955,7 @@ const tokens = [
 	{
 		atk: '745',
 		atkBonus: '106',
+		bgId: '1',
 		def: '342',
 		defBonus: '2',
 		id: '724',
@@ -6962,6 +7966,7 @@ const tokens = [
 	{
 		atk: '847',
 		atkBonus: '23',
+		bgId: '17',
 		def: '207',
 		defBonus: '105',
 		id: '725',
@@ -6972,6 +7977,7 @@ const tokens = [
 	{
 		atk: '431',
 		atkBonus: '64',
+		bgId: '18',
 		def: '666',
 		defBonus: '-1',
 		id: '726',
@@ -6982,6 +7988,7 @@ const tokens = [
 	{
 		atk: '691',
 		atkBonus: '44',
+		bgId: '1',
 		def: '432',
 		defBonus: '21',
 		id: '727',
@@ -6992,6 +7999,7 @@ const tokens = [
 	{
 		atk: '455',
 		atkBonus: '58',
+		bgId: '20',
 		def: '521',
 		defBonus: '103',
 		id: '728',
@@ -7002,6 +8010,7 @@ const tokens = [
 	{
 		atk: '664',
 		atkBonus: '10',
+		bgId: '2',
 		def: '362',
 		defBonus: '152',
 		id: '729',
@@ -7010,18 +8019,9 @@ const tokens = [
 		subClass: 'Assassin',
 	},
 	{
-		atk: '632',
-		atkBonus: '68',
-		def: '344',
-		defBonus: '112',
-		id: '73',
-		spd: '465',
-		spdBonus: '61',
-		subClass: 'Sorcerer',
-	},
-	{
 		atk: '297',
 		atkBonus: '18',
+		bgId: '24',
 		def: '330',
 		defBonus: '28',
 		id: '730',
@@ -7032,6 +8032,7 @@ const tokens = [
 	{
 		atk: '819',
 		atkBonus: '140',
+		bgId: '13',
 		def: '383',
 		defBonus: '64',
 		id: '731',
@@ -7042,6 +8043,7 @@ const tokens = [
 	{
 		atk: '555',
 		atkBonus: '29',
+		bgId: '10',
 		def: '463',
 		defBonus: '104',
 		id: '732',
@@ -7052,6 +8054,7 @@ const tokens = [
 	{
 		atk: '701',
 		atkBonus: '130',
+		bgId: '2',
 		def: '514',
 		defBonus: '131',
 		id: '733',
@@ -7062,6 +8065,7 @@ const tokens = [
 	{
 		atk: '613',
 		atkBonus: '80',
+		bgId: '13',
 		def: '167',
 		defBonus: '23',
 		id: '734',
@@ -7072,6 +8076,7 @@ const tokens = [
 	{
 		atk: '323',
 		atkBonus: '14',
+		bgId: '10',
 		def: '639',
 		defBonus: '6',
 		id: '735',
@@ -7082,6 +8087,7 @@ const tokens = [
 	{
 		atk: '126',
 		atkBonus: '20',
+		bgId: '4',
 		def: '599',
 		defBonus: '50',
 		id: '736',
@@ -7092,6 +8098,7 @@ const tokens = [
 	{
 		atk: '381',
 		atkBonus: '25',
+		bgId: '12',
 		def: '282',
 		defBonus: '9',
 		id: '737',
@@ -7102,6 +8109,7 @@ const tokens = [
 	{
 		atk: '322',
 		atkBonus: '78',
+		bgId: '18',
 		def: '621',
 		defBonus: '77',
 		id: '738',
@@ -7112,6 +8120,7 @@ const tokens = [
 	{
 		atk: '551',
 		atkBonus: '20',
+		bgId: '2',
 		def: '203',
 		defBonus: '0',
 		id: '739',
@@ -7121,17 +8130,8 @@ const tokens = [
 	},
 	{
 		atk: '346',
-		atkBonus: '43',
-		def: '188',
-		defBonus: '86',
-		id: '74',
-		spd: '806',
-		spdBonus: '11',
-		subClass: 'Ranger',
-	},
-	{
-		atk: '346',
 		atkBonus: '29',
+		bgId: '15',
 		def: '748',
 		defBonus: '70',
 		id: '740',
@@ -7142,6 +8142,7 @@ const tokens = [
 	{
 		atk: '370',
 		atkBonus: '55',
+		bgId: '6',
 		def: '289',
 		defBonus: '103',
 		id: '741',
@@ -7152,6 +8153,7 @@ const tokens = [
 	{
 		atk: '387',
 		atkBonus: '108',
+		bgId: '17',
 		def: '781',
 		defBonus: '27',
 		id: '742',
@@ -7162,6 +8164,7 @@ const tokens = [
 	{
 		atk: '387',
 		atkBonus: '53',
+		bgId: '3',
 		def: '372',
 		defBonus: '98',
 		id: '743',
@@ -7172,6 +8175,7 @@ const tokens = [
 	{
 		atk: '458',
 		atkBonus: '106',
+		bgId: '9',
 		def: '528',
 		defBonus: '74',
 		id: '744',
@@ -7182,6 +8186,7 @@ const tokens = [
 	{
 		atk: '668',
 		atkBonus: '82',
+		bgId: '1',
 		def: '465',
 		defBonus: '19',
 		id: '745',
@@ -7192,6 +8197,7 @@ const tokens = [
 	{
 		atk: '653',
 		atkBonus: '93',
+		bgId: '0',
 		def: '358',
 		defBonus: '21',
 		id: '746',
@@ -7202,6 +8208,7 @@ const tokens = [
 	{
 		atk: '279',
 		atkBonus: '-94',
+		bgId: '9',
 		def: '680',
 		defBonus: '72',
 		id: '747',
@@ -7212,6 +8219,7 @@ const tokens = [
 	{
 		atk: '242',
 		atkBonus: '12',
+		bgId: '14',
 		def: '630',
 		defBonus: '21',
 		id: '748',
@@ -7222,6 +8230,7 @@ const tokens = [
 	{
 		atk: '612',
 		atkBonus: '156',
+		bgId: '19',
 		def: '285',
 		defBonus: '10',
 		id: '749',
@@ -7230,18 +8239,9 @@ const tokens = [
 		subClass: 'Cleric',
 	},
 	{
-		atk: '933',
-		atkBonus: '42',
-		def: '205',
-		defBonus: '10',
-		id: '75',
-		spd: '197',
-		spdBonus: '83',
-		subClass: 'Sorcerer',
-	},
-	{
 		atk: '326',
 		atkBonus: '65',
+		bgId: '6',
 		def: '272',
 		defBonus: '30',
 		id: '750',
@@ -7252,6 +8252,7 @@ const tokens = [
 	{
 		atk: '731',
 		atkBonus: '21',
+		bgId: '16',
 		def: '390',
 		defBonus: '75',
 		id: '751',
@@ -7262,6 +8263,7 @@ const tokens = [
 	{
 		atk: '670',
 		atkBonus: '38',
+		bgId: '1',
 		def: '356',
 		defBonus: '58',
 		id: '752',
@@ -7272,6 +8274,7 @@ const tokens = [
 	{
 		atk: '232',
 		atkBonus: '50',
+		bgId: '23',
 		def: '982',
 		defBonus: '122',
 		id: '753',
@@ -7282,6 +8285,7 @@ const tokens = [
 	{
 		atk: '658',
 		atkBonus: '15',
+		bgId: '8',
 		def: '457',
 		defBonus: '32',
 		id: '754',
@@ -7292,6 +8296,7 @@ const tokens = [
 	{
 		atk: '872',
 		atkBonus: '63',
+		bgId: '12',
 		def: '335',
 		defBonus: '122',
 		id: '755',
@@ -7302,6 +8307,7 @@ const tokens = [
 	{
 		atk: '557',
 		atkBonus: '64',
+		bgId: '3',
 		def: '184',
 		defBonus: '72',
 		id: '756',
@@ -7312,6 +8318,7 @@ const tokens = [
 	{
 		atk: '824',
 		atkBonus: '83',
+		bgId: '5',
 		def: '237',
 		defBonus: '81',
 		id: '757',
@@ -7322,6 +8329,7 @@ const tokens = [
 	{
 		atk: '342',
 		atkBonus: '47',
+		bgId: '0',
 		def: '368',
 		defBonus: '112',
 		id: '758',
@@ -7332,6 +8340,7 @@ const tokens = [
 	{
 		atk: '516',
 		atkBonus: '7',
+		bgId: '12',
 		def: '234',
 		defBonus: '7',
 		id: '759',
@@ -7340,18 +8349,9 @@ const tokens = [
 		subClass: 'Ranger',
 	},
 	{
-		atk: '245',
-		atkBonus: '34',
-		def: '810',
-		defBonus: '39',
-		id: '76',
-		spd: '337',
-		spdBonus: '119',
-		subClass: 'Cleric',
-	},
-	{
 		atk: '662',
 		atkBonus: '8',
+		bgId: '8',
 		def: '399',
 		defBonus: '59',
 		id: '760',
@@ -7362,6 +8362,7 @@ const tokens = [
 	{
 		atk: '700',
 		atkBonus: '102',
+		bgId: '15',
 		def: '443',
 		defBonus: '76',
 		id: '761',
@@ -7372,6 +8373,7 @@ const tokens = [
 	{
 		atk: '682',
 		atkBonus: '29',
+		bgId: '7',
 		def: '362',
 		defBonus: '97',
 		id: '762',
@@ -7382,6 +8384,7 @@ const tokens = [
 	{
 		atk: '939',
 		atkBonus: '95',
+		bgId: '15',
 		def: '179',
 		defBonus: '43',
 		id: '763',
@@ -7392,6 +8395,7 @@ const tokens = [
 	{
 		atk: '497',
 		atkBonus: '100',
+		bgId: '14',
 		def: '260',
 		defBonus: '130',
 		id: '764',
@@ -7402,6 +8406,7 @@ const tokens = [
 	{
 		atk: '729',
 		atkBonus: '125',
+		bgId: '24',
 		def: '239',
 		defBonus: '24',
 		id: '765',
@@ -7412,6 +8417,7 @@ const tokens = [
 	{
 		atk: '266',
 		atkBonus: '100',
+		bgId: '10',
 		def: '696',
 		defBonus: '65',
 		id: '766',
@@ -7422,6 +8428,7 @@ const tokens = [
 	{
 		atk: '465',
 		atkBonus: '12',
+		bgId: '11',
 		def: '380',
 		defBonus: '61',
 		id: '767',
@@ -7432,6 +8439,7 @@ const tokens = [
 	{
 		atk: '118',
 		atkBonus: '-82',
+		bgId: '8',
 		def: '235',
 		defBonus: '28',
 		id: '768',
@@ -7442,6 +8450,7 @@ const tokens = [
 	{
 		atk: '478',
 		atkBonus: '14',
+		bgId: '20',
 		def: '451',
 		defBonus: '95',
 		id: '769',
@@ -7450,18 +8459,9 @@ const tokens = [
 		subClass: 'Assassin',
 	},
 	{
-		atk: '661',
-		atkBonus: '85',
-		def: '389',
-		defBonus: '68',
-		id: '77',
-		spd: '374',
-		spdBonus: '71',
-		subClass: 'Summoner',
-	},
-	{
 		atk: '656',
 		atkBonus: '27',
+		bgId: '10',
 		def: '574',
 		defBonus: '119',
 		id: '770',
@@ -7472,6 +8472,7 @@ const tokens = [
 	{
 		atk: '270',
 		atkBonus: '74',
+		bgId: '1',
 		def: '700',
 		defBonus: '107',
 		id: '771',
@@ -7482,6 +8483,7 @@ const tokens = [
 	{
 		atk: '728',
 		atkBonus: '97',
+		bgId: '14',
 		def: '243',
 		defBonus: '62',
 		id: '772',
@@ -7492,6 +8494,7 @@ const tokens = [
 	{
 		atk: '248',
 		atkBonus: '11',
+		bgId: '11',
 		def: '912',
 		defBonus: '61',
 		id: '773',
@@ -7502,6 +8505,7 @@ const tokens = [
 	{
 		atk: '718',
 		atkBonus: '3',
+		bgId: '19',
 		def: '250',
 		defBonus: '150',
 		id: '774',
@@ -7512,6 +8516,7 @@ const tokens = [
 	{
 		atk: '389',
 		atkBonus: '98',
+		bgId: '19',
 		def: '322',
 		defBonus: '104',
 		id: '775',
@@ -7522,6 +8527,7 @@ const tokens = [
 	{
 		atk: '377',
 		atkBonus: '56',
+		bgId: '17',
 		def: '569',
 		defBonus: '63',
 		id: '776',
@@ -7532,6 +8538,7 @@ const tokens = [
 	{
 		atk: '553',
 		atkBonus: '24',
+		bgId: '11',
 		def: '377',
 		defBonus: '8',
 		id: '777',
@@ -7542,6 +8549,7 @@ const tokens = [
 	{
 		atk: '1028',
 		atkBonus: '328',
+		bgId: '13',
 		def: '235',
 		defBonus: '-35',
 		id: '778',
@@ -7552,6 +8560,7 @@ const tokens = [
 	{
 		atk: '738',
 		atkBonus: '47',
+		bgId: '6',
 		def: '274',
 		defBonus: '33',
 		id: '779',
@@ -7560,18 +8569,9 @@ const tokens = [
 		subClass: 'Sorcerer',
 	},
 	{
-		atk: '778',
-		atkBonus: '107',
-		def: '158',
-		defBonus: '24',
-		id: '78',
-		spd: '501',
-		spdBonus: '106',
-		subClass: 'Ranger',
-	},
-	{
 		atk: '843',
 		atkBonus: '81',
+		bgId: '7',
 		def: '223',
 		defBonus: '103',
 		id: '780',
@@ -7582,6 +8582,7 @@ const tokens = [
 	{
 		atk: '803',
 		atkBonus: '115',
+		bgId: '7',
 		def: '345',
 		defBonus: '105',
 		id: '781',
@@ -7592,6 +8593,7 @@ const tokens = [
 	{
 		atk: '807',
 		atkBonus: '86',
+		bgId: '2',
 		def: '285',
 		defBonus: '2',
 		id: '782',
@@ -7602,6 +8604,7 @@ const tokens = [
 	{
 		atk: '299',
 		atkBonus: '37',
+		bgId: '12',
 		def: '615',
 		defBonus: '127',
 		id: '783',
@@ -7612,6 +8615,7 @@ const tokens = [
 	{
 		atk: '463',
 		atkBonus: '123',
+		bgId: '15',
 		def: '344',
 		defBonus: '102',
 		id: '784',
@@ -7622,6 +8626,7 @@ const tokens = [
 	{
 		atk: '312',
 		atkBonus: '2',
+		bgId: '9',
 		def: '420',
 		defBonus: '34',
 		id: '785',
@@ -7632,6 +8637,7 @@ const tokens = [
 	{
 		atk: '506',
 		atkBonus: '102',
+		bgId: '6',
 		def: '459',
 		defBonus: '40',
 		id: '786',
@@ -7642,6 +8648,7 @@ const tokens = [
 	{
 		atk: '759',
 		atkBonus: '111',
+		bgId: '3',
 		def: '455',
 		defBonus: '124',
 		id: '787',
@@ -7652,6 +8659,7 @@ const tokens = [
 	{
 		atk: '819',
 		atkBonus: '61',
+		bgId: '22',
 		def: '310',
 		defBonus: '124',
 		id: '788',
@@ -7662,6 +8670,7 @@ const tokens = [
 	{
 		atk: '237',
 		atkBonus: '91',
+		bgId: '5',
 		def: '804',
 		defBonus: '84',
 		id: '789',
@@ -7670,18 +8679,9 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
-		atk: '842',
-		atkBonus: '105',
-		def: '317',
-		defBonus: '41',
-		id: '79',
-		spd: '230',
-		spdBonus: '43',
-		subClass: 'Dark Knight',
-	},
-	{
 		atk: '673',
 		atkBonus: '51',
+		bgId: '8',
 		def: '570',
 		defBonus: '118',
 		id: '790',
@@ -7692,6 +8692,7 @@ const tokens = [
 	{
 		atk: '814',
 		atkBonus: '128',
+		bgId: '1',
 		def: '245',
 		defBonus: '35',
 		id: '791',
@@ -7702,6 +8703,7 @@ const tokens = [
 	{
 		atk: '375',
 		atkBonus: '114',
+		bgId: '21',
 		def: '720',
 		defBonus: '76',
 		id: '792',
@@ -7712,6 +8714,7 @@ const tokens = [
 	{
 		atk: '555',
 		atkBonus: '98',
+		bgId: '14',
 		def: '531',
 		defBonus: '56',
 		id: '793',
@@ -7722,6 +8725,7 @@ const tokens = [
 	{
 		atk: '385',
 		atkBonus: '9',
+		bgId: '23',
 		def: '472',
 		defBonus: '60',
 		id: '794',
@@ -7732,6 +8736,7 @@ const tokens = [
 	{
 		atk: '597',
 		atkBonus: '3',
+		bgId: '24',
 		def: '376',
 		defBonus: '81',
 		id: '795',
@@ -7742,6 +8747,7 @@ const tokens = [
 	{
 		atk: '227',
 		atkBonus: '-43',
+		bgId: '20',
 		def: '697',
 		defBonus: '155',
 		id: '796',
@@ -7752,6 +8758,7 @@ const tokens = [
 	{
 		atk: '667',
 		atkBonus: '51',
+		bgId: '16',
 		def: '441',
 		defBonus: '122',
 		id: '797',
@@ -7762,6 +8769,7 @@ const tokens = [
 	{
 		atk: '416',
 		atkBonus: '48',
+		bgId: '23',
 		def: '710',
 		defBonus: '101',
 		id: '798',
@@ -7772,6 +8780,7 @@ const tokens = [
 	{
 		atk: '395',
 		atkBonus: '33',
+		bgId: '6',
 		def: '668',
 		defBonus: '65',
 		id: '799',
@@ -7780,28 +8789,9 @@ const tokens = [
 		subClass: 'Sorcerer',
 	},
 	{
-		atk: '720',
-		atkBonus: '62',
-		def: '413',
-		defBonus: '21',
-		id: '8',
-		spd: '185',
-		spdBonus: '35',
-		subClass: 'Paladin',
-	},
-	{
-		atk: '798',
-		atkBonus: '103',
-		def: '282',
-		defBonus: '16',
-		id: '80',
-		spd: '343',
-		spdBonus: '104',
-		subClass: 'Druid',
-	},
-	{
 		atk: '457',
 		atkBonus: '121',
+		bgId: '13',
 		def: '320',
 		defBonus: '83',
 		id: '800',
@@ -7812,6 +8802,7 @@ const tokens = [
 	{
 		atk: '269',
 		atkBonus: '6',
+		bgId: '3',
 		def: '805',
 		defBonus: '83',
 		id: '801',
@@ -7822,6 +8813,7 @@ const tokens = [
 	{
 		atk: '546',
 		atkBonus: '34',
+		bgId: '24',
 		def: '543',
 		defBonus: '120',
 		id: '802',
@@ -7832,6 +8824,7 @@ const tokens = [
 	{
 		atk: '585',
 		atkBonus: '14',
+		bgId: '2',
 		def: '293',
 		defBonus: '43',
 		id: '803',
@@ -7842,6 +8835,7 @@ const tokens = [
 	{
 		atk: '327',
 		atkBonus: '92',
+		bgId: '16',
 		def: '625',
 		defBonus: '81',
 		id: '804',
@@ -7852,6 +8846,7 @@ const tokens = [
 	{
 		atk: '669',
 		atkBonus: '6',
+		bgId: '13',
 		def: '344',
 		defBonus: '5',
 		id: '805',
@@ -7862,6 +8857,7 @@ const tokens = [
 	{
 		atk: '414',
 		atkBonus: '93',
+		bgId: '16',
 		def: '507',
 		defBonus: '127',
 		id: '806',
@@ -7872,6 +8868,7 @@ const tokens = [
 	{
 		atk: '781',
 		atkBonus: '88',
+		bgId: '17',
 		def: '170',
 		defBonus: '23',
 		id: '807',
@@ -7882,6 +8879,7 @@ const tokens = [
 	{
 		atk: '651',
 		atkBonus: '126',
+		bgId: '9',
 		def: '290',
 		defBonus: '32',
 		id: '808',
@@ -7892,6 +8890,7 @@ const tokens = [
 	{
 		atk: '710',
 		atkBonus: '121',
+		bgId: '10',
 		def: '433',
 		defBonus: '80',
 		id: '809',
@@ -7900,18 +8899,9 @@ const tokens = [
 		subClass: 'Cleric',
 	},
 	{
-		atk: '328',
-		atkBonus: '9',
-		def: '743',
-		defBonus: '114',
-		id: '81',
-		spd: '276',
-		spdBonus: '24',
-		subClass: 'Monk',
-	},
-	{
 		atk: '343',
 		atkBonus: '34',
+		bgId: '22',
 		def: '653',
 		defBonus: '93',
 		id: '810',
@@ -7922,6 +8912,7 @@ const tokens = [
 	{
 		atk: '555',
 		atkBonus: '90',
+		bgId: '3',
 		def: '226',
 		defBonus: '8',
 		id: '811',
@@ -7932,6 +8923,7 @@ const tokens = [
 	{
 		atk: '289',
 		atkBonus: '46',
+		bgId: '8',
 		def: '550',
 		defBonus: '279',
 		id: '812',
@@ -7942,6 +8934,7 @@ const tokens = [
 	{
 		atk: '767',
 		atkBonus: '114',
+		bgId: '0',
 		def: '246',
 		defBonus: '23',
 		id: '813',
@@ -7952,6 +8945,7 @@ const tokens = [
 	{
 		atk: '337',
 		atkBonus: '107',
+		bgId: '15',
 		def: '138',
 		defBonus: '13',
 		id: '814',
@@ -7962,6 +8956,7 @@ const tokens = [
 	{
 		atk: '752',
 		atkBonus: '76',
+		bgId: '5',
 		def: '156',
 		defBonus: '-8',
 		id: '815',
@@ -7972,6 +8967,7 @@ const tokens = [
 	{
 		atk: '956',
 		atkBonus: '130',
+		bgId: '17',
 		def: '188',
 		defBonus: '86',
 		id: '816',
@@ -7982,6 +8978,7 @@ const tokens = [
 	{
 		atk: '526',
 		atkBonus: '112',
+		bgId: '22',
 		def: '604',
 		defBonus: '37',
 		id: '817',
@@ -7992,6 +8989,7 @@ const tokens = [
 	{
 		atk: '656',
 		atkBonus: '36',
+		bgId: '4',
 		def: '519',
 		defBonus: '70',
 		id: '818',
@@ -8002,6 +9000,7 @@ const tokens = [
 	{
 		atk: '495',
 		atkBonus: '-2',
+		bgId: '6',
 		def: '631',
 		defBonus: '91',
 		id: '819',
@@ -8010,18 +9009,9 @@ const tokens = [
 		subClass: 'Summoner',
 	},
 	{
-		atk: '708',
-		atkBonus: '17',
-		def: '379',
-		defBonus: '69',
-		id: '82',
-		spd: '255',
-		spdBonus: '56',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '572',
 		atkBonus: '79',
+		bgId: '18',
 		def: '221',
 		defBonus: '79',
 		id: '820',
@@ -8032,6 +9022,7 @@ const tokens = [
 	{
 		atk: '559',
 		atkBonus: '89',
+		bgId: '9',
 		def: '163',
 		defBonus: '35',
 		id: '821',
@@ -8042,6 +9033,7 @@ const tokens = [
 	{
 		atk: '510',
 		atkBonus: '51',
+		bgId: '8',
 		def: '534',
 		defBonus: '127',
 		id: '822',
@@ -8052,6 +9044,7 @@ const tokens = [
 	{
 		atk: '472',
 		atkBonus: '85',
+		bgId: '0',
 		def: '367',
 		defBonus: '103',
 		id: '823',
@@ -8062,6 +9055,7 @@ const tokens = [
 	{
 		atk: '597',
 		atkBonus: '48',
+		bgId: '9',
 		def: '255',
 		defBonus: '67',
 		id: '824',
@@ -8072,6 +9066,7 @@ const tokens = [
 	{
 		atk: '876',
 		atkBonus: '115',
+		bgId: '7',
 		def: '173',
 		defBonus: '20',
 		id: '825',
@@ -8082,6 +9077,7 @@ const tokens = [
 	{
 		atk: '482',
 		atkBonus: '5',
+		bgId: '13',
 		def: '413',
 		defBonus: '39',
 		id: '826',
@@ -8092,6 +9088,7 @@ const tokens = [
 	{
 		atk: '493',
 		atkBonus: '82',
+		bgId: '19',
 		def: '412',
 		defBonus: '132',
 		id: '827',
@@ -8102,6 +9099,7 @@ const tokens = [
 	{
 		atk: '859',
 		atkBonus: '128',
+		bgId: '18',
 		def: '255',
 		defBonus: '41',
 		id: '828',
@@ -8112,6 +9110,7 @@ const tokens = [
 	{
 		atk: '848',
 		atkBonus: '74',
+		bgId: '17',
 		def: '340',
 		defBonus: '107',
 		id: '829',
@@ -8120,18 +9119,9 @@ const tokens = [
 		subClass: 'Druid',
 	},
 	{
-		atk: '385',
-		atkBonus: '11',
-		def: '260',
-		defBonus: '131',
-		id: '83',
-		spd: '813',
-		spdBonus: '116',
-		subClass: 'Sorcerer',
-	},
-	{
 		atk: '976',
 		atkBonus: '102',
+		bgId: '0',
 		def: '312',
 		defBonus: '87',
 		id: '830',
@@ -8142,6 +9132,7 @@ const tokens = [
 	{
 		atk: '414',
 		atkBonus: '25',
+		bgId: '11',
 		def: '430',
 		defBonus: '191',
 		id: '831',
@@ -8152,6 +9143,7 @@ const tokens = [
 	{
 		atk: '387',
 		atkBonus: '103',
+		bgId: '6',
 		def: '624',
 		defBonus: '118',
 		id: '832',
@@ -8162,6 +9154,7 @@ const tokens = [
 	{
 		atk: '866',
 		atkBonus: '43',
+		bgId: '13',
 		def: '242',
 		defBonus: '48',
 		id: '833',
@@ -8172,6 +9165,7 @@ const tokens = [
 	{
 		atk: '622',
 		atkBonus: '117',
+		bgId: '15',
 		def: '706',
 		defBonus: '129',
 		id: '834',
@@ -8182,6 +9176,7 @@ const tokens = [
 	{
 		atk: '237',
 		atkBonus: '96',
+		bgId: '10',
 		def: '869',
 		defBonus: '106',
 		id: '835',
@@ -8192,6 +9187,7 @@ const tokens = [
 	{
 		atk: '820',
 		atkBonus: '46',
+		bgId: '22',
 		def: '308',
 		defBonus: '80',
 		id: '836',
@@ -8202,6 +9198,7 @@ const tokens = [
 	{
 		atk: '626',
 		atkBonus: '84',
+		bgId: '14',
 		def: '423',
 		defBonus: '85',
 		id: '837',
@@ -8212,6 +9209,7 @@ const tokens = [
 	{
 		atk: '618',
 		atkBonus: '109',
+		bgId: '9',
 		def: '516',
 		defBonus: '46',
 		id: '838',
@@ -8222,6 +9220,7 @@ const tokens = [
 	{
 		atk: '273',
 		atkBonus: '113',
+		bgId: '24',
 		def: '396',
 		defBonus: '126',
 		id: '839',
@@ -8230,18 +9229,9 @@ const tokens = [
 		subClass: 'Ranger',
 	},
 	{
-		atk: '580',
-		atkBonus: '119',
-		def: '379',
-		defBonus: '0',
-		id: '84',
-		spd: '426',
-		spdBonus: '66',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '694',
 		atkBonus: '48',
+		bgId: '6',
 		def: '466',
 		defBonus: '24',
 		id: '840',
@@ -8252,6 +9242,7 @@ const tokens = [
 	{
 		atk: '758',
 		atkBonus: '73',
+		bgId: '2',
 		def: '258',
 		defBonus: '64',
 		id: '841',
@@ -8262,6 +9253,7 @@ const tokens = [
 	{
 		atk: '626',
 		atkBonus: '127',
+		bgId: '1',
 		def: '451',
 		defBonus: '106',
 		id: '842',
@@ -8272,6 +9264,7 @@ const tokens = [
 	{
 		atk: '705',
 		atkBonus: '332',
+		bgId: '23',
 		def: '389',
 		defBonus: '-86',
 		id: '843',
@@ -8282,6 +9275,7 @@ const tokens = [
 	{
 		atk: '544',
 		atkBonus: '114',
+		bgId: '9',
 		def: '256',
 		defBonus: '8',
 		id: '844',
@@ -8292,6 +9286,7 @@ const tokens = [
 	{
 		atk: '642',
 		atkBonus: '103',
+		bgId: '4',
 		def: '400',
 		defBonus: '69',
 		id: '845',
@@ -8302,6 +9297,7 @@ const tokens = [
 	{
 		atk: '319',
 		atkBonus: '-10',
+		bgId: '16',
 		def: '486',
 		defBonus: '118',
 		id: '846',
@@ -8312,6 +9308,7 @@ const tokens = [
 	{
 		atk: '785',
 		atkBonus: '119',
+		bgId: '21',
 		def: '257',
 		defBonus: '35',
 		id: '847',
@@ -8322,6 +9319,7 @@ const tokens = [
 	{
 		atk: '488',
 		atkBonus: '2',
+		bgId: '9',
 		def: '535',
 		defBonus: '34',
 		id: '848',
@@ -8332,6 +9330,7 @@ const tokens = [
 	{
 		atk: '544',
 		atkBonus: '1',
+		bgId: '11',
 		def: '603',
 		defBonus: '113',
 		id: '849',
@@ -8340,18 +9339,9 @@ const tokens = [
 		subClass: 'Paladin',
 	},
 	{
-		atk: '335',
-		atkBonus: '-8',
-		def: '730',
-		defBonus: '146',
-		id: '85',
-		spd: '305',
-		spdBonus: '32',
-		subClass: 'Sorcerer',
-	},
-	{
 		atk: '610',
 		atkBonus: '83',
+		bgId: '11',
 		def: '344',
 		defBonus: '67',
 		id: '850',
@@ -8362,6 +9352,7 @@ const tokens = [
 	{
 		atk: '583',
 		atkBonus: '101',
+		bgId: '14',
 		def: '343',
 		defBonus: '19',
 		id: '851',
@@ -8372,6 +9363,7 @@ const tokens = [
 	{
 		atk: '562',
 		atkBonus: '31',
+		bgId: '14',
 		def: '450',
 		defBonus: '125',
 		id: '852',
@@ -8382,6 +9374,7 @@ const tokens = [
 	{
 		atk: '431',
 		atkBonus: '17',
+		bgId: '21',
 		def: '275',
 		defBonus: '121',
 		id: '853',
@@ -8392,6 +9385,7 @@ const tokens = [
 	{
 		atk: '718',
 		atkBonus: '63',
+		bgId: '15',
 		def: '469',
 		defBonus: '126',
 		id: '854',
@@ -8402,6 +9396,7 @@ const tokens = [
 	{
 		atk: '644',
 		atkBonus: '54',
+		bgId: '20',
 		def: '161',
 		defBonus: '49',
 		id: '855',
@@ -8412,6 +9407,7 @@ const tokens = [
 	{
 		atk: '519',
 		atkBonus: '87',
+		bgId: '17',
 		def: '341',
 		defBonus: '78',
 		id: '856',
@@ -8422,6 +9418,7 @@ const tokens = [
 	{
 		atk: '406',
 		atkBonus: '104',
+		bgId: '20',
 		def: '458',
 		defBonus: '62',
 		id: '857',
@@ -8432,6 +9429,7 @@ const tokens = [
 	{
 		atk: '543',
 		atkBonus: '25',
+		bgId: '1',
 		def: '507',
 		defBonus: '66',
 		id: '858',
@@ -8442,6 +9440,7 @@ const tokens = [
 	{
 		atk: '737',
 		atkBonus: '97',
+		bgId: '17',
 		def: '239',
 		defBonus: '117',
 		id: '859',
@@ -8450,18 +9449,9 @@ const tokens = [
 		subClass: 'Assassin',
 	},
 	{
-		atk: '399',
-		atkBonus: '284',
-		def: '252',
-		defBonus: '-156',
-		id: '86',
-		spd: '665',
-		spdBonus: '-12',
-		subClass: 'Cleric',
-	},
-	{
 		atk: '459',
 		atkBonus: '63',
+		bgId: '18',
 		def: '366',
 		defBonus: '98',
 		id: '860',
@@ -8472,6 +9462,7 @@ const tokens = [
 	{
 		atk: '652',
 		atkBonus: '113',
+		bgId: '7',
 		def: '305',
 		defBonus: '9',
 		id: '861',
@@ -8482,6 +9473,7 @@ const tokens = [
 	{
 		atk: '273',
 		atkBonus: '-46',
+		bgId: '14',
 		def: '316',
 		defBonus: '116',
 		id: '862',
@@ -8492,6 +9484,7 @@ const tokens = [
 	{
 		atk: '416',
 		atkBonus: '53',
+		bgId: '5',
 		def: '801',
 		defBonus: '122',
 		id: '863',
@@ -8502,6 +9495,7 @@ const tokens = [
 	{
 		atk: '441',
 		atkBonus: '38',
+		bgId: '22',
 		def: '317',
 		defBonus: '54',
 		id: '864',
@@ -8512,6 +9506,7 @@ const tokens = [
 	{
 		atk: '808',
 		atkBonus: '76',
+		bgId: '6',
 		def: '352',
 		defBonus: '68',
 		id: '865',
@@ -8522,6 +9517,7 @@ const tokens = [
 	{
 		atk: '801',
 		atkBonus: '52',
+		bgId: '4',
 		def: '236',
 		defBonus: '50',
 		id: '866',
@@ -8532,6 +9528,7 @@ const tokens = [
 	{
 		atk: '707',
 		atkBonus: '79',
+		bgId: '14',
 		def: '288',
 		defBonus: '62',
 		id: '867',
@@ -8542,6 +9539,7 @@ const tokens = [
 	{
 		atk: '529',
 		atkBonus: '32',
+		bgId: '0',
 		def: '593',
 		defBonus: '74',
 		id: '868',
@@ -8552,6 +9550,7 @@ const tokens = [
 	{
 		atk: '421',
 		atkBonus: '57',
+		bgId: '3',
 		def: '564',
 		defBonus: '11',
 		id: '869',
@@ -8560,18 +9559,9 @@ const tokens = [
 		subClass: 'Cleric',
 	},
 	{
-		atk: '644',
-		atkBonus: '-36',
-		def: '372',
-		defBonus: '80',
-		id: '87',
-		spd: '284',
-		spdBonus: '56',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '709',
 		atkBonus: '107',
+		bgId: '20',
 		def: '289',
 		defBonus: '71',
 		id: '870',
@@ -8582,6 +9572,7 @@ const tokens = [
 	{
 		atk: '760',
 		atkBonus: '49',
+		bgId: '18',
 		def: '294',
 		defBonus: '20',
 		id: '871',
@@ -8592,6 +9583,7 @@ const tokens = [
 	{
 		atk: '383',
 		atkBonus: '22',
+		bgId: '1',
 		def: '385',
 		defBonus: '7',
 		id: '872',
@@ -8602,6 +9594,7 @@ const tokens = [
 	{
 		atk: '717',
 		atkBonus: '130',
+		bgId: '2',
 		def: '443',
 		defBonus: '86',
 		id: '873',
@@ -8612,6 +9605,7 @@ const tokens = [
 	{
 		atk: '426',
 		atkBonus: '-16',
+		bgId: '10',
 		def: '493',
 		defBonus: '206',
 		id: '874',
@@ -8622,6 +9616,7 @@ const tokens = [
 	{
 		atk: '681',
 		atkBonus: '-18',
+		bgId: '0',
 		def: '234',
 		defBonus: '8',
 		id: '875',
@@ -8632,6 +9627,7 @@ const tokens = [
 	{
 		atk: '383',
 		atkBonus: '92',
+		bgId: '10',
 		def: '507',
 		defBonus: '13',
 		id: '876',
@@ -8642,6 +9638,7 @@ const tokens = [
 	{
 		atk: '859',
 		atkBonus: '-46',
+		bgId: '9',
 		def: '275',
 		defBonus: '156',
 		id: '877',
@@ -8652,6 +9649,7 @@ const tokens = [
 	{
 		atk: '499',
 		atkBonus: '122',
+		bgId: '14',
 		def: '388',
 		defBonus: '126',
 		id: '878',
@@ -8662,6 +9660,7 @@ const tokens = [
 	{
 		atk: '525',
 		atkBonus: '81',
+		bgId: '8',
 		def: '537',
 		defBonus: '95',
 		id: '879',
@@ -8670,18 +9669,9 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
-		atk: '242',
-		atkBonus: '3',
-		def: '642',
-		defBonus: '128',
-		id: '88',
-		spd: '463',
-		spdBonus: '16',
-		subClass: 'Ranger',
-	},
-	{
 		atk: '300',
 		atkBonus: '52',
+		bgId: '9',
 		def: '260',
 		defBonus: '25',
 		id: '880',
@@ -8692,6 +9682,7 @@ const tokens = [
 	{
 		atk: '462',
 		atkBonus: '22',
+		bgId: '6',
 		def: '313',
 		defBonus: '64',
 		id: '881',
@@ -8702,6 +9693,7 @@ const tokens = [
 	{
 		atk: '315',
 		atkBonus: '121',
+		bgId: '21',
 		def: '555',
 		defBonus: '130',
 		id: '882',
@@ -8712,6 +9704,7 @@ const tokens = [
 	{
 		atk: '335',
 		atkBonus: '87',
+		bgId: '12',
 		def: '683',
 		defBonus: '114',
 		id: '883',
@@ -8722,6 +9715,7 @@ const tokens = [
 	{
 		atk: '760',
 		atkBonus: '66',
+		bgId: '11',
 		def: '489',
 		defBonus: '85',
 		id: '884',
@@ -8732,6 +9726,7 @@ const tokens = [
 	{
 		atk: '389',
 		atkBonus: '89',
+		bgId: '20',
 		def: '399',
 		defBonus: '124',
 		id: '885',
@@ -8742,6 +9737,7 @@ const tokens = [
 	{
 		atk: '645',
 		atkBonus: '110',
+		bgId: '22',
 		def: '409',
 		defBonus: '116',
 		id: '886',
@@ -8752,6 +9748,7 @@ const tokens = [
 	{
 		atk: '523',
 		atkBonus: '86',
+		bgId: '20',
 		def: '342',
 		defBonus: '98',
 		id: '887',
@@ -8762,6 +9759,7 @@ const tokens = [
 	{
 		atk: '393',
 		atkBonus: '112',
+		bgId: '21',
 		def: '374',
 		defBonus: '122',
 		id: '888',
@@ -8772,6 +9770,7 @@ const tokens = [
 	{
 		atk: '612',
 		atkBonus: '48',
+		bgId: '19',
 		def: '365',
 		defBonus: '105',
 		id: '889',
@@ -8780,18 +9779,9 @@ const tokens = [
 		subClass: 'Knight',
 	},
 	{
-		atk: '781',
-		atkBonus: '55',
-		def: '304',
-		defBonus: '4',
-		id: '89',
-		spd: '278',
-		spdBonus: '104',
-		subClass: 'Dragoon',
-	},
-	{
 		atk: '588',
 		atkBonus: '83',
+		bgId: '17',
 		def: '555',
 		defBonus: '100',
 		id: '890',
@@ -8802,6 +9792,7 @@ const tokens = [
 	{
 		atk: '566',
 		atkBonus: '38',
+		bgId: '19',
 		def: '329',
 		defBonus: '57',
 		id: '891',
@@ -8812,6 +9803,7 @@ const tokens = [
 	{
 		atk: '365',
 		atkBonus: '106',
+		bgId: '11',
 		def: '474',
 		defBonus: '76',
 		id: '892',
@@ -8822,6 +9814,7 @@ const tokens = [
 	{
 		atk: '634',
 		atkBonus: '35',
+		bgId: '16',
 		def: '225',
 		defBonus: '47',
 		id: '893',
@@ -8832,6 +9825,7 @@ const tokens = [
 	{
 		atk: '366',
 		atkBonus: '51',
+		bgId: '2',
 		def: '776',
 		defBonus: '41',
 		id: '894',
@@ -8842,6 +9836,7 @@ const tokens = [
 	{
 		atk: '167',
 		atkBonus: '64',
+		bgId: '8',
 		def: '229',
 		defBonus: '97',
 		id: '895',
@@ -8852,6 +9847,7 @@ const tokens = [
 	{
 		atk: '472',
 		atkBonus: '127',
+		bgId: '11',
 		def: '312',
 		defBonus: '127',
 		id: '896',
@@ -8862,6 +9858,7 @@ const tokens = [
 	{
 		atk: '752',
 		atkBonus: '77',
+		bgId: '24',
 		def: '469',
 		defBonus: '83',
 		id: '897',
@@ -8872,6 +9869,7 @@ const tokens = [
 	{
 		atk: '523',
 		atkBonus: '65',
+		bgId: '12',
 		def: '379',
 		defBonus: '17',
 		id: '898',
@@ -8882,6 +9880,7 @@ const tokens = [
 	{
 		atk: '414',
 		atkBonus: '47',
+		bgId: '1',
 		def: '384',
 		defBonus: '13',
 		id: '899',
@@ -8890,28 +9889,9 @@ const tokens = [
 		subClass: 'Druid',
 	},
 	{
-		atk: '533',
-		atkBonus: '109',
-		def: '637',
-		defBonus: '27',
-		id: '9',
-		spd: '199',
-		spdBonus: '33',
-		subClass: 'Dark Knight',
-	},
-	{
-		atk: '404',
-		atkBonus: '-44',
-		def: '680',
-		defBonus: '185',
-		id: '90',
-		spd: '263',
-		spdBonus: '6',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '399',
 		atkBonus: '92',
+		bgId: '13',
 		def: '686',
 		defBonus: '7',
 		id: '900',
@@ -8922,6 +9902,7 @@ const tokens = [
 	{
 		atk: '890',
 		atkBonus: '130',
+		bgId: '13',
 		def: '441',
 		defBonus: '129',
 		id: '901',
@@ -8932,6 +9913,7 @@ const tokens = [
 	{
 		atk: '487',
 		atkBonus: '46',
+		bgId: '17',
 		def: '274',
 		defBonus: '90',
 		id: '902',
@@ -8942,6 +9924,7 @@ const tokens = [
 	{
 		atk: '412',
 		atkBonus: '55',
+		bgId: '17',
 		def: '477',
 		defBonus: '67',
 		id: '903',
@@ -8952,6 +9935,7 @@ const tokens = [
 	{
 		atk: '853',
 		atkBonus: '106',
+		bgId: '6',
 		def: '267',
 		defBonus: '66',
 		id: '904',
@@ -8962,6 +9946,7 @@ const tokens = [
 	{
 		atk: '433',
 		atkBonus: '63',
+		bgId: '3',
 		def: '584',
 		defBonus: '40',
 		id: '905',
@@ -8972,6 +9957,7 @@ const tokens = [
 	{
 		atk: '314',
 		atkBonus: '60',
+		bgId: '9',
 		def: '468',
 		defBonus: '130',
 		id: '906',
@@ -8982,6 +9968,7 @@ const tokens = [
 	{
 		atk: '274',
 		atkBonus: '87',
+		bgId: '8',
 		def: '579',
 		defBonus: '117',
 		id: '907',
@@ -8992,6 +9979,7 @@ const tokens = [
 	{
 		atk: '420',
 		atkBonus: '50',
+		bgId: '13',
 		def: '196',
 		defBonus: '13',
 		id: '908',
@@ -9002,6 +9990,7 @@ const tokens = [
 	{
 		atk: '262',
 		atkBonus: '5',
+		bgId: '9',
 		def: '298',
 		defBonus: '102',
 		id: '909',
@@ -9010,18 +9999,9 @@ const tokens = [
 		subClass: 'Dark Knight',
 	},
 	{
-		atk: '498',
-		atkBonus: '197',
-		def: '416',
-		defBonus: '22',
-		id: '91',
-		spd: '537',
-		spdBonus: '32',
-		subClass: 'Cleric',
-	},
-	{
 		atk: '653',
 		atkBonus: '120',
+		bgId: '9',
 		def: '634',
 		defBonus: '98',
 		id: '910',
@@ -9032,6 +10012,7 @@ const tokens = [
 	{
 		atk: '727',
 		atkBonus: '2',
+		bgId: '4',
 		def: '381',
 		defBonus: '62',
 		id: '911',
@@ -9042,6 +10023,7 @@ const tokens = [
 	{
 		atk: '894',
 		atkBonus: '74',
+		bgId: '10',
 		def: '299',
 		defBonus: '42',
 		id: '912',
@@ -9052,6 +10034,7 @@ const tokens = [
 	{
 		atk: '270',
 		atkBonus: '99',
+		bgId: '15',
 		def: '797',
 		defBonus: '67',
 		id: '913',
@@ -9062,6 +10045,7 @@ const tokens = [
 	{
 		atk: '434',
 		atkBonus: '76',
+		bgId: '3',
 		def: '725',
 		defBonus: '47',
 		id: '914',
@@ -9072,6 +10056,7 @@ const tokens = [
 	{
 		atk: '438',
 		atkBonus: '46',
+		bgId: '23',
 		def: '647',
 		defBonus: '120',
 		id: '915',
@@ -9082,6 +10067,7 @@ const tokens = [
 	{
 		atk: '941',
 		atkBonus: '49',
+		bgId: '3',
 		def: '276',
 		defBonus: '116',
 		id: '916',
@@ -9092,6 +10078,7 @@ const tokens = [
 	{
 		atk: '853',
 		atkBonus: '53',
+		bgId: '16',
 		def: '173',
 		defBonus: '24',
 		id: '917',
@@ -9102,6 +10089,7 @@ const tokens = [
 	{
 		atk: '697',
 		atkBonus: '32',
+		bgId: '16',
 		def: '364',
 		defBonus: '105',
 		id: '918',
@@ -9112,6 +10100,7 @@ const tokens = [
 	{
 		atk: '698',
 		atkBonus: '232',
+		bgId: '19',
 		def: '493',
 		defBonus: '-80',
 		id: '919',
@@ -9120,18 +10109,9 @@ const tokens = [
 		subClass: 'Cleric',
 	},
 	{
-		atk: '221',
-		atkBonus: '-17',
-		def: '576',
-		defBonus: '-53',
-		id: '92',
-		spd: '528',
-		spdBonus: '195',
-		subClass: 'Monk',
-	},
-	{
 		atk: '798',
 		atkBonus: '28',
+		bgId: '3',
 		def: '220',
 		defBonus: '35',
 		id: '920',
@@ -9142,6 +10122,7 @@ const tokens = [
 	{
 		atk: '748',
 		atkBonus: '64',
+		bgId: '24',
 		def: '399',
 		defBonus: '44',
 		id: '921',
@@ -9152,6 +10133,7 @@ const tokens = [
 	{
 		atk: '753',
 		atkBonus: '47',
+		bgId: '16',
 		def: '366',
 		defBonus: '26',
 		id: '922',
@@ -9162,6 +10144,7 @@ const tokens = [
 	{
 		atk: '314',
 		atkBonus: '86',
+		bgId: '9',
 		def: '806',
 		defBonus: '86',
 		id: '923',
@@ -9172,6 +10155,7 @@ const tokens = [
 	{
 		atk: '500',
 		atkBonus: '67',
+		bgId: '12',
 		def: '343',
 		defBonus: '92',
 		id: '924',
@@ -9182,6 +10166,7 @@ const tokens = [
 	{
 		atk: '515',
 		atkBonus: '105',
+		bgId: '24',
 		def: '499',
 		defBonus: '53',
 		id: '925',
@@ -9192,6 +10177,7 @@ const tokens = [
 	{
 		atk: '618',
 		atkBonus: '11',
+		bgId: '14',
 		def: '426',
 		defBonus: '72',
 		id: '926',
@@ -9202,6 +10188,7 @@ const tokens = [
 	{
 		atk: '356',
 		atkBonus: '33',
+		bgId: '2',
 		def: '606',
 		defBonus: '41',
 		id: '927',
@@ -9212,6 +10199,7 @@ const tokens = [
 	{
 		atk: '763',
 		atkBonus: '40',
+		bgId: '12',
 		def: '400',
 		defBonus: '105',
 		id: '928',
@@ -9222,6 +10210,7 @@ const tokens = [
 	{
 		atk: '469',
 		atkBonus: '122',
+		bgId: '3',
 		def: '573',
 		defBonus: '107',
 		id: '929',
@@ -9230,18 +10219,9 @@ const tokens = [
 		subClass: 'Sorcerer',
 	},
 	{
-		atk: '230',
-		atkBonus: '1',
-		def: '393',
-		defBonus: '100',
-		id: '93',
-		spd: '781',
-		spdBonus: '103',
-		subClass: 'Berserker',
-	},
-	{
 		atk: '827',
 		atkBonus: '131',
+		bgId: '16',
 		def: '176',
 		defBonus: '39',
 		id: '930',
@@ -9252,6 +10232,7 @@ const tokens = [
 	{
 		atk: '767',
 		atkBonus: '66',
+		bgId: '10',
 		def: '325',
 		defBonus: '31',
 		id: '931',
@@ -9262,6 +10243,7 @@ const tokens = [
 	{
 		atk: '822',
 		atkBonus: '84',
+		bgId: '10',
 		def: '187',
 		defBonus: '64',
 		id: '932',
@@ -9272,6 +10254,7 @@ const tokens = [
 	{
 		atk: '572',
 		atkBonus: '96',
+		bgId: '2',
 		def: '420',
 		defBonus: '121',
 		id: '933',
@@ -9282,6 +10265,7 @@ const tokens = [
 	{
 		atk: '653',
 		atkBonus: '-10',
+		bgId: '23',
 		def: '410',
 		defBonus: '180',
 		id: '934',
@@ -9292,6 +10276,7 @@ const tokens = [
 	{
 		atk: '800',
 		atkBonus: '104',
+		bgId: '4',
 		def: '276',
 		defBonus: '77',
 		id: '935',
@@ -9302,6 +10287,7 @@ const tokens = [
 	{
 		atk: '327',
 		atkBonus: '22',
+		bgId: '3',
 		def: '244',
 		defBonus: '82',
 		id: '936',
@@ -9312,6 +10298,7 @@ const tokens = [
 	{
 		atk: '728',
 		atkBonus: '86',
+		bgId: '6',
 		def: '209',
 		defBonus: '98',
 		id: '937',
@@ -9322,6 +10309,7 @@ const tokens = [
 	{
 		atk: '710',
 		atkBonus: '85',
+		bgId: '8',
 		def: '377',
 		defBonus: '120',
 		id: '938',
@@ -9332,6 +10320,7 @@ const tokens = [
 	{
 		atk: '556',
 		atkBonus: '82',
+		bgId: '6',
 		def: '194',
 		defBonus: '7',
 		id: '939',
@@ -9340,18 +10329,9 @@ const tokens = [
 		subClass: 'Ranger',
 	},
 	{
-		atk: '330',
-		atkBonus: '42',
-		def: '505',
-		defBonus: '53',
-		id: '94',
-		spd: '549',
-		spdBonus: '89',
-		subClass: 'Cleric',
-	},
-	{
 		atk: '911',
 		atkBonus: '114',
+		bgId: '22',
 		def: '283',
 		defBonus: '71',
 		id: '940',
@@ -9362,6 +10342,7 @@ const tokens = [
 	{
 		atk: '421',
 		atkBonus: '36',
+		bgId: '21',
 		def: '525',
 		defBonus: '93',
 		id: '941',
@@ -9372,6 +10353,7 @@ const tokens = [
 	{
 		atk: '289',
 		atkBonus: '28',
+		bgId: '13',
 		def: '538',
 		defBonus: '96',
 		id: '942',
@@ -9382,6 +10364,7 @@ const tokens = [
 	{
 		atk: '111',
 		atkBonus: '10',
+		bgId: '6',
 		def: '467',
 		defBonus: '107',
 		id: '943',
@@ -9392,6 +10375,7 @@ const tokens = [
 	{
 		atk: '512',
 		atkBonus: '8',
+		bgId: '0',
 		def: '522',
 		defBonus: '49',
 		id: '944',
@@ -9402,6 +10386,7 @@ const tokens = [
 	{
 		atk: '179',
 		atkBonus: '5',
+		bgId: '18',
 		def: '373',
 		defBonus: '29',
 		id: '945',
@@ -9412,6 +10397,7 @@ const tokens = [
 	{
 		atk: '811',
 		atkBonus: '38',
+		bgId: '23',
 		def: '208',
 		defBonus: '80',
 		id: '946',
@@ -9422,6 +10408,7 @@ const tokens = [
 	{
 		atk: '225',
 		atkBonus: '123',
+		bgId: '6',
 		def: '1006',
 		defBonus: '107',
 		id: '947',
@@ -9432,6 +10419,7 @@ const tokens = [
 	{
 		atk: '303',
 		atkBonus: '70',
+		bgId: '0',
 		def: '448',
 		defBonus: '73',
 		id: '948',
@@ -9442,6 +10430,7 @@ const tokens = [
 	{
 		atk: '668',
 		atkBonus: '91',
+		bgId: '24',
 		def: '366',
 		defBonus: '26',
 		id: '949',
@@ -9450,18 +10439,9 @@ const tokens = [
 		subClass: 'Sorcerer',
 	},
 	{
-		atk: '526',
-		atkBonus: '-5',
-		def: '393',
-		defBonus: '123',
-		id: '95',
-		spd: '538',
-		spdBonus: '139',
-		subClass: 'Summoner',
-	},
-	{
 		atk: '707',
 		atkBonus: '71',
+		bgId: '17',
 		def: '437',
 		defBonus: '108',
 		id: '950',
@@ -9472,6 +10452,7 @@ const tokens = [
 	{
 		atk: '230',
 		atkBonus: '42',
+		bgId: '14',
 		def: '370',
 		defBonus: '69',
 		id: '951',
@@ -9482,6 +10463,7 @@ const tokens = [
 	{
 		atk: '903',
 		atkBonus: '79',
+		bgId: '6',
 		def: '199',
 		defBonus: '2',
 		id: '952',
@@ -9492,6 +10474,7 @@ const tokens = [
 	{
 		atk: '723',
 		atkBonus: '78',
+		bgId: '6',
 		def: '328',
 		defBonus: '126',
 		id: '953',
@@ -9502,6 +10485,7 @@ const tokens = [
 	{
 		atk: '412',
 		atkBonus: '103',
+		bgId: '10',
 		def: '317',
 		defBonus: '43',
 		id: '954',
@@ -9512,6 +10496,7 @@ const tokens = [
 	{
 		atk: '544',
 		atkBonus: '93',
+		bgId: '4',
 		def: '660',
 		defBonus: '101',
 		id: '955',
@@ -9522,6 +10507,7 @@ const tokens = [
 	{
 		atk: '688',
 		atkBonus: '76',
+		bgId: '3',
 		def: '199',
 		defBonus: '94',
 		id: '956',
@@ -9532,6 +10518,7 @@ const tokens = [
 	{
 		atk: '341',
 		atkBonus: '99',
+		bgId: '20',
 		def: '218',
 		defBonus: '7',
 		id: '957',
@@ -9542,6 +10529,7 @@ const tokens = [
 	{
 		atk: '545',
 		atkBonus: '35',
+		bgId: '20',
 		def: '418',
 		defBonus: '25',
 		id: '958',
@@ -9552,6 +10540,7 @@ const tokens = [
 	{
 		atk: '507',
 		atkBonus: '95',
+		bgId: '18',
 		def: '711',
 		defBonus: '177',
 		id: '959',
@@ -9560,18 +10549,9 @@ const tokens = [
 		subClass: 'Berserker',
 	},
 	{
-		atk: '487',
-		atkBonus: '58',
-		def: '476',
-		defBonus: '32',
-		id: '96',
-		spd: '369',
-		spdBonus: '42',
-		subClass: 'Assassin',
-	},
-	{
 		atk: '345',
 		atkBonus: '63',
+		bgId: '5',
 		def: '157',
 		defBonus: '7',
 		id: '960',
@@ -9582,6 +10562,7 @@ const tokens = [
 	{
 		atk: '239',
 		atkBonus: '-80',
+		bgId: '5',
 		def: '622',
 		defBonus: '211',
 		id: '961',
@@ -9592,6 +10573,7 @@ const tokens = [
 	{
 		atk: '556',
 		atkBonus: '102',
+		bgId: '21',
 		def: '519',
 		defBonus: '105',
 		id: '962',
@@ -9602,6 +10584,7 @@ const tokens = [
 	{
 		atk: '579',
 		atkBonus: '171',
+		bgId: '23',
 		def: '459',
 		defBonus: '-31',
 		id: '963',
@@ -9612,6 +10595,7 @@ const tokens = [
 	{
 		atk: '238',
 		atkBonus: '110',
+		bgId: '11',
 		def: '395',
 		defBonus: '15',
 		id: '964',
@@ -9622,6 +10606,7 @@ const tokens = [
 	{
 		atk: '400',
 		atkBonus: '61',
+		bgId: '21',
 		def: '397',
 		defBonus: '63',
 		id: '965',
@@ -9632,6 +10617,7 @@ const tokens = [
 	{
 		atk: '681',
 		atkBonus: '70',
+		bgId: '24',
 		def: '576',
 		defBonus: '107',
 		id: '966',
@@ -9642,6 +10628,7 @@ const tokens = [
 	{
 		atk: '464',
 		atkBonus: '110',
+		bgId: '23',
 		def: '246',
 		defBonus: '122',
 		id: '967',
@@ -9652,6 +10639,7 @@ const tokens = [
 	{
 		atk: '663',
 		atkBonus: '94',
+		bgId: '10',
 		def: '598',
 		defBonus: '109',
 		id: '968',
@@ -9662,6 +10650,7 @@ const tokens = [
 	{
 		atk: '386',
 		atkBonus: '28',
+		bgId: '18',
 		def: '649',
 		defBonus: '83',
 		id: '969',
@@ -9670,18 +10659,9 @@ const tokens = [
 		subClass: 'Druid',
 	},
 	{
-		atk: '585',
-		atkBonus: '62',
-		def: '209',
-		defBonus: '60',
-		id: '97',
-		spd: '568',
-		spdBonus: '40',
-		subClass: 'Berserker',
-	},
-	{
 		atk: '773',
 		atkBonus: '23',
+		bgId: '3',
 		def: '351',
 		defBonus: '124',
 		id: '970',
@@ -9692,6 +10672,7 @@ const tokens = [
 	{
 		atk: '359',
 		atkBonus: '44',
+		bgId: '19',
 		def: '642',
 		defBonus: '62',
 		id: '971',
@@ -9702,6 +10683,7 @@ const tokens = [
 	{
 		atk: '182',
 		atkBonus: '82',
+		bgId: '1',
 		def: '623',
 		defBonus: '131',
 		id: '972',
@@ -9712,6 +10694,7 @@ const tokens = [
 	{
 		atk: '564',
 		atkBonus: '61',
+		bgId: '8',
 		def: '221',
 		defBonus: '20',
 		id: '973',
@@ -9722,6 +10705,7 @@ const tokens = [
 	{
 		atk: '691',
 		atkBonus: '130',
+		bgId: '20',
 		def: '526',
 		defBonus: '79',
 		id: '974',
@@ -9732,6 +10716,7 @@ const tokens = [
 	{
 		atk: '452',
 		atkBonus: '28',
+		bgId: '12',
 		def: '419',
 		defBonus: '11',
 		id: '975',
@@ -9742,6 +10727,7 @@ const tokens = [
 	{
 		atk: '679',
 		atkBonus: '152',
+		bgId: '10',
 		def: '506',
 		defBonus: '17',
 		id: '976',
@@ -9752,6 +10738,7 @@ const tokens = [
 	{
 		atk: '553',
 		atkBonus: '112',
+		bgId: '21',
 		def: '372',
 		defBonus: '35',
 		id: '977',
@@ -9762,6 +10749,7 @@ const tokens = [
 	{
 		atk: '396',
 		atkBonus: '24',
+		bgId: '16',
 		def: '265',
 		defBonus: '-78',
 		id: '978',
@@ -9772,6 +10760,7 @@ const tokens = [
 	{
 		atk: '478',
 		atkBonus: '119',
+		bgId: '0',
 		def: '151',
 		defBonus: '17',
 		id: '979',
@@ -9780,18 +10769,9 @@ const tokens = [
 		subClass: 'Ranger',
 	},
 	{
-		atk: '757',
-		atkBonus: '144',
-		def: '509',
-		defBonus: '110',
-		id: '98',
-		spd: '260',
-		spdBonus: '72',
-		subClass: 'Monk',
-	},
-	{
 		atk: '505',
 		atkBonus: '-7',
+		bgId: '23',
 		def: '595',
 		defBonus: '51',
 		id: '980',
@@ -9802,6 +10782,7 @@ const tokens = [
 	{
 		atk: '505',
 		atkBonus: '52',
+		bgId: '0',
 		def: '525',
 		defBonus: '12',
 		id: '981',
@@ -9812,6 +10793,7 @@ const tokens = [
 	{
 		atk: '451',
 		atkBonus: '57',
+		bgId: '5',
 		def: '446',
 		defBonus: '32',
 		id: '982',
@@ -9822,6 +10804,7 @@ const tokens = [
 	{
 		atk: '563',
 		atkBonus: '106',
+		bgId: '9',
 		def: '377',
 		defBonus: '74',
 		id: '983',
@@ -9832,6 +10815,7 @@ const tokens = [
 	{
 		atk: '230',
 		atkBonus: '-9',
+		bgId: '18',
 		def: '756',
 		defBonus: '176',
 		id: '984',
@@ -9842,6 +10826,7 @@ const tokens = [
 	{
 		atk: '460',
 		atkBonus: '132',
+		bgId: '24',
 		def: '465',
 		defBonus: '68',
 		id: '985',
@@ -9852,6 +10837,7 @@ const tokens = [
 	{
 		atk: '510',
 		atkBonus: '99',
+		bgId: '4',
 		def: '516',
 		defBonus: '0',
 		id: '986',
@@ -9862,6 +10848,7 @@ const tokens = [
 	{
 		atk: '634',
 		atkBonus: '127',
+		bgId: '4',
 		def: '557',
 		defBonus: '97',
 		id: '987',
@@ -9872,6 +10859,7 @@ const tokens = [
 	{
 		atk: '342',
 		atkBonus: '-54',
+		bgId: '18',
 		def: '523',
 		defBonus: '108',
 		id: '988',
@@ -9882,6 +10870,7 @@ const tokens = [
 	{
 		atk: '853',
 		atkBonus: '75',
+		bgId: '21',
 		def: '301',
 		defBonus: '118',
 		id: '989',
@@ -9890,18 +10879,9 @@ const tokens = [
 		subClass: 'Assassin',
 	},
 	{
-		atk: '781',
-		atkBonus: '84',
-		def: '263',
-		defBonus: '33',
-		id: '99',
-		spd: '265',
-		spdBonus: '-8',
-		subClass: 'Druid',
-	},
-	{
 		atk: '560',
 		atkBonus: '117',
+		bgId: '16',
 		def: '570',
 		defBonus: '65',
 		id: '990',
@@ -9912,6 +10892,7 @@ const tokens = [
 	{
 		atk: '823',
 		atkBonus: '130',
+		bgId: '16',
 		def: '266',
 		defBonus: '50',
 		id: '991',
@@ -9922,6 +10903,7 @@ const tokens = [
 	{
 		atk: '573',
 		atkBonus: '17',
+		bgId: '24',
 		def: '426',
 		defBonus: '122',
 		id: '992',
@@ -9932,6 +10914,7 @@ const tokens = [
 	{
 		atk: '641',
 		atkBonus: '44',
+		bgId: '15',
 		def: '500',
 		defBonus: '67',
 		id: '993',
@@ -9942,6 +10925,7 @@ const tokens = [
 	{
 		atk: '357',
 		atkBonus: '119',
+		bgId: '20',
 		def: '523',
 		defBonus: '120',
 		id: '994',
@@ -9952,6 +10936,7 @@ const tokens = [
 	{
 		atk: '517',
 		atkBonus: '6',
+		bgId: '1',
 		def: '129',
 		defBonus: '-30',
 		id: '995',
@@ -9962,6 +10947,7 @@ const tokens = [
 	{
 		atk: '406',
 		atkBonus: '60',
+		bgId: '15',
 		def: '592',
 		defBonus: '93',
 		id: '996',
@@ -9970,8 +10956,20 @@ const tokens = [
 		subClass: 'Monk',
 	},
 	{
+		atk: '647',
+		atkBonus: '117',
+		bgId: '13',
+		def: '425',
+		defBonus: '127',
+		id: '1000',
+		spd: '432',
+		spdBonus: '60',
+		subClass: 'Knight',
+	},
+	{
 		atk: '422',
 		atkBonus: '3',
+		bgId: '9',
 		def: '337',
 		defBonus: '72',
 		id: '997',
@@ -9982,6 +10980,7 @@ const tokens = [
 	{
 		atk: '468',
 		atkBonus: '14',
+		bgId: '17',
 		def: '602',
 		defBonus: '227',
 		id: '998',
@@ -9992,6 +10991,7 @@ const tokens = [
 	{
 		atk: '371',
 		atkBonus: '21',
+		bgId: '22',
 		def: '551',
 		defBonus: '86',
 		id: '999',

@@ -1,6 +1,7 @@
 const hre = require('hardhat');
+const { getAddresses } = require('./adminCalls/addresses');
 
-const EthemeralsAddress_4 = '0xcdb47e685819638668ff736d1a2ae32b68e76ba5';
+let chain = 4;
 
 async function main() {
 	async function sleep(millis) {
@@ -18,7 +19,7 @@ async function main() {
 	await sleep(4000);
 
 	// register
-	await escrowL1.addContract(1, EthemeralsAddress_4);
+	await escrowL1.addContract(1, getAddresses(chain).merals);
 	console.log('add ethemerals contract');
 	await sleep(4000);
 

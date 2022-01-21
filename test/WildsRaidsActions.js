@@ -23,6 +23,20 @@ describe('Wilds Raid Actions', function () {
 		return id;
 	};
 
+	const typeMult = 100000;
+	const getTypeFromId = (id) => {
+		return parseInt(parseInt(id) / typeMult);
+	};
+
+	const getTokenIdFromId = (id) => {
+		let type = getTypeFromId(id);
+		return parseInt(parseInt(id) - parseInt(type) * typeMult);
+	};
+
+	const getIdFromType = (type, tokenId) => {
+		return parseInt(parseInt(tokenId) + parseInt(type) * typeMult);
+	};
+
 	const makeRaid = async () => {
 		const landId = 1;
 		for (let i = 1; i <= 5; i++) {
@@ -57,10 +71,6 @@ describe('Wilds Raid Actions', function () {
 		const MeralManager = await ethers.getContractFactory('MeralManager');
 		meralManager = await MeralManager.deploy(); // TODO random register
 		await meralManager.deployed();
-
-		const EthemeralsL2 = await ethers.getContractFactory('EthemeralsOnL2');
-		meralsL2 = await EthemeralsL2.deploy(meralManager.address);
-		await meralsL2.deployed();
 
 		// L2 Wilds Contracts
 		const WildsAdminActions = await ethers.getContractFactory('WildsAdminActions');
@@ -104,10 +114,8 @@ describe('Wilds Raid Actions', function () {
 
 		// register Meral Addresses
 		await escrowL1.addContract(1, merals.address);
-		await meralManager.addMeralContract(1, meralsL2.address);
 
 		// add admin as delegate and game master BRIDGE ADMIN
-		await meralsL2.addDelegate(admin.address, true);
 		await meralManager.addGM(admin.address, true);
 
 		// DO ESCROW ON L1
@@ -126,22 +134,21 @@ describe('Wilds Raid Actions', function () {
 		}
 
 		// NODE BACKEND MINT (MIGRATE) TO L2
+		for (let i = 1; i <= 40; i++) {
+			let _id = await escrowL1.getIdFromType(type, i);
+			let deposits = await escrowL1.allDeposits(_id);
+			await meralManager.releaseFromPortal(deposits, _id);
+		}
 
 		// // set and allow delegates
 		await meralManager.addGM(onsen.address, true);
 		await meralManager.addGM(wilds.address, true);
-		await meralManager.addGM(meralsL2.address, true);
-
-		for (let i = 1; i <= 40; i++) {
-			let meralStats = allMeralStats[i];
-			await meralsL2.migrateMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
-		}
+		await meralManager.addGM(meralManager.address, true);
 
 		// ADMIN
 		for (let i = 1; i <= 40; i++) {
-			let deposits = await escrowL1.allDeposits(getOGMeralId(i));
-			let _id = await escrowL1.getIdFromType(type, i);
-			await meralManager.releaseFromPortal(deposits, _id);
+			let meralStats = allMeralStats[i];
+			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
 		}
 	});
 

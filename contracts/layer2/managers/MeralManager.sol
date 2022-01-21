@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.3;
 
-import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "hardhat/console.sol";
-import "../../utils/MeralParser.sol";
-import "../../interfaces/IERC721.sol";
 
-contract MeralManager is ERC721Holder, MeralParser {
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "../../utils/MeralParser.sol";
+
+contract MeralManager is ERC721, Ownable, MeralParser {
 
   event ChangeHP(uint id, uint16 hp, bool add);
   event ChangeXP(uint id, uint32 xp, bool add);
@@ -16,7 +17,6 @@ contract MeralManager is ERC721Holder, MeralParser {
   event ChangeElement(uint id, uint8 element);
   event InitMeral(uint meralType, uint tokenId, uint32 elf, uint16 hp, uint16 maxHp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass);
   event AuthChange(address auth, bool add);
-
 
   /*///////////////////////////////////////////////////////////////
                   STORAGE
@@ -37,7 +37,6 @@ contract MeralManager is ERC721Holder, MeralParser {
   mapping(uint => address) public meralContracts;
 
   // IERC721 public merals;
-  address public admin;
   address public register;
 
   struct Meral {
@@ -57,48 +56,31 @@ contract MeralManager is ERC721Holder, MeralParser {
   /*///////////////////////////////////////////////////////////////
                   ADMIN FUNCTIONS
   //////////////////////////////////////////////////////////////*/
+  constructor() ERC721("Proxy Ethemerals", "MERALS") {}
 
-  constructor() {
-    admin = msg.sender;
-  }
-
-  function setAdmin(address _admin) external onlyAdmin {
-    admin = _admin;
-  }
-
-  function setRegister(address _register) external onlyAdmin {
+  function setRegister(address _register) external onlyOwner {
     register = _register;
   }
 
-  function addGM(address _gm, bool add) external onlyAdmin {
+  function addGM(address _gm, bool add) external onlyOwner {
     gmAddresses[_gm] = add;
     emit AuthChange(_gm, add);
   }
-
-  function addMeralContract(uint _type, address _meralAddress) external onlyAdmin {
-    meralContracts[_type] = _meralAddress;
-  }
-
 
   /*///////////////////////////////////////////////////////////////
                   GM FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
   function transfer(address from, address to, uint _id) external onlyGM {
-    IERC721 meralsAddress = IERC721(meralContracts[getTypeFromId(_id)]);
-    meralsAddress.safeTransferFrom(from, to, getTokenIdFromId(_id));
+    safeTransferFrom(from, to, _id);
   }
 
   function releaseFromPortal(address to, uint _id) external onlyGM {
-    IERC721 meralsAddress = IERC721(meralContracts[getTypeFromId(_id)]);
-    meralsAddress.safeTransferFrom(address(this), to, getTokenIdFromId(_id));
+    _safeMint(to, _id);
   }
 
   function returnToPortal(uint _id) external onlyGM {
-    IERC721 meralsAddress = IERC721(meralContracts[getTypeFromId(_id)]);
-    uint _tokenId = getTokenIdFromId(_id);
-    address _owner = meralsAddress.ownerOf(_tokenId);
-    meralsAddress.safeTransferFrom(_owner, address(this), _tokenId);
+    _burn(_id);
   }
 
   function registerOGMeral(
@@ -210,6 +192,28 @@ contract MeralManager is ERC721Holder, MeralParser {
     emit ChangeElement(_id, _element);
   }
 
+  /*///////////////////////////////////////////////////////////////
+                  OVERRIDES
+  //////////////////////////////////////////////////////////////*/
+
+  /**
+    * @dev See {IERC721-isApprovedForAll}.
+    * White list for game masters and auction house
+    * On by default Opposite of mainnet
+    */
+  function isApprovedForAll(address _owner, address _operator)
+    public
+    view
+    override
+    returns (bool)
+  {
+    if (gmAddresses[_operator]) {
+      return true;
+    }
+
+    return super.isApprovedForAll(_owner, _operator);
+  }
+
 
   /*///////////////////////////////////////////////////////////////
                   MODIFIERS
@@ -223,28 +227,12 @@ contract MeralManager is ERC721Holder, MeralParser {
     _;
   }
 
-  /**
-  * @dev Throws if called by any account other than the admin account.
-  */
-  modifier onlyAdmin() {
-    require(msg.sender == admin, "admin only");
-    _;
-  }
-
-
   /*///////////////////////////////////////////////////////////////
                   PUBLIC VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
-  // INTERNAL ID
-  function ownerOf(uint _id) external returns (address) {
-    IERC721 meralsAddress = IERC721(meralContracts[getTypeFromId(_id)]);
-    return meralsAddress.ownerOf(getTokenIdFromId(_id));
-  }
-
   // TODO
-  function ownerOfByType(uint _type, uint _tokenId) external returns (address) {
-    IERC721 meralsAddress = IERC721(meralContracts[_type]);
-    return meralsAddress.ownerOf(getTokenIdFromId(_tokenId));
+  function ownerOfByType(uint _type, uint _tokenId) external view returns (address) {
+    return ownerOf(getIdFromType(_type, _tokenId));
   }
 
   // INTERNAL ID
@@ -252,9 +240,12 @@ contract MeralManager is ERC721Holder, MeralParser {
     return allMerals[_id];
   }
 
-  // CONTRACT TYPE & TOKENID
+  // TYPE & TOKENID
   function getMeral(uint _type, uint _tokenId) external view returns (Meral memory) {
     return allMerals[getIdFromType(_type, _tokenId)];
   }
 
+  function exists(uint256 id) public view returns (bool) {
+    return super._exists(id);
+  }
 }

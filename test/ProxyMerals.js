@@ -3,8 +3,9 @@ const { ethers } = require('hardhat');
 const { MeralsL1Data, minMaxAvg, getRandomInt } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe('Onsen', function () {
+describe('Proxy Merals', function () {
 	let merals;
+	let meralsL2;
 	let escrowL1;
 	let meralManager;
 	let wilds;
@@ -36,7 +37,7 @@ describe('Onsen', function () {
 
 		// L2 Contracts
 		const MeralManager = await ethers.getContractFactory('MeralManager');
-		meralManager = await MeralManager.deploy(); // TODO random register
+		meralManager = await MeralManager.deploy();
 		await meralManager.deployed();
 
 		// L2 Wilds Contracts
@@ -101,94 +102,49 @@ describe('Onsen', function () {
 		}
 
 		// NODE BACKEND MINT (MIGRATE) TO L2
-		for (let i = 1; i <= 40; i++) {
-			let _id = await escrowL1.getIdFromType(type, i);
-			let deposits = await escrowL1.allDeposits(_id);
-			await meralManager.releaseFromPortal(deposits, _id);
-		}
 
 		// // set and allow delegates
 		await meralManager.addGM(onsen.address, true);
 		await meralManager.addGM(wilds.address, true);
-		await meralManager.addGM(meralManager.address, true);
 
-		// ADMIN
 		for (let i = 1; i <= 40; i++) {
 			let meralStats = allMeralStats[i];
 			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
 		}
 	});
 
-	function safeScale(number, inMax, outMin, outMax) {
-		let scaled = (number * (outMax - outMin)) / inMax + outMin;
-		return scaled > outMax ? outMax : scaled;
-	}
+	describe('Proxy Meral', function () {
+		it('Should registered og merals', async function () {
+			let value = await meralManager.getMeral(1, 1);
+			console.log(value);
+			// expect(hpAfter).to.equal(0);
+		});
+		it('Should release from portal', async function () {
+			let id = getOGMeralId(1);
+			await expect(meralManager.ownerOf(id)).to.be.revertedWith('ERC721: owner query for nonexistent token');
+			await meralManager.releaseFromPortal(player1.address, id);
+			let value = await meralManager.ownerOf(id);
+			expect(value).to.equal(player1.address);
+			// expect(hpAfter).to.equal(0);
+		});
 
-	const getXp = (now, start, mod) => {
-		return parseInt((now - start) / mod);
-	};
+		it('Should return to portal', async function () {
+			let id = getOGMeralId(1);
+			await expect(meralManager.ownerOf(id)).to.be.revertedWith('ERC721: owner query for nonexistent token');
+			await meralManager.releaseFromPortal(player1.address, id);
+			let value = await meralManager.ownerOf(id);
+			expect(value).to.equal(player1.address);
 
-	const getElf = (now, start, mod) => {
-		return parseInt((now - start) / mod);
-	};
+			await meralManager.returnToPortal(id);
+			await expect(meralManager.ownerOf(id)).to.be.revertedWith('ERC721: owner query for nonexistent token');
+			// expect(hpAfter).to.equal(0);
+		});
 
-	const gethp = (now, start, stat, mod) => {
-		let scaled = safeScale(stat, 2000, 14, 22);
-		return parseInt(((now - start) * parseInt(scaled)) / mod);
-	};
-
-	describe('Onsen hp and xp gains', function () {
-		it('should relax and gain', async function () {
-			let type = 1;
-			let tokenId = 1;
-			let id = await meralManager.getIdFromType(type, tokenId);
-			let meral = await meralManager.getMeralById(id);
-			let hp = meral.hp;
-			let xp = meral.xp;
-			let elf = meral.elf;
-
-			let xpMod = await onsen.xpMod();
-			let hpMod = await onsen.hpMod();
-			let elfMod = await onsen.elfMod();
-
-			await onsen.stake(id);
-			let blockNumBefore = await ethers.provider.getBlockNumber();
-			let blockBefore = await ethers.provider.getBlock(blockNumBefore);
-			let _start = blockBefore.timestamp;
-
-			await network.provider.send('evm_increaseTime', [day * 2]);
-			await network.provider.send('evm_mine');
-
-			blockNumBefore = await ethers.provider.getBlockNumber();
-			blockBefore = await ethers.provider.getBlock(blockNumBefore);
-			let _now = blockBefore.timestamp;
-
-			let change = await onsen.calculateChange(id);
-
-			await onsen.unstake(id);
-			let value = await meralManager.getMeral(type, tokenId);
-
-			expect(value.xp - xp).to.equal(getXp(_now, _start, xpMod));
-			expect(parseInt(value.elf) - elf).to.equal(getElf(_now, _start, elfMod));
-			expect(value.hp - hp).to.equal(gethp(_now, _start, value.spd, hpMod));
-
-			xpMod = 3600;
-			hpMod = 5000;
-			elfMod = 5000;
-			await onsen.setMods(hpMod, xpMod, elfMod);
-			await onsen.stake(id);
-			await expect(onsen.connect(player1).setMods(100, 100, 100)).to.be.revertedWith('admin only');
-			await expect(onsen.connect(player1).unstake(id)).to.be.revertedWith('owner only');
-			await expect(onsen.connect(player1).stake(id)).to.be.revertedWith('ERC721: transfer of token that is not own');
-
-			await network.provider.send('evm_increaseTime', [day * 2]);
-			await network.provider.send('evm_mine');
-
-			// change = await onsen.calculateChange(id);
-			// console.log(change);
-			// await onsen.unstake(id);
-			// value = await meralManager.getMeralById(id);
-			// console.log(value);
+		it('Should not allow minting or burning', async function () {
+			let id = getOGMeralId(1);
+			await meralManager.releaseFromPortal(player1.address, id);
+			let value = await meralManager.exists(id);
+			console.log(value);
 		});
 	});
 });
