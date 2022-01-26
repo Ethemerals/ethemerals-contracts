@@ -14,7 +14,7 @@ async function main() {
 	console.log(admin.address);
 
 	const Onsen = await ethers.getContractFactory('Onsen');
-	onsen = await Onsen.deploy(getAddresses().meralManager);
+	onsen = await Onsen.deploy(getAddresses(chain).meralManager);
 	await onsen.deployed();
 	console.log('onsen deployed to:', onsen.address);
 	await sleep(4000);

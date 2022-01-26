@@ -71,7 +71,6 @@ describe('Wilds', function () {
 		await wildsActions.deployed();
 
 		const Wilds = await ethers.getContractFactory('Wilds');
-
 		wilds = await Wilds.deploy(meralManager.address, wildsAdminActions.address, wildsStaking.address, wildsActions.address);
 		await wilds.deployed();
 

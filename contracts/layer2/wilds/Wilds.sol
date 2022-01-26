@@ -226,7 +226,7 @@ contract Wilds is ERC721Holder, WildsCalculate {
     require(success, "need success");
     merals.transfer(msg.sender, address(this), _Id);
 
-    emit Staked(_landId, _Id, uint8(_action), true);
+    emit Staked(_landId, _Id, uint8(_action), true); // TODO TRUE???
   }
 
   /**
