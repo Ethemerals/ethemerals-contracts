@@ -68,7 +68,7 @@ async function main() {
 	// landId: 1,
 	// stakeAction: 1
 
-	let value = await meralManager.ownerOf(getIdFromType(1, 424));
+	let value = await meralManager.ownerOf(getIdFromType(1, 264));
 	console.log(value);
 	// value = await meralManager.ownerOf(getIdFromType(1, 387));
 	// console.log(value);
