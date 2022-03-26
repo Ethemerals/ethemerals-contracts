@@ -66,8 +66,8 @@ module.exports = {
 		// 	polygon = process.env.POLYGONSCAN_APIKEY,
 		// 	polygonMumbai = process.env.POLYGONSCAN_APIKEY,
 		// },
-		apiKey: process.env.POLYGONSCAN_APIKEY,
-		// apiKey: process.env.ETHERSCAN_APIKEY,
+		// apiKey: process.env.POLYGONSCAN_APIKEY,
+		apiKey: process.env.ETHERSCAN_APIKEY,
 	},
 	gasReporter: {
 		currency: 'USD',

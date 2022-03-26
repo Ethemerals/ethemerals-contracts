@@ -166,7 +166,7 @@ describe('Onsen', function () {
 			let change = await onsen.calculateChange(id);
 
 			await onsen.unstake(id);
-			let value = await meralManager.getMeral(type, tokenId);
+			let value = await meralManager.getMeralByType(type, tokenId);
 
 			expect(value.xp - xp).to.equal(getXp(_now, _start, xpMod));
 			expect(parseInt(value.elf) - elf).to.equal(getElf(_now, _start, elfMod));

@@ -22,7 +22,7 @@ describe('Wilds Raiding', function () {
 		return id;
 	};
 
-	const typeMult = 100000;
+	const typeMult = 1000000;
 	const getTypeFromId = (id) => {
 		return parseInt(parseInt(id) / typeMult);
 	};

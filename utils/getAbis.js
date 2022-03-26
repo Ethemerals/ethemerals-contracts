@@ -1,5 +1,6 @@
 const { writeFileSync } = require('fs');
 
+const EthemeralsBurner = require('../src/artifacts/contracts/EthemeralsBurner.sol/EthemeralsBurner.json');
 const MeralManager = require('../src/artifacts/contracts/layer2/managers/MeralManager.sol/MeralManager.json');
 const Wilds = require('../src/artifacts/contracts/layer2/wilds/Wilds.sol/Wilds.json');
 const Onsen = require('../src/artifacts/contracts/layer2/wilds/Onsen.sol/Onsen.json');
@@ -16,6 +17,7 @@ const writeABI = (path, abi) => {
 };
 
 const main = async () => {
+	writeABI('./abi/EthemeralsBurner.json', EthemeralsBurner.abi);
 	writeABI('./abi/MeralManager.json', MeralManager.abi);
 	writeABI('./abi/Wilds.json', Wilds.abi);
 	writeABI('./abi/Onsen.json', Onsen.abi);

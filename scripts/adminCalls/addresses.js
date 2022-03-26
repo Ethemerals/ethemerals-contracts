@@ -5,6 +5,7 @@ const getAddresses = (chain = 1) => {
 		bridgeGM1: process.env.ADDRESS_MATIC_BRIDGE_1,
 		bridgeGM2: process.env.ADDRESS_MATIC_BRIDGE_2,
 		bridgeGM3: process.env.ADDRESS_MATIC_BRIDGE_3,
+		ethemeralsBurner: '0xDb128597CB3C4F4b1D3C739Dbb2c5350EA84BA0D',
 		merals: '0xeE8C0131aa6B66A2CE3cad6D2A039c1473a79a6d',
 		escrowL1: '0x52AD83F0aE762622eab23BF9A15508195d404ef5',
 		meralManager: '0x055F437a439CaEC49De34026e583528aae84d7aF',
@@ -18,6 +19,7 @@ const getAddresses = (chain = 1) => {
 	if (chain === 4) {
 		addresses.merals = '0xcdb47e685819638668ff736d1a2ae32b68e76ba5';
 		addresses.escrowL1 = '0x52AD83F0aE762622eab23BF9A15508195d404ef5';
+		addresses.ethemeralsBurner = '0x3b3D085078E3dAEad342A89bb2A3C2B45bC18828';
 	}
 
 	return addresses;

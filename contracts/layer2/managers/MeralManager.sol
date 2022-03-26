@@ -10,12 +10,14 @@ import "../../utils/MeralParser.sol";
 
 contract MeralManager is ERC721, Ownable, MeralParser {
 
+  event ContractRegistered(address contractAddress, uint meralType);
   event ChangeHP(uint id, uint16 hp, bool add);
   event ChangeXP(uint id, uint32 xp, bool add);
   event ChangeELF(uint id, uint32 elf, bool add);
   event ChangeStats(uint id, uint16 atk, uint16 def, uint16 spd);
   event ChangeElement(uint id, uint8 element);
-  event InitMeral(uint meralType, uint tokenId, uint32 elf, uint16 hp, uint16 maxHp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass);
+  event InitMeral(uint meralType, uint tokenId, uint32 elf, uint16 hp, uint16 maxHp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass, address owner);
+  event ChangeMeralStatus(uint id, uint8 status);
   event AuthChange(address auth, bool add);
 
   /*///////////////////////////////////////////////////////////////
@@ -24,21 +26,31 @@ contract MeralManager is ERC721, Ownable, MeralParser {
 
   /**
     * @dev Storage of all Meral IDs
-    * Use MeralParser to parse Type and Token ID from IDs, max 100,000 in a type
+    * Use MeralParser to parse Type and Token ID from IDs, max 1,000,000 in a type
     * Ethemeral Merals = 0, Monster Merals = 1 etc etc
     * Front end must call correct ID
     */
   mapping(uint => Meral) public allMerals;
 
-  // include game masters
-  mapping(address => bool) public gmAddresses;
+  /**
+    * @dev Storage of all Meral Owners
+    * Allows owner transfer / active or not / checks / admin approve
+    */
+  mapping(uint => address) public meralOwners;
 
   // TYPE to IERC721 addresses
   mapping(uint => address) public meralContracts;
 
-  // IERC721 public merals;
-  address public register;
+  // addresses to type
+  mapping(address => uint) public meralType;
 
+    // include game masters
+  mapping(address => bool) public gmAddresses;
+
+  // contract address counter
+  uint public typeCounter;
+
+  // STATUS: 0=new, 1=pending, 2=approved
   struct Meral {
     uint32 elf;
     uint32 xp;
@@ -50,6 +62,7 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     uint16 maxStamina;
     uint8 element;
     uint8 subclass;
+    uint8 status;
   }
 
 
@@ -57,10 +70,6 @@ contract MeralManager is ERC721, Ownable, MeralParser {
                   ADMIN FUNCTIONS
   //////////////////////////////////////////////////////////////*/
   constructor() ERC721("Proxy Ethemerals", "MERALS") {}
-
-  function setRegister(address _register) external onlyOwner {
-    register = _register;
-  }
 
   function addGM(address _gm, bool add) external onlyOwner {
     gmAddresses[_gm] = add;
@@ -75,36 +84,50 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     safeTransferFrom(from, to, _id);
   }
 
+  // TODO REMOVE
   function releaseFromPortal(address to, uint _id) external onlyGM {
     _safeMint(to, _id);
   }
 
+  // TODO REMOVE
   function returnToPortal(uint _id) external onlyGM {
     _burn(_id);
   }
 
-  function registerOGMeral(
-    uint _tokenId,
-    uint16 _score,
-    uint32 _rewards,
-    uint16 _atk,
-    uint16 _def,
-    uint16 _spd,
-    uint8 _element,
-    uint8 _subclass
-  ) external onlyGM {
-    allMerals[getIdFromType(1, _tokenId)] = Meral(_rewards, 0, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
-    emit InitMeral(1, _tokenId, _rewards, _score, 1000, _atk, _def, _spd, 100, _element, _subclass);
+  function mintMeral(uint _id) external onlyGM {
+    require(allMerals[_id].status == 1, 'need pending');
+    _safeMint(meralOwners[_id], _id);
+    allMerals[_id].status = 2;
+    emit ChangeMeralStatus(_id, 2);
   }
 
-  // function registerMeral(uint _type, uint _tokenId) external onlyGM() {
+  // Revert Meral to blank state, eg if stats are not in range
+  function burnMeral(uint _id) external onlyGM {
+    allMerals[_id].status = 0;
+    if(exists(_id)) {
+      _burn(_id);
+    }
+    emit ChangeMeralStatus(_id, 0);
+  }
 
-  //   bool success;
-  //   bytes memory data;
+  // Set owner, requested by user or bot to verify ownership on L1
+  function changeMeralOwnership(uint _id, address newOwner) external onlyGM{
+    meralOwners[_id] = newOwner;
+  }
 
-  //   (success, data) = register.delegatecall(abi.encodeWithSignature("registerMeral(uint16,uint)", _type, _tokenId));
-  //   require(success, "need success");
-  // }
+  /**
+    * @dev User registers contract address
+    */
+  function registerContract(address contractAddress) external onlyGM {
+    require(meralType[contractAddress] == 0, 'already registered');
+    typeCounter++;
+    meralType[contractAddress] = typeCounter;
+    emit ContractRegistered(contractAddress, typeCounter);
+  }
+
+  /*///////////////////////////////////////////////////////////////
+                  GM STATS FUNCTIONS
+  //////////////////////////////////////////////////////////////*/
 
   function changeHP(uint _id, uint16 offset, bool add) external onlyGM {
     Meral storage _meral = allMerals[_id];
@@ -192,6 +215,38 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     emit ChangeElement(_id, _element);
   }
 
+
+  /*///////////////////////////////////////////////////////////////
+                  PUBLIC
+  //////////////////////////////////////////////////////////////*/
+
+  /**
+    * @dev User registers Meral AND stats
+    * Meral stats will be verified by node backend and released if accurate
+    */
+  function registerMeral(
+    address contractAddress,
+    uint _tokenId,
+    uint16 _hp,
+    uint32 _elf,
+    uint16 _atk,
+    uint16 _def,
+    uint16 _spd,
+    uint8 _element,
+    uint8 _subclass
+  ) external {
+    uint _type = meralType[contractAddress];
+    require(meralType[contractAddress] != 0, 'no contract');
+
+    uint meralId = getIdFromType(_type, _tokenId);
+    require(allMerals[meralId].status == 0, 'already registered');
+
+    allMerals[meralId] = Meral(_elf, 0, _hp, 1000, _atk, _def, _spd, 100, _element, _subclass, 1);
+    meralOwners[meralId] = msg.sender;
+    emit InitMeral(_type, _tokenId, _elf, _hp, 1000, _atk, _def, _spd, 100, _element, _subclass, msg.sender);
+  }
+
+
   /*///////////////////////////////////////////////////////////////
                   OVERRIDES
   //////////////////////////////////////////////////////////////*/
@@ -241,11 +296,21 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   }
 
   // TYPE & TOKENID
-  function getMeral(uint _type, uint _tokenId) external view returns (Meral memory) {
+  function getMeralByType(uint _type, uint _tokenId) external view returns (Meral memory) {
     return allMerals[getIdFromType(_type, _tokenId)];
+  }
+
+  function getTypeByContract(address contractAddress) external view returns (uint) {
+    return meralType[contractAddress];
+  }
+
+  function getMeralByContractAndTokenId(address contractAddress, uint _tokenId) external view returns (Meral memory) {
+    return allMerals[getIdFromType(meralType[contractAddress], _tokenId)];
   }
 
   function exists(uint256 id) public view returns (bool) {
     return super._exists(id);
   }
+
+
 }

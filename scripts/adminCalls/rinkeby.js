@@ -15,7 +15,12 @@ async function main() {
 	const EscrowL1 = await ethers.getContractFactory('EscrowOnL1');
 	const escrowL1 = await EscrowL1.attach(getAddresses(chain).escrowL1);
 
-	let value = await merals.ownerOf(435);
+	let value = await merals.tokenURI(435);
+	console.log(value);
+
+	// await merals.setBaseURI('https://api.ethemerals.com/api/rinkeby/');
+
+	value = await merals.tokenURI(435);
 	console.log(value);
 
 	// await escrowL1.withdraw(1, 273);

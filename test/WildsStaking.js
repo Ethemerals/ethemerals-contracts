@@ -21,7 +21,7 @@ describe('Wilds Staking', function () {
 		let id = await meralManager.getIdFromType(type, tokenId);
 		return id;
 	};
-	const typeMult = 100000;
+	const typeMult = 1000000;
 	const getTypeFromId = (id) => {
 		return parseInt(parseInt(id) / typeMult);
 	};

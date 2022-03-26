@@ -115,7 +115,7 @@ describe('Proxy Merals', function () {
 
 	describe('Proxy Meral', function () {
 		it('Should registered og merals', async function () {
-			let value = await meralManager.getMeral(1, 1);
+			let value = await meralManager.getMeralByType(1, 1);
 			console.log(value);
 			// expect(hpAfter).to.equal(0);
 		});
