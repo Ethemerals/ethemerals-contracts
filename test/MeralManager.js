@@ -113,7 +113,7 @@ describe('Meral Manager', function () {
 		}
 	};
 
-	describe.only('Meral Manager', function () {
+	describe('Meral Manager', function () {
 		it('Should Register and Mint Merals', async function () {
 			await meralManager.registerContract(merals.address);
 			let type = await meralManager.getTypeByContract(merals.address);
@@ -284,7 +284,7 @@ describe('Meral Manager', function () {
 			expect(meral.element).to.equal(25);
 		});
 
-		it.only('Should allow meralManager to transfer Merals', async function () {
+		it('Should allow meralManager to transfer Merals', async function () {
 			await meralManager.registerContract(merals.address);
 			await macroRegisterMerals();
 			await macroMintMerals();
