@@ -1,12 +1,10 @@
 const { expect } = require('chai');
 const { ethers } = require('hardhat');
-const { MeralsL1Data, minMaxAvg, getRandomInt } = require('./utils');
+const { MeralsL1Data, minMaxAvg, getRandomInt, getIdFromType } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
 describe('Meral Manager', function () {
 	let merals;
-	let meralsL2;
-	let escrowL1;
 	let meralManager;
 	let wilds;
 	let onsen;
@@ -16,12 +14,6 @@ describe('Meral Manager', function () {
 	let player3;
 	let [min, hour, day, week] = [60, 3600, 86400, 604800];
 	let allMeralStats = MeralsL1Data();
-
-	const typeMult = 1000000;
-
-	const getIdFromType = (_type, _tokenId) => {
-		return _tokenId + _type * typeMult;
-	};
 
 	beforeEach(async function () {
 		[admin, player1, player2, player3] = await ethers.getSigners();
@@ -71,6 +63,8 @@ describe('Meral Manager', function () {
 		await merals.mintMeralsAdmin(player3.address, 10); // ID starts at 31
 
 		// add admin as delegate and game master BRIDGE ADMIN
+		await meralManager.addValidators(admin.address, true);
+
 		await meralManager.addGM(admin.address, true);
 
 		// NODE BACKEND MINT (MIGRATE) TO L2
@@ -85,11 +79,11 @@ describe('Meral Manager', function () {
 			let meralStats = allMeralStats[i];
 			if (i <= 10) {
 				await meralManager.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
-			} else if (i > 10) {
+			} else if (i > 10 && i <= 20) {
 				await meralManager
 					.connect(player1)
 					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
-			} else if (i > 20) {
+			} else if (i > 20 && i <= 30) {
 				await meralManager
 					.connect(player2)
 					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
@@ -109,7 +103,7 @@ describe('Meral Manager', function () {
 
 	const macroBurnMerals = async () => {
 		for (let i = 1; i <= 40; i++) {
-			await meralManager.burnMeral(getIdFromType(1, i));
+			await meralManager.burn(getIdFromType(1, i));
 		}
 	};
 

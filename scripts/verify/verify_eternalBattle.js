@@ -4,12 +4,22 @@ const { getAddresses } = require('../adminCalls/addresses');
 let chain = 4;
 
 async function main() {
+	async function sleep(millis) {
+		return new Promise((resolve) => setTimeout(resolve, millis));
+	}
 	let admin;
 	[admin, player1, player2, player3] = await ethers.getSigners();
 
 	await hre.run('verify:verify', {
-		address: getAddresses(chain).escrowL1,
+		address: getAddresses(chain).priceFeedProvider,
 		constructorArguments: [],
+	});
+
+	await sleep(4000);
+
+	await hre.run('verify:verify', {
+		address: getAddresses(chain).eternalBattle,
+		constructorArguments: [getAddresses(chain).meralManager, getAddresses(chain).priceFeedProvider],
 	});
 }
 

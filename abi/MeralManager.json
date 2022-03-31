@@ -203,6 +203,25 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "contractAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "meralType",
+        "type": "uint256"
+      }
+    ],
+    "name": "ContractRegistered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "meralType",
         "type": "uint256"
@@ -266,9 +285,34 @@
         "internalType": "uint8",
         "name": "subclass",
         "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
       }
     ],
     "name": "InitMeral",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "status",
+        "type": "uint8"
+      }
+    ],
+    "name": "MeralStatusChange",
     "type": "event"
   },
   {
@@ -336,6 +380,24 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "_validators",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "add",
+        "type": "bool"
+      }
+    ],
+    "name": "addValidators",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
@@ -392,6 +454,11 @@
         "internalType": "uint8",
         "name": "subclass",
         "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "status",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -432,6 +499,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "burn",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -494,6 +574,24 @@
       }
     ],
     "name": "changeHP",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "changeMeralOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -614,9 +712,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_type",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "contractAddress",
+        "type": "address"
       },
       {
         "internalType": "uint256",
@@ -624,7 +722,7 @@
         "type": "uint256"
       }
     ],
-    "name": "getMeral",
+    "name": "getMeralByContractAndTokenId",
     "outputs": [
       {
         "components": [
@@ -676,6 +774,11 @@
           {
             "internalType": "uint8",
             "name": "subclass",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "status",
             "type": "uint8"
           }
         ],
@@ -748,6 +851,92 @@
             "internalType": "uint8",
             "name": "subclass",
             "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "status",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct MeralManager.Meral",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_type",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMeralByType",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "elf",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "xp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "hp",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHp",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "spd",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxStamina",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint8",
+            "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "subclass",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "status",
+            "type": "uint8"
           }
         ],
         "internalType": "struct MeralManager.Meral",
@@ -780,6 +969,25 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "contractAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getTypeByContract",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "_id",
         "type": "uint256"
@@ -794,6 +1002,25 @@
       }
     ],
     "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "getVerifiedOwner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -856,6 +1083,57 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "meralOwners",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "meralType",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "mintMeral",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -928,20 +1206,25 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "register",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "contractAddress",
         "type": "address"
       }
     ],
-    "stateMutability": "view",
+    "name": "registerContract",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
+      {
+        "internalType": "address",
+        "name": "contractAddress",
+        "type": "address"
+      },
       {
         "internalType": "uint256",
         "name": "_tokenId",
@@ -949,12 +1232,12 @@
       },
       {
         "internalType": "uint16",
-        "name": "_score",
+        "name": "_hp",
         "type": "uint16"
       },
       {
         "internalType": "uint32",
-        "name": "_rewards",
+        "name": "_elf",
         "type": "uint32"
       },
       {
@@ -983,25 +1266,7 @@
         "type": "uint8"
       }
     ],
-    "name": "registerOGMeral",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_id",
-        "type": "uint256"
-      }
-    ],
-    "name": "releaseFromPortal",
+    "name": "registerMeral",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1021,7 +1286,7 @@
         "type": "uint256"
       }
     ],
-    "name": "returnToPortal",
+    "name": "revertMeral",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1091,19 +1356,6 @@
       }
     ],
     "name": "setApprovalForAll",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_register",
-        "type": "address"
-      }
-    ],
-    "name": "setRegister",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1216,6 +1468,38 @@
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "typeCounter",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "validatorsAddresses",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

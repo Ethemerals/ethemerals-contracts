@@ -13,18 +13,18 @@ async function main() {
 	console.log(admin.address);
 
 	const MeralManager = await ethers.getContractFactory('MeralManager');
-	const meralManager = await MeralManager.attach(getAddresses(chain).meralManagerAddress);
+	const meralManager = await MeralManager.attach(getAddresses(chain).meralManager);
 
-	// await meralManager.addGM(admin.address, true);
-	// await sleep(10000);
-	// await meralManager.addGM(getAddresses(chain).bridgeGM1, true);
-	// await sleep(10000);
-	// await meralManager.addGM(getAddresses(chain).bridgeGM2, true);
-	// await sleep(10000);
-	// await meralManager.addGM(getAddresses(chain).bridgeGM3, true);
-	// await sleep(10000);
+	await meralManager.addValidators(admin.address, true);
+	await sleep(10000);
+	await meralManager.addValidators(getAddresses(chain).bridgeGM1, true);
+	await sleep(10000);
+	await meralManager.addValidators(getAddresses(chain).bridgeGM2, true);
+	await sleep(10000);
+	await meralManager.addValidators(getAddresses(chain).bridgeGM3, true);
+	await sleep(10000);
 
-	console.log('set gm');
+	console.log('set validators');
 }
 
 main()

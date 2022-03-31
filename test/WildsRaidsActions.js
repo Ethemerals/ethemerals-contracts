@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const { ethers } = require('hardhat');
-const { MeralsL1Data, minMaxAvg, getRandomInt } = require('./utils');
+const { MeralsL1Data, minMaxAvg, getRandomInt, getTypeFromId, getIdFromType } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
 describe('Wilds Raid Actions', function () {
@@ -21,20 +21,6 @@ describe('Wilds Raid Actions', function () {
 		let type = 1;
 		let id = await meralManager.getIdFromType(type, tokenId);
 		return id;
-	};
-
-	const typeMult = 1000000;
-	const getTypeFromId = (id) => {
-		return parseInt(parseInt(id) / typeMult);
-	};
-
-	const getTokenIdFromId = (id) => {
-		let type = getTypeFromId(id);
-		return parseInt(parseInt(id) - parseInt(type) * typeMult);
-	};
-
-	const getIdFromType = (type, tokenId) => {
-		return parseInt(parseInt(tokenId) + parseInt(type) * typeMult);
 	};
 
 	const makeRaid = async () => {
@@ -63,13 +49,9 @@ describe('Wilds Raid Actions', function () {
 		merals = await Ethemerals.deploy('https://api.ethemerals.com/api/', '0x169310e61e71ef5834ce5466c7155d8a90d15f1e'); // RANDOM ELF ADDRESS
 		await merals.deployed();
 
-		const EscrowL1 = await ethers.getContractFactory('EscrowOnL1');
-		escrowL1 = await EscrowL1.deploy();
-		await escrowL1.deployed();
-
 		// L2 Contracts
 		const MeralManager = await ethers.getContractFactory('MeralManager');
-		meralManager = await MeralManager.deploy(); // TODO random register
+		meralManager = await MeralManager.deploy();
 		await meralManager.deployed();
 
 		// L2 Wilds Contracts
@@ -106,49 +88,39 @@ describe('Wilds Raid Actions', function () {
 		await merals.mintMeralsAdmin(player2.address, 10); // ID starts at 21
 		await merals.mintMeralsAdmin(player3.address, 10); // ID starts at 31
 
-		// set approvals for bridge
-		await merals.connect(admin).setApprovalForAll(escrowL1.address, true);
-		await merals.connect(player1).setApprovalForAll(escrowL1.address, true);
-		await merals.connect(player2).setApprovalForAll(escrowL1.address, true);
-		await merals.connect(player3).setApprovalForAll(escrowL1.address, true);
-
-		// register Meral Addresses
-		await escrowL1.addContract(1, merals.address);
-
-		// add admin as delegate and game master BRIDGE ADMIN
+		// add admin as delegate and game master
 		await meralManager.addGM(admin.address, true);
-
-		// DO ESCROW ON L1
-		let type = 1;
-		for (let i = 1; i <= 10; i++) {
-			await escrowL1.deposit(type, i);
-		}
-		for (let i = 11; i <= 20; i++) {
-			await escrowL1.connect(player1).deposit(type, i);
-		}
-		for (let i = 21; i <= 30; i++) {
-			await escrowL1.connect(player2).deposit(type, i);
-		}
-		for (let i = 31; i <= 40; i++) {
-			await escrowL1.connect(player3).deposit(type, i);
-		}
-
-		// NODE BACKEND MINT (MIGRATE) TO L2
-		for (let i = 1; i <= 40; i++) {
-			let _id = await escrowL1.getIdFromType(type, i);
-			let deposits = await escrowL1.allDeposits(_id);
-			await meralManager.releaseFromPortal(deposits, _id);
-		}
+		await meralManager.addValidators(admin.address, true);
+		// register ethemeral contract address
+		await meralManager.registerContract(merals.address);
 
 		// // set and allow delegates
 		await meralManager.addGM(onsen.address, true);
 		await meralManager.addGM(wilds.address, true);
-		await meralManager.addGM(meralManager.address, true);
 
-		// ADMIN
+		// REGISTER MERALS
 		for (let i = 1; i <= 40; i++) {
 			let meralStats = allMeralStats[i];
-			await meralManager.registerOGMeral(i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+			if (i <= 10) {
+				await meralManager.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+			} else if (i > 10 && i <= 20) {
+				await meralManager
+					.connect(player1)
+					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+			} else if (i > 20 && i <= 30) {
+				await meralManager
+					.connect(player2)
+					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+			} else if (i > 30) {
+				await meralManager
+					.connect(player3)
+					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+			}
+		}
+
+		// MINT MERALS
+		for (let i = 1; i <= 40; i++) {
+			await meralManager.mintMeral(getIdFromType(1, i));
 		}
 	});
 

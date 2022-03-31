@@ -81,4 +81,14 @@ function getRandomInt(max) {
 	return Math.floor(Math.random() * max);
 }
 
-module.exports = { MeralsL1Data, minMaxAvg, getRandomInt };
+const typeMult = 1000000;
+
+function getIdFromType(_type, _tokenId) {
+	return _tokenId + _type * typeMult;
+}
+
+function getTypeFromId(id) {
+	return parseInt(parseInt(id) / typeMult);
+}
+
+module.exports = { MeralsL1Data, minMaxAvg, getRandomInt, getIdFromType, getTypeFromId };

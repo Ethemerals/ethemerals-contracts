@@ -14,6 +14,7 @@ interface IMeralManager {
     uint16 maxStamina;
     uint8 element;
     uint8 subclass;
+    uint8 status;
   }
 
   function transfer(address from, address to, uint _id) external;
@@ -23,12 +24,16 @@ interface IMeralManager {
   function changeELF(uint _id, uint32 offset, bool add) external;
   function changeStats(uint _id, uint16 _atk, uint16 _def, uint16 _spd) external;
   function changeElement(uint _id, uint8 _element) external;
+  function getVerifiedOwner(uint _id) external view returns (address);
   function getMeralById(uint _id) external view returns (Meral memory);
-  function getMeral(uint _type, uint _tokenId) external view returns (Meral memory);
+  function getMeralByType(uint _type, uint _tokenId) external view returns (Meral memory);
+  function getTypeByContract(address contractAddress) external view returns (uint);
+  function getMeralByContractAndTokenId(address contractAddress, uint _tokenId) external view returns (Meral memory);
   function registerOGMeral(
+    address contractAddress,
     uint _tokenId,
-    uint16 _score,
-    uint32 _rewards,
+    uint16 _hp,
+    uint32 _elf,
     uint16 _atk,
     uint16 _def,
     uint16 _spd,

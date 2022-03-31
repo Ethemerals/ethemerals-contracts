@@ -1,3 +1,4 @@
+const { ethers } = require('hardhat');
 const hre = require('hardhat');
 const { getAddresses } = require('./addresses');
 
@@ -15,13 +16,10 @@ async function main() {
 	const MeralManager = await ethers.getContractFactory('MeralManager');
 	const meralManager = await MeralManager.attach(getAddresses(chain).meralManager);
 
-	// await meralManager.addGM(getAddresses(chain).onsen, true);
-	// await sleep(10000);
+	const EternalBattle = await ethers.getContractFactory('EternalBattle');
+	const eternalBattle = await EternalBattle.attach(getAddresses(chain).eternalBattle);
 
-	await meralManager.addGM(getAddresses(chain).wilds, true);
-	await sleep(10000);
-
-	console.log('set gm');
+	console.log('set contract');
 }
 
 main()

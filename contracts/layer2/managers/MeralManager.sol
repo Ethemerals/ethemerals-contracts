@@ -17,8 +17,8 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   event ChangeStats(uint id, uint16 atk, uint16 def, uint16 spd);
   event ChangeElement(uint id, uint8 element);
   event InitMeral(uint meralType, uint tokenId, uint32 elf, uint16 hp, uint16 maxHp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass, address owner);
-  event ChangeMeralStatus(uint id, uint8 status);
   event AuthChange(address auth, bool add);
+  event MeralStatusChange(uint id, uint8 status);
 
   /*///////////////////////////////////////////////////////////////
                   STORAGE
@@ -44,8 +44,11 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   // addresses to type
   mapping(address => uint) public meralType;
 
-    // include game masters
+  // include game masters
   mapping(address => bool) public gmAddresses;
+
+  // include validators
+  mapping(address => bool) public validatorsAddresses;
 
   // contract address counter
   uint public typeCounter;
@@ -65,7 +68,6 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     uint8 status;
   }
 
-
   /*///////////////////////////////////////////////////////////////
                   ADMIN FUNCTIONS
   //////////////////////////////////////////////////////////////*/
@@ -76,58 +78,53 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     emit AuthChange(_gm, add);
   }
 
-  /*///////////////////////////////////////////////////////////////
-                  GM FUNCTIONS
-  //////////////////////////////////////////////////////////////*/
-
-  function transfer(address from, address to, uint _id) external onlyGM {
-    safeTransferFrom(from, to, _id);
-  }
-
-  // TODO REMOVE
-  function releaseFromPortal(address to, uint _id) external onlyGM {
-    _safeMint(to, _id);
-  }
-
-  // TODO REMOVE
-  function returnToPortal(uint _id) external onlyGM {
-    _burn(_id);
-  }
-
-  function mintMeral(uint _id) external onlyGM {
-    require(allMerals[_id].status == 1, 'need pending');
-    _safeMint(meralOwners[_id], _id);
-    allMerals[_id].status = 2;
-    emit ChangeMeralStatus(_id, 2);
-  }
-
-  // Revert Meral to blank state, eg if stats are not in range
-  function burnMeral(uint _id) external onlyGM {
-    allMerals[_id].status = 0;
-    if(exists(_id)) {
-      _burn(_id);
-    }
-    emit ChangeMeralStatus(_id, 0);
-  }
-
-  // Set owner, requested by user or bot to verify ownership on L1
-  function changeMeralOwnership(uint _id, address newOwner) external onlyGM{
-    meralOwners[_id] = newOwner;
+  function addValidators(address _validators, bool add) external onlyOwner {
+    validatorsAddresses[_validators] = add;
+    emit AuthChange(_validators, add);
   }
 
   /**
     * @dev User registers contract address
     */
-  function registerContract(address contractAddress) external onlyGM {
+  function registerContract(address contractAddress) external onlyValidators {
     require(meralType[contractAddress] == 0, 'already registered');
     typeCounter++;
     meralType[contractAddress] = typeCounter;
+    meralContracts[typeCounter] = contractAddress; // TODO maybe redundent
     emit ContractRegistered(contractAddress, typeCounter);
   }
 
   /*///////////////////////////////////////////////////////////////
-                  GM STATS FUNCTIONS
+                  VALIDATORS FUNCTIONS
   //////////////////////////////////////////////////////////////*/
+
+  function mintMeral(uint _id) external onlyValidators {
+    require(allMerals[_id].status == 1, 'need pending');
+    _safeMint(meralOwners[_id], _id);
+    allMerals[_id].status = 2;
+  }
+
+  // Revert Meral to blank state, eg if stats are not in range
+  function revertMeral(uint _id) external onlyValidators {
+    require(allMerals[_id].status == 1, 'need pending');
+    allMerals[_id].status = 0;
+    emit MeralStatusChange(_id, 0);
+  }
+
+  // Set owner, requested by user or bot to verify ownership on L1
+  function changeMeralOwnership(uint _id, address newOwner) external onlyValidators {
+    meralOwners[_id] = newOwner;
+  }
+
+  /*///////////////////////////////////////////////////////////////
+                  GM FUNCTIONS
+  //////////////////////////////////////////////////////////////*/
+
+
+  function transfer(address from, address to, uint _id) external onlyGM {
+    safeTransferFrom(from, to, _id);
+  }
+
 
   function changeHP(uint _id, uint16 offset, bool add) external onlyGM {
     Meral storage _meral = allMerals[_id];
@@ -247,6 +244,12 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   }
 
 
+  function burn(uint256 _id) external {
+    require(_isApprovedOrOwner(_msgSender(), _id), "not approved");
+    allMerals[_id].status = 0;
+    _burn(_id);
+  }
+
   /*///////////////////////////////////////////////////////////////
                   OVERRIDES
   //////////////////////////////////////////////////////////////*/
@@ -282,10 +285,20 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     _;
   }
 
+  modifier onlyValidators() {
+    require(validatorsAddresses[msg.sender], "validators only");
+    _;
+  }
+
+
   /*///////////////////////////////////////////////////////////////
                   PUBLIC VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
   // TODO
+  function getVerifiedOwner(uint _id) external view returns (address) {
+    return meralOwners[_id];
+  }
+
   function ownerOfByType(uint _type, uint _tokenId) external view returns (address) {
     return ownerOf(getIdFromType(_type, _tokenId));
   }

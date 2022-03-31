@@ -31,6 +31,9 @@ module.exports = {
 			runs: 200,
 		},
 	},
+	mocha: {
+		timeout: 100000,
+	},
 	paths: {
 		artifacts: './src/artifacts',
 	},
@@ -66,8 +69,8 @@ module.exports = {
 		// 	polygon = process.env.POLYGONSCAN_APIKEY,
 		// 	polygonMumbai = process.env.POLYGONSCAN_APIKEY,
 		// },
-		// apiKey: process.env.POLYGONSCAN_APIKEY,
-		apiKey: process.env.ETHERSCAN_APIKEY,
+		apiKey: process.env.POLYGONSCAN_APIKEY,
+		// apiKey: process.env.ETHERSCAN_APIKEY,
 	},
 	gasReporter: {
 		currency: 'USD',
