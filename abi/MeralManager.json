@@ -314,12 +314,6 @@
       },
       {
         "indexed": false,
-        "internalType": "uint16",
-        "name": "maxStamina",
-        "type": "uint16"
-      },
-      {
-        "indexed": false,
         "internalType": "uint8",
         "name": "element",
         "type": "uint8"

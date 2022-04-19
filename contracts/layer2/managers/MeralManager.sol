@@ -18,7 +18,7 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   event ChangeMax(uint id, uint16 maxHp, uint16 maxStamina);
   event ChangeElement(uint id, uint8 element);
   event ChangeCMID(uint id, uint32 cmId);
-  event InitMeral(uint meralType, uint tokenId, uint32 cmId, uint32 elf, uint16 hp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass, address owner);
+  event InitMeral(uint meralType, uint tokenId, uint32 cmId, uint32 elf, uint16 hp, uint16 atk, uint16 def, uint16 spd, uint8 element, uint8 subclass, address owner);
   event AuthChange(address auth, bool add);
   event MeralStatusChange(uint id, uint8 status);
   event MeralOwnerChange(uint id, address newOwner);
@@ -263,7 +263,7 @@ contract MeralManager is ERC721, Ownable, MeralParser {
 
     allMerals[meralId] = Meral(_cmId, _elf, 0, _hp, 1000, _atk, _def, _spd, 100, _element, _subclass, 1);
     meralOwners[meralId] = msg.sender;
-    emit InitMeral(_type, _tokenId, _cmId, _elf, _hp, _atk, _def, _spd, 100, _element, _subclass, msg.sender);
+    emit InitMeral(_type, _tokenId, _cmId, _elf, _hp, _atk, _def, _spd, _element, _subclass, msg.sender);
   }
 
 

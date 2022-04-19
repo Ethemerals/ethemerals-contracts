@@ -3,7 +3,7 @@ const { ethers } = require('hardhat');
 const { MeralsL1Data, minMaxAvg, getRandomInt, getIdFromType } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe('Meral Manager', function () {
+describe.only('Meral Manager', function () {
 	let merals;
 	let meralManager;
 	let wilds;

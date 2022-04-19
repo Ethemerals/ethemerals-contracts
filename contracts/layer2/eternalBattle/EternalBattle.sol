@@ -213,14 +213,9 @@ contract EternalBattle is ERC721Holder {
     def = safeScale(def, 2000, 100, 2000);
     spd = safeScale(spd, 2000, 100, 2000);
 
-    console.log(def);
-
     change = change / 1000;
-    console.log(change, 'change');
 
     if(win) {
-      change = change * atk / atkDivMod + change;
-
       // REWARDS
       uint16 longs = gamePairs[_stake.priceFeedId].longs;
       uint16 shorts = gamePairs[_stake.priceFeedId].shorts;
@@ -235,6 +230,8 @@ contract EternalBattle is ERC721Holder {
       counterTradeBonus = counterTradeBonus > 5 ? 5 : counterTradeBonus;
 
       reward = change * spd / spdDivMod * counterTradeBonus + change;
+
+      change = change * atk / atkDivMod + change;
 
     } else {
       uint subtract = change * def / defDivMod;
