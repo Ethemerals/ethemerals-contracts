@@ -10,12 +10,12 @@ async function main() {
 	let admin;
 	[admin, player1, player2, player3] = await ethers.getSigners();
 
-	await hre.run('verify:verify', {
-		address: getAddresses(chain).priceFeedProvider,
-		constructorArguments: [],
-	});
+	// await hre.run('verify:verify', {
+	// 	address: getAddresses(chain).priceFeedProvider,
+	// 	constructorArguments: [],
+	// });
 
-	await sleep(4000);
+	// await sleep(4000);
 
 	await hre.run('verify:verify', {
 		address: getAddresses(chain).eternalBattle,

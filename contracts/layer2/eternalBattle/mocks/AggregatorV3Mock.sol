@@ -2,6 +2,8 @@
 pragma solidity ^0.8.3;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract AggregatorV3Mock is AggregatorV3Interface {
     uint256 public constant override version = 0;

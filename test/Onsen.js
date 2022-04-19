@@ -3,7 +3,7 @@ const { ethers } = require('hardhat');
 const { MeralsL1Data, minMaxAvg, getRandomInt, getIdFromType } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe('Onsen', function () {
+describe.only('Onsen', function () {
 	let merals;
 	let escrowL1;
 	let meralManager;
@@ -77,19 +77,30 @@ describe('Onsen', function () {
 		for (let i = 1; i <= 40; i++) {
 			let meralStats = allMeralStats[i];
 			if (i <= 10) {
-				await meralManager.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+				await meralManager.registerMeral(
+					merals.address,
+					i,
+					meralStats.cmId,
+					meralStats.rewards,
+					meralStats.score,
+					meralStats.atk,
+					meralStats.def,
+					meralStats.spd,
+					meralStats.element,
+					meralStats.subclass
+				);
 			} else if (i > 10 && i <= 20) {
 				await meralManager
 					.connect(player1)
-					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+					.registerMeral(merals.address, i, meralStats.cmId, meralStats.rewards, meralStats.score, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
 			} else if (i > 20 && i <= 30) {
 				await meralManager
 					.connect(player2)
-					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+					.registerMeral(merals.address, i, meralStats.cmId, meralStats.rewards, meralStats.score, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
 			} else if (i > 30) {
 				await meralManager
 					.connect(player3)
-					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+					.registerMeral(merals.address, i, meralStats.cmId, meralStats.rewards, meralStats.score, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
 			}
 		}
 
@@ -169,6 +180,29 @@ describe('Onsen', function () {
 			// await onsen.unstake(id);
 			// value = await meralManager.getMeralById(id);
 			// console.log(value);
+		});
+
+		it('should relax and gain loop', async function () {
+			let type = 1;
+			let tokenId = 1;
+
+			let run = 0;
+			let id = getIdFromType(type, tokenId);
+
+			let meral = await meralManager.getMeralById(id);
+			console.log(meral.hp, meral.elf, meral.xp);
+
+			while (run < 2) {
+				run++;
+				await onsen.stake(id);
+				await network.provider.send('evm_increaseTime', [day]);
+				await network.provider.send('evm_mine');
+
+				await onsen.unstake(id);
+
+				meral = await meralManager.getMeralById(id);
+				console.log(meral.hp, meral.elf, meral.xp);
+			}
 		});
 	});
 });

@@ -78,19 +78,30 @@ describe('Meral Manager', function () {
 		for (let i = 1; i <= 40; i++) {
 			let meralStats = allMeralStats[i];
 			if (i <= 10) {
-				await meralManager.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+				await meralManager.registerMeral(
+					merals.address,
+					i,
+					meralStats.cmId,
+					meralStats.rewards,
+					meralStats.score,
+					meralStats.atk,
+					meralStats.def,
+					meralStats.spd,
+					meralStats.element,
+					meralStats.subclass
+				);
 			} else if (i > 10 && i <= 20) {
 				await meralManager
 					.connect(player1)
-					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+					.registerMeral(merals.address, i, meralStats.cmId, meralStats.rewards, meralStats.score, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
 			} else if (i > 20 && i <= 30) {
 				await meralManager
 					.connect(player2)
-					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+					.registerMeral(merals.address, i, meralStats.cmId, meralStats.rewards, meralStats.score, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
 			} else if (i > 30) {
 				await meralManager
 					.connect(player3)
-					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+					.registerMeral(merals.address, i, meralStats.cmId, meralStats.rewards, meralStats.score, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
 			}
 		}
 	};
@@ -140,10 +151,10 @@ describe('Meral Manager', function () {
 			// REVERTS
 			await expect(meralManager.registerContract(merals.address)).to.be.revertedWith('already registered');
 			await expect(meralManager.mintMeral(getIdFromType(1, 1))).to.be.revertedWith('need pending');
-			await expect(meralManager.registerMeral(player3.address, 1, 1000, 3000, 125, 125, 125, 8, 1)).to.be.revertedWith('no contract');
+			await expect(meralManager.registerMeral(player3.address, 1, 1, 1000, 3000, 125, 125, 125, 8, 1)).to.be.revertedWith('no contract');
 
 			await macroRegisterMerals();
-			await expect(meralManager.registerMeral(merals.address, 1, 1000, 3000, 125, 125, 125, 8, 1)).to.be.revertedWith('already registered');
+			await expect(meralManager.registerMeral(merals.address, 1, 1, 1000, 3000, 125, 125, 125, 8, 1)).to.be.revertedWith('already registered');
 
 			await macroMintMerals();
 
@@ -273,9 +284,11 @@ describe('Meral Manager', function () {
 			let id = await meralManager.getIdFromType(type, tokenId);
 
 			await meralManager.changeElement(id, 25);
+			await meralManager.changeCMID(id, 10000);
 			meral = await meralManager.getMeralByType(1, tokenId);
 
 			expect(meral.element).to.equal(25);
+			expect(meral.cmId).to.equal(10000);
 		});
 
 		it('Should allow meralManager to transfer Merals', async function () {

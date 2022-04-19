@@ -55,7 +55,8 @@ const MeralsL1Data = () => {
 		let rewards = 2000;
 		let element = parseInt(token.bgId);
 		let subclass = parseClass(token.subClass);
-		merals.push({ score, rewards, atk, def, spd, element, subclass });
+		let cmId = parseInt(token.cmId);
+		merals.push({ score, rewards, atk, def, spd, element, subclass, cmId });
 	});
 
 	return merals;

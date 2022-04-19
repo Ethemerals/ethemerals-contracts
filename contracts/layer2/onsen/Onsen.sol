@@ -17,8 +17,8 @@ contract Onsen is ERC721Holder {
   address public admin;
 
   uint16 public hpMod; // lower = more
-  uint16 public xpMod; // lower = more
   uint16 public elfMod; // lower = more
+  uint16 public xpMod; // lower = more
 
   // MERALS => STAKES
   mapping (uint => Stake) public stakes;
@@ -36,8 +36,8 @@ contract Onsen is ERC721Holder {
     admin = msg.sender;
     merals = IMeralManager(_meralManager);
     hpMod = 10000;
-    xpMod = 7200;
     elfMod = 10000;
+    xpMod = 7200;
   }
 
   function adminUnstake(uint _Id) external {

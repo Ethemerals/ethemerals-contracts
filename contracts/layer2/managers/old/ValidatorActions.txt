@@ -1,0 +1,137 @@
+
+// // SPDX-License-Identifier: MIT
+// pragma solidity ^0.8.3;
+
+// import "hardhat/console.sol";
+
+// contract ValidatorActions {
+
+//   event ContractRegistered(address contractAddress, uint meralType);
+//   event AuthChange(address auth, bool add);
+
+//   // MERALS
+//   event InitMeral(uint meralType, uint tokenId, uint32 elf, uint16 hp, uint16 maxHp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass, address owner);
+//   event ChangeHP(uint id, uint16 hp, bool add);
+//   event ChangeXP(uint id, uint32 xp, bool add);
+//   event ChangeELF(uint id, uint32 elf, bool add);
+//   event ChangeStats(uint id, uint16 atk, uint16 def, uint16 spd);
+//   event ChangeElement(uint id, uint8 element);
+//   event MeralStatusChange(uint id, uint8 status);
+
+//   // VERIFY OWNERSHIP
+//   event OwnershipSubmit(uint txId);
+//   event OwnershipApprove(address validator, uint txId);
+//   event OwnershipExecute(uint txId);
+
+//   /*///////////////////////////////////////////////////////////////
+//                   STORAGE
+//   //////////////////////////////////////////////////////////////*/
+
+//   /**
+//     * @dev Storage of all Meral IDs
+//     * Use MeralParser to parse Type and Token ID from IDs, max 1,000,000 in a type
+//     * Ethemeral Merals = 0, Monster Merals = 1 etc etc
+//     * Front end must call correct ID
+//     */
+//   mapping(uint => Meral) public allMerals;
+
+//   /**
+//     * @dev Storage of all Meral Owners
+//     * Allows owner transfer / active or not / checks / admin approve
+//     */
+//   mapping(uint => address) public meralOwners;
+
+//   // include game masters
+//   mapping(address => bool) public gmAddresses;
+
+//   // addresses to type
+//   mapping(address => uint) public meralType;
+
+//   // contract address counter
+//   uint public typeCounter;
+
+//   // STATUS: 0=new, 1=pending, 2=approved
+//   struct Meral {
+//     uint32 elf;
+//     uint32 xp;
+//     uint16 hp;
+//     uint16 maxHp;
+//     uint16 atk;
+//     uint16 def;
+//     uint16 spd;
+//     uint16 maxStamina;
+//     uint8 element;
+//     uint8 subclass;
+//     uint8 status;
+//   }
+
+//   // VALIDATION /////////////////////////////////////
+//   address[] public validators;
+//   mapping(address => bool) public isValidator;
+
+//   struct Transaction {
+//     uint timestamp;
+//     uint meralId;
+//     address newOwner;
+//     bool executed;
+//   }
+
+//   Transaction[] public transactions;
+//   mapping(uint => mapping(address => bool)) public approved;
+//   ///////////////////////////////////////////////////
+
+//   address public gmActions;
+//   address public validatorActions;
+//   /*///////////////////////////////////////////////////////////////
+//                   OWNERSHIP VALIDATION
+//   //////////////////////////////////////////////////////////////*/
+//   function approve(uint _txId) external {
+//     require(_txId < transactions.length, "tx does not exist");
+//     require(!approved[_txId][msg.sender], "tx already approved");
+//     require(transactions[_txId].executed, "tx already executed");
+//     require(block.timestamp - transactions[_txId].timestamp < 259200  , "tx expired");
+
+//     approved[_txId][msg.sender] = true;
+//     emit OwnershipApprove(msg.sender, _txId);
+//   }
+
+//   function execute(uint _txId) external {
+//     require(_getApprovalCount(_txId) >= 2, "approvals < required");
+//     Transaction storage transaction = transactions[_txId];
+//     transaction.executed = true;
+//     meralOwners[transaction.meralId] = transaction.newOwner;
+//     emit OwnershipExecute(_txId);
+//   }
+
+//   function _getApprovalCount(uint _txId) private view returns (uint count) {
+//     for(uint i; i < validators.length; i ++) {
+//       if(approved[_txId][validators[i]]) {
+//         count += 1;
+//       }
+//     }
+//   }
+
+
+//   /*///////////////////////////////////////////////////////////////
+//                   GM FUNCTIONS
+//   //////////////////////////////////////////////////////////////*/
+
+//   /*///////////////////////////////////////////////////////////////
+//                   PUBLIC
+//   //////////////////////////////////////////////////////////////*/
+
+//   /*///////////////////////////////////////////////////////////////
+//                   OVERRIDES
+//   //////////////////////////////////////////////////////////////*/
+
+//   /*///////////////////////////////////////////////////////////////
+//                   MODIFIERS
+//   //////////////////////////////////////////////////////////////*/
+
+//   /*///////////////////////////////////////////////////////////////
+//                   PUBLIC VIEW FUNCTIONS
+//   //////////////////////////////////////////////////////////////*/
+
+
+
+// }

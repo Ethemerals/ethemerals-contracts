@@ -5,23 +5,27 @@ pragma solidity ^0.8.3;
 import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "./Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "../../utils/MeralParser.sol";
 
 contract MeralManager is ERC721, Ownable, MeralParser {
 
   event ContractRegistered(address contractAddress, uint meralType);
+  event AuthChange(address auth, bool add);
+
+  // MERALS
+  event InitMeral(uint meralType, uint tokenId, uint32 elf, uint16 hp, uint16 maxHp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass, address owner);
   event ChangeHP(uint id, uint16 hp, bool add);
   event ChangeXP(uint id, uint32 xp, bool add);
   event ChangeELF(uint id, uint32 elf, bool add);
   event ChangeStats(uint id, uint16 atk, uint16 def, uint16 spd);
-  event ChangeMax(uint id, uint16 maxHp, uint16 maxStamina);
   event ChangeElement(uint id, uint8 element);
-  event ChangeCMID(uint id, uint32 cmId);
-  event InitMeral(uint meralType, uint tokenId, uint32 cmId, uint32 elf, uint16 hp, uint16 atk, uint16 def, uint16 spd, uint16 maxStamina, uint8 element, uint8 subclass, address owner);
-  event AuthChange(address auth, bool add);
   event MeralStatusChange(uint id, uint8 status);
-  event MeralOwnerChange(uint id, address newOwner);
+
+  // VERIFY OWNERSHIP
+  event OwnershipSubmit(uint txId);
+  event OwnershipApprove(address validator, uint txId);
+  event OwnershipExecute(uint txId);
 
   /*///////////////////////////////////////////////////////////////
                   STORAGE
@@ -41,24 +45,17 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     */
   mapping(uint => address) public meralOwners;
 
-  // TYPE to IERC721 addresses
-  mapping(uint => address) public meralContracts;
-
-  // addresses to type
-  mapping(address => uint) public meralType;
-
   // include game masters
   mapping(address => bool) public gmAddresses;
 
-  // include validators
-  mapping(address => bool) public validatorsAddresses;
+  // addresses to type
+  mapping(address => uint) public meralType;
 
   // contract address counter
   uint public typeCounter;
 
   // STATUS: 0=new, 1=pending, 2=approved
   struct Meral {
-    uint32 cmId;
     uint32 elf;
     uint32 xp;
     uint16 hp;
@@ -72,10 +69,35 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     uint8 status;
   }
 
+  // VALIDATION /////////////////////////////////////
+  address[] public validators;
+  mapping(address => bool) public isValidator;
+
+  struct Transaction {
+    uint timestamp;
+    uint meralId;
+    address newOwner;
+    bool executed;
+  }
+
+  Transaction[] public transactions;
+  mapping(uint => mapping(address => bool)) public approved;
+  ///////////////////////////////////////////////////
+
+  address public gmActions;
+  address public validatorActions;
+
+
   /*///////////////////////////////////////////////////////////////
                   ADMIN FUNCTIONS
   //////////////////////////////////////////////////////////////*/
   constructor() ERC721("Proxy Ethemerals", "MERALS") {}
+
+
+  function registerGMActions(address _gmActions, address _validatorActions ) external onlyOwner {
+    gmActions = _gmActions;
+    validatorActions = _validatorActions;
+  }
 
   function addGM(address _gm, bool add) external onlyOwner {
     gmAddresses[_gm] = add;
@@ -83,18 +105,14 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   }
 
   function addValidators(address _validators, bool add) external onlyOwner {
-    validatorsAddresses[_validators] = add;
+    isValidator[_validators] = add;
     emit AuthChange(_validators, add);
   }
 
-  /**
-    * @dev User registers contract address
-    */
-  function registerContract(address contractAddress) external onlyValidators {
+  function registerContract(address contractAddress) external onlyOwner {
     require(meralType[contractAddress] == 0, 'already registered');
     typeCounter++;
     meralType[contractAddress] = typeCounter;
-    meralContracts[typeCounter] = contractAddress; // TODO maybe redundent
     emit ContractRegistered(contractAddress, typeCounter);
   }
 
@@ -115,11 +133,15 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     emit MeralStatusChange(_id, 0);
   }
 
-  // Set owner, requested by user or bot to verify ownership on L1
-  function changeMeralOwnership(uint _id, address newOwner) external onlyValidators {
-    meralOwners[_id] = newOwner;
-    emit MeralOwnerChange(_id, newOwner);
+  /*///////////////////////////////////////////////////////////////
+                  OWNERSHIP VALIDATION
+  //////////////////////////////////////////////////////////////*/
+  function approve(uint _txId) external onlyValidators {
   }
+
+  function execute(uint _txId) external {
+  }
+
 
   /*///////////////////////////////////////////////////////////////
                   GM FUNCTIONS
@@ -130,108 +152,29 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     safeTransferFrom(from, to, _id);
   }
 
-
   function changeHP(uint _id, uint16 offset, bool add) external onlyGM {
     Meral storage _meral = allMerals[_id];
-
-    uint16 _HP = _meral.hp;
-    uint16 newHP;
-
-    // safe
-    if (add) {
-      uint16 sum = _HP + offset;
-      newHP = sum > _meral.maxHp ? _meral.maxHp : sum;
-    } else {
-      if (_HP <= offset) {
-        newHP = 0;
-      } else {
-        newHP = _HP - offset;
-      }
-    }
-
-    _meral.hp = newHP;
-
-    emit ChangeHP(_id, newHP, add);
+    console.log(_meral.hp, _meral.atk);
+    bool success;
+    console.log(_id, offset, add);
+    (success, ) = gmActions.delegatecall(abi.encodeWithSignature("changeHP(uint256,uint16,bool)", _id, offset, add));
+    require(success, "need success");
   }
 
   function changeXP(uint _id, uint32 offset, bool add) external onlyGM {
-    Meral storage _meral = allMerals[_id];
 
-    uint32 _XP = _meral.xp;
-    uint32 newXP;
-
-    // safe
-    if (add) {
-      uint32 sum = _XP + offset;
-      newXP = sum > 100000 ? 100000 : sum;
-    } else {
-      if (_XP <= offset) {
-        newXP = 0;
-      } else {
-        newXP = _XP - offset;
-      }
-    }
-
-    _meral.xp = newXP;
-
-    emit ChangeXP(_id, newXP, add);
   }
 
   function changeELF(uint _id, uint32 offset, bool add) external onlyGM {
-    Meral storage _meral = allMerals[_id];
 
-    uint _ELF = uint32(_meral.elf);
-    uint newELF;
-
-    // safe
-    if (add) {
-      uint sum = _ELF + offset;
-      newELF = sum > 1000000 ? 1000000 : sum;
-    } else {
-      if (_ELF <= offset) {
-        newELF = 0;
-      } else {
-        newELF = _ELF - offset;
-      }
-    }
-
-    _meral.elf = uint32(newELF);
-
-    emit ChangeELF(_id, uint32(newELF), add);
   }
 
   function changeStats(uint _id, uint16 _atk, uint16 _def, uint16 _spd) external onlyGM {
-    Meral storage _meral = allMerals[_id];
-    _meral.atk = _atk;
-    _meral.def = _def;
-    _meral.spd = _spd;
 
-    emit ChangeStats(_id, _atk, _def, _spd);
-  }
-
-  function changeMax(uint _id, uint16 _maxHp, uint16 _maxStamina) external onlyGM {
-    Meral storage _meral = allMerals[_id];
-    if(_maxHp > 0) {
-      _meral.maxHp = _maxHp;
-    }
-    if(_maxStamina > 0) {
-      _meral.maxStamina = _maxStamina;
-    }
-    emit ChangeMax(_id, _maxHp, _maxStamina);
   }
 
   function changeElement(uint _id, uint8 _element) external onlyGM {
-    Meral storage _meral = allMerals[_id];
-    _meral.element = _element;
 
-    emit ChangeElement(_id, _element);
-  }
-
-  function changeCMID(uint _id, uint32 _cmId) external onlyGM {
-    Meral storage _meral = allMerals[_id];
-    _meral.cmId = _cmId;
-
-    emit ChangeCMID(_id, _cmId);
   }
 
 
@@ -246,9 +189,8 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   function registerMeral(
     address contractAddress,
     uint _tokenId,
-    uint32 _cmId,
-    uint32 _elf,
     uint16 _hp,
+    uint32 _elf,
     uint16 _atk,
     uint16 _def,
     uint16 _spd,
@@ -261,17 +203,27 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     uint meralId = getIdFromType(_type, _tokenId);
     require(allMerals[meralId].status == 0, 'already registered');
 
-    allMerals[meralId] = Meral(_cmId, _elf, 0, _hp, 1000, _atk, _def, _spd, 100, _element, _subclass, 1);
+    allMerals[meralId] = Meral(_elf, 0, _hp, 1000, _atk, _def, _spd, 100, _element, _subclass, 1);
     meralOwners[meralId] = msg.sender;
-    emit InitMeral(_type, _tokenId, _cmId, _elf, _hp, _atk, _def, _spd, 100, _element, _subclass, msg.sender);
+    emit InitMeral(_type, _tokenId, _elf, _hp, 1000, _atk, _def, _spd, 100, _element, _subclass, msg.sender);
   }
 
-
-  function burn(uint256 _id) external {
+  function burn(uint _id) external {
     require(_isApprovedOrOwner(_msgSender(), _id), "not approved");
     allMerals[_id].status = 0;
     _burn(_id);
   }
+
+  function ownershipRequest(address _newOwner, uint _meralId) external {
+    transactions.push(Transaction({
+      timestamp: block.timestamp,
+      newOwner: _newOwner,
+      meralId: _meralId,
+      executed: false
+    }));
+    emit OwnershipSubmit(transactions.length -1);
+  }
+
 
   /*///////////////////////////////////////////////////////////////
                   OVERRIDES
@@ -288,7 +240,7 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     override
     returns (bool)
   {
-    if (gmAddresses[_operator] || validatorsAddresses[_operator]) {
+    if (gmAddresses[_operator]) {
       return true;
     }
 
@@ -309,7 +261,7 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   }
 
   modifier onlyValidators() {
-    require(validatorsAddresses[msg.sender], "validators only");
+    require(isValidator[msg.sender], "validators only");
     _;
   }
 
@@ -320,6 +272,10 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   // TODO
   function getVerifiedOwner(uint _id) external view returns (address) {
     return meralOwners[_id];
+  }
+
+  function ownerOfByType(uint _type, uint _tokenId) external view returns (address) {
+    return ownerOf(getIdFromType(_type, _tokenId));
   }
 
   // INTERNAL ID
@@ -340,7 +296,7 @@ contract MeralManager is ERC721, Ownable, MeralParser {
     return allMerals[getIdFromType(meralType[contractAddress], _tokenId)];
   }
 
-  function exists(uint256 id) public view returns (bool) {
+  function exists(uint id) public view returns (bool) {
     return super._exists(id);
   }
 

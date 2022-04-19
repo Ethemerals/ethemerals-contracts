@@ -12,34 +12,45 @@ async function main() {
 
 	console.log(admin.address);
 
-	const MeralManager = await ethers.getContractFactory('MeralManager');
-	const meralManager = await MeralManager.attach(getAddresses(chain).meralManager);
+	// const MeralManager = await ethers.getContractFactory('MeralManager');
+	// const meralManager = await MeralManager.attach(getAddresses(chain).meralManager);
+
+	// await meralManager.registerMeral(getAddresses(chain).merals, 363, 300, 2000, 665, 475, 371, 10, 4);
+	// console.log('register meral');
 
 	////////////////////////////
 
-	const Aggrator = await ethers.getContractFactory('AggregatorV3Mock');
-	const aggrator1 = await Aggrator.attach(getAddresses(chain).aggregatorMock1);
-	const aggrator2 = await Aggrator.attach(getAddresses(chain).aggregatorMock2);
+	// const Aggrator = await ethers.getContractFactory('AggregatorV3Mock');
+	// const aggrator1 = await Aggrator.attach(getAddresses(chain).aggregatorMock1);
+	// const aggrator2 = await Aggrator.attach(getAddresses(chain).aggregatorMock2);
 
-	let price1 = '5320161587121';
-	let price2 = '450632446780';
-	await aggrator1.updateAnswer(price1);
-	console.log('update price');
-	await sleep(10000);
+	// let price1 = '5320161587121';
+	// let price2 = '450632446780';
+	// await aggrator1.updateAnswer(price1);
+	// console.log('update price');
+	// await sleep(10000);
 
-	await aggrator2.updateAnswer(price2);
-	console.log('update price');
-	await sleep(10000);
+	// await aggrator2.updateAnswer(price2);
+	// console.log('update price');
+	// await sleep(10000);
 
 	const PriceFeedProvider = await ethers.getContractFactory('PriceFeedProvider');
 	const priceFeedProvider = await PriceFeedProvider.attach(getAddresses(chain).priceFeedProvider);
 
-	let answer;
-	answer = await priceFeedProvider.getLatestPrice(1);
-	console.log(answer);
+	// await priceFeedProvider.upsertFeed(1, getAddresses(chain).aggregatorMock1);
+	// await sleep(10000);
+	// console.log('added price feed');
 
-	answer = await priceFeedProvider.getLatestPrice(2);
-	console.log(answer);
+	// await priceFeedProvider.upsertFeed(2, getAddresses(chain).aggregatorMock2);
+	// await sleep(10000);
+	// console.log('added price feed2');
+
+	// let answer;
+	// answer = await priceFeedProvider.getLatestPrice(1);
+	// console.log(answer);
+
+	// answer = await priceFeedProvider.getLatestPrice(2);
+	// console.log(answer);
 
 	//////////////////////////
 
@@ -49,10 +60,13 @@ async function main() {
 	const EternalBattle = await ethers.getContractFactory('EternalBattle');
 	const eternalBattle = await EternalBattle.attach(getAddresses(chain).eternalBattle);
 
-	// await eternalBattle.createStake(1000363, 1, 255, true);
-	await eternalBattle.cancelStake(1000363);
-	console.log('stake');
-	await sleep(10000);
+	// await eternalBattle.createStake(1000363, 1, 1000, true);
+	let value = await eternalBattle.getGamePair(0);
+	console.log(value);
+
+	// await eternalBattle.cancelStake(1000363);
+	// console.log('stake');
+	// await sleep(10000);
 }
 
 main()

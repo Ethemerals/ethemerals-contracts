@@ -21,19 +21,6 @@ async function main() {
 	console.log('PriceFeedProvider deployed to:', priceFeedProvider.address);
 	await sleep(10000);
 
-	// const AggregatorV3Mock = await ethers.getContractFactory('AggregatorV3Mock');
-	// aggV3Mock1 = await AggregatorV3Mock.deploy(8, 1);
-	// await aggV3Mock1.deployed();
-
-	// console.log('aggV3Mock1 deployed to:', aggV3Mock1.address);
-	// await sleep(10000);
-
-	// aggV3Mock2 = await AggregatorV3Mock.deploy(18, 1);
-	// await aggV3Mock2.deployed();
-
-	// console.log('aggV3Mock2 deployed to:', aggV3Mock1.address);
-	// await sleep(10000);
-
 	const EternalBattle = await ethers.getContractFactory('EternalBattle');
 	battle = await EternalBattle.deploy(getAddresses(chain).meralManager, priceFeedProvider.address);
 	await battle.deployed();

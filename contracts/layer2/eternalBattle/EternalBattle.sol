@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.3;
 
+import "hardhat/console.sol";
+
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "./IPriceFeedProvider.sol";
 import "../../interfaces/IMeralManager.sol";
@@ -12,7 +14,12 @@ contract EternalBattle is ERC721Holder {
   event StakeCanceled (uint indexed tokenId, uint change, uint reward, bool win);
   event TokenRevived (uint indexed tokenId, uint reviver);
 
+  /*///////////////////////////////////////////////////////////////
+                  STORAGE
+  //////////////////////////////////////////////////////////////*/
+
   struct Stake {
+    uint timestamp;
     uint16 priceFeedId;
     uint16 positionSize;
     uint startingPrice;
@@ -25,12 +32,19 @@ contract EternalBattle is ERC721Holder {
     uint16 shorts;
   }
 
+  mapping(uint16 => mapping(uint32 => bool)) bonusLongs;
+  mapping(uint16 => mapping(uint32 => bool)) bonusShorts;
+
+  // pricefeed > longs? > cmId > bonus?
+  mapping(uint16 => mapping(bool => mapping(uint32 => bool))) gamePairsBonus;
+
   IMeralManager meralManager;
   IPriceFeedProvider priceFeed;
 
-  uint16 public atkDivMod = 1800; // lower number higher multiplier
-  uint16 public defDivMod = 1400; // lower number higher multiplier
-  uint16 public spdDivMod = 400; // lower number higher multiplier
+  uint16 public atkDivMod; // lower number higher multiplier
+  uint16 public defDivMod; // lower number higher multiplier
+  uint16 public spdDivMod; // lower number higher multiplier
+  uint16 public xpMod; // lower number higher multiplier
   uint32 public reviverReward = 500; //500 tokens
 
   address private admin;
@@ -45,7 +59,17 @@ contract EternalBattle is ERC721Holder {
     admin = msg.sender;
     meralManager = IMeralManager(_meralManagerAddress);
     priceFeed = IPriceFeedProvider(_priceFeedAddress);
+    atkDivMod = 5000;
+    defDivMod = 2000;
+    spdDivMod = 1000;
+    xpMod = 3600;
   }
+
+
+  /*///////////////////////////////////////////////////////////////
+                  PUBLIC FUNCTIONS
+  //////////////////////////////////////////////////////////////*/
+
 
   /**
     * @dev
@@ -57,14 +81,70 @@ contract EternalBattle is ERC721Holder {
     require(gamePairs[_priceFeedId].active, 'not active');
     uint price = uint(priceFeed.getLatestPrice(_priceFeedId));
     require(price > 1000, 'pbounds');
-    require(_positionSize > 100 && _positionSize <= 1000, 'bounds');
+    require(_positionSize >= 100 && _positionSize <= 1000, 'bounds');
     IMeralManager.Meral memory _meral = meralManager.getMeralById(_tokenId);
     require(_meral.elf > reviverReward, 'needs ELF');
     meralManager.transfer(msg.sender, address(this), _tokenId);
-    stakes[_tokenId] = Stake(_priceFeedId, _positionSize, price, long);
+    stakes[_tokenId] = Stake(block.timestamp, _priceFeedId, _positionSize, price, long);
 
     _changeGamePair(_priceFeedId, long, true);
     emit StakeCreated(_tokenId, _priceFeedId, _positionSize, price, long);
+  }
+
+  /**
+    * @dev
+    * gets price and score change
+    * returns token to owner
+    *
+    */
+  function cancelStake(uint _tokenId) external {
+    address owner = meralManager.getVerifiedOwner(_tokenId);
+    require(owner == msg.sender, 'only owner');
+    require(meralManager.ownerOf(_tokenId) == address(this), 'only staked');
+    (uint change, uint reward, bool win) = getChange(_tokenId);
+    meralManager.transfer(address(this), owner, _tokenId);
+    meralManager.changeHP(_tokenId, uint16(change), win); // change in bps
+    meralManager.changeXP(_tokenId, uint32((block.timestamp - stakes[_tokenId].timestamp) / xpMod), true);
+
+    if(win) {
+      meralManager.changeELF(_tokenId, uint32(reward), true);
+    }
+
+    _changeGamePair(stakes[_tokenId].priceFeedId, stakes[_tokenId].long, false);
+    emit StakeCanceled(_tokenId, change, reward, win);
+  }
+
+  /**
+    * @dev
+    * allows second token1 to revive token0 and take rewards
+    * returns token1 to owner
+    *
+    */
+  function reviveToken(uint _id0, uint _id1) external {
+    require(meralManager.ownerOf(_id0) == address(this), 'only staked');
+    require(meralManager.ownerOf(_id1) == msg.sender, 'only owner');
+    // GET CHANGE
+    Stake storage _stake = stakes[_id0];
+    IMeralManager.Meral memory _meral = meralManager.getMeralById(_id0);
+
+    (uint change, , bool win) = getChange(_id0);
+
+    require((win != true && _meral.hp <= (change + 35)), 'not dead');
+    address owner = meralManager.getVerifiedOwner(_id0);
+    meralManager.transfer(address(this), owner, _id0);
+
+    if(_meral.hp < 100) {
+      meralManager.changeHP(_id0, uint16(100 - _meral.hp), true); // reset scores to 100
+    } else {
+      meralManager.changeHP(_id0, uint16(_meral.hp - 100), false); // reset scores to 100
+    }
+
+    meralManager.changeELF(_id0, reviverReward, false);
+    meralManager.changeELF(_id1, reviverReward, true);
+    meralManager.changeXP(_id0, uint32((block.timestamp - stakes[_id0].timestamp) / xpMod), true);
+
+    _changeGamePair(_stake.priceFeedId, _stake.long, false);
+    emit TokenRevived(_id0, _id1);
   }
 
 
@@ -82,59 +162,26 @@ contract EternalBattle is ERC721Holder {
     }
   }
 
-  /**
-    * @dev
-    * gets price and score change
-    * returns token to owner
-    *
-    */
-  function cancelStake(uint _tokenId) external {
-    address owner = meralManager.getVerifiedOwner(_tokenId);
-    require(owner == msg.sender, 'only owner');
-    require(meralManager.ownerOf(_tokenId) == address(this), 'only staked');
-    (uint change, uint reward, bool win) = getChange(_tokenId);
-    meralManager.transfer(address(this), owner, _tokenId);
-    meralManager.changeHP(_tokenId, uint16(change), win); // change in bps
-    meralManager.changeELF(_tokenId, uint32(reward), win);
 
-    _changeGamePair(stakes[_tokenId].priceFeedId, stakes[_tokenId].long, false);
-    emit StakeCanceled(_tokenId, change, reward, win);
+  /*///////////////////////////////////////////////////////////////
+                  INTERNAL VIEW FUNCTIONS
+  //////////////////////////////////////////////////////////////*/
+
+  function _calcBonus(uint _stat, uint denominator) internal pure returns (uint16) {
+    uint stat = _stat * 10000;
+    return uint16((stat + stat / denominator) / 10000);
   }
 
-  /**
-    * @dev
-    * allows second token1 to revive token0 and take rewards
-    * returns token1 to owner
-    *
-    */
-  function reviveToken(uint _id0, uint _id1) external {
-    require(meralManager.ownerOf(_id0) == address(this), 'only staked');
-    require(meralManager.ownerOf(_id1) == msg.sender, 'only owner');
-    // GET CHANGE
-    Stake storage _stake = stakes[_id0];
-    uint priceEnd = uint(priceFeed.getLatestPrice(_stake.priceFeedId));
-    IMeralManager.Meral memory _meral = meralManager.getMeralById(_id0);
-    uint change = _stake.positionSize * calcBps(_stake.startingPrice, priceEnd);
-    bool win = _stake.long ? _stake.startingPrice < priceEnd : _stake.startingPrice > priceEnd;
-    change = ((change - (_meral.def * change / defDivMod)) ) / 1000; // BONUS DEF
-    uint scoreBefore = _meral.hp;
-
-    require((win != true && scoreBefore <= (change + 35)), 'not dead');
-    address owner = meralManager.getVerifiedOwner(_id0);
-    meralManager.transfer(address(this), owner, _id0);
-
-    if(scoreBefore < 100) {
-      meralManager.changeHP(_id0, uint16(100 - scoreBefore), true); // reset scores to 100 // ###BUG can be NEGATIVE FIXED
-    } else {
-      meralManager.changeHP(_id0, uint16(scoreBefore - 100), false); // reset scores to 100 // ###BUG can be NEGATIVE FIXED
-    }
-
-    meralManager.changeELF(_id0, reviverReward, false);
-    meralManager.changeELF(_id1, reviverReward, true);
-
-    _changeGamePair(_stake.priceFeedId, _stake.long, false);
-    emit TokenRevived(_id0, _id1);
+  function safeScale(uint num, uint inMax, uint outMin, uint outMax) internal pure returns(uint16) {
+    uint scaled = (num * (outMax - outMin)) / inMax + outMin;
+    return uint16(scaled > outMax ? outMax : scaled);
   }
+
+
+  /*///////////////////////////////////////////////////////////////
+                  PUBLIC VIEW FUNCTIONS
+  //////////////////////////////////////////////////////////////*/
+
 
   /**
     * @dev
@@ -148,14 +195,33 @@ contract EternalBattle is ERC721Holder {
     uint priceEnd = uint(priceFeed.getLatestPrice(_stake.priceFeedId));
     uint reward;
     bool win = _stake.long ? _stake.startingPrice < priceEnd : _stake.startingPrice > priceEnd;
-
     uint change = _stake.positionSize * calcBps(_stake.startingPrice, priceEnd);
+
+    uint16 atk = _meral.atk;
+    uint16 def = _meral.def;
+    uint16 spd = _meral.spd;
+
+    if(getShouldBonus(_stake.priceFeedId, _meral.cmId, _stake.long)) {
+      atk = _calcBonus(atk, 20); // 5%
+      def = _calcBonus(def, 20);
+      spd = _calcBonus(spd, 20);
+    }
+
+    //scale stats
+    atk = safeScale(_meral.atk, 2000, 100, 1000);
+    def = safeScale(_meral.def, 2000, 200, 1600);
+    spd = safeScale(_meral.spd, 2000, 500, 2000);
+
+    change = change / 1000;
+
     if(win) {
-      change = (_meral.atk * change / atkDivMod + change) / 1000; // BONUS ATK
-      // reward = (_meral.spd * change) / spdDivMod / 1000; // BONUS SPD
-      uint16 longs = gamePairs[stakes[_tokenId].priceFeedId].longs;
-      uint16 shorts = gamePairs[stakes[_tokenId].priceFeedId].shorts;
+      change = change * atk / atkDivMod + change;
+
+      // REWARDS
+      uint16 longs = gamePairs[_stake.priceFeedId].longs;
+      uint16 shorts = gamePairs[_stake.priceFeedId].shorts;
       uint counterTradeBonus = 1;
+
       if(!_stake.long && longs > shorts) {
         counterTradeBonus = longs / shorts;
       }
@@ -163,13 +229,20 @@ contract EternalBattle is ERC721Holder {
         counterTradeBonus = shorts / longs;
       }
       counterTradeBonus = counterTradeBonus > 5 ? 5 : counterTradeBonus;
-      reward = (_meral.spd * change / spdDivMod) * counterTradeBonus;
+
+      reward = change * spd / spdDivMod * counterTradeBonus + (change * 2);
 
     } else {
-      change = ((change - (_meral.def * change / defDivMod)) ) / 1000; // BONUS DEF
+      change = change - (change * def / defDivMod);
     }
+
     return (change, reward, win);
   }
+
+  function getShouldBonus(uint16 _gamePair, uint32 _cmId, bool _long) public view returns (bool shouldBonus) {
+    return gamePairsBonus[_gamePair][_long][_cmId];
+  }
+
 
   function calcBps(uint _x, uint _y) public pure returns (uint) {
     // 1000 = 10% 100 = 1% 10 = 0.1% 1 = 0.01%
@@ -180,9 +253,14 @@ contract EternalBattle is ERC721Holder {
     return stakes[_tokenId];
   }
 
-  function getGamePair(uint8 _gameIndex) external view returns (GamePair memory) {
-    return gamePairs[_gameIndex];
+  function getGamePair(uint8 _gamePair) external view returns (GamePair memory) {
+    return gamePairs[_gamePair];
   }
+
+
+  /*///////////////////////////////////////////////////////////////
+                  ADMIN FUNCTIONS
+  //////////////////////////////////////////////////////////////*/
 
   function resetGamePair(uint8 _gameIndex, bool _active) external onlyAdmin() { //admin
     gamePairs[_gameIndex].active = _active;
@@ -198,14 +276,21 @@ contract EternalBattle is ERC721Holder {
     emit StakeCanceled(_tokenId, 0, 0, false);
   }
 
+  function setCMIDBonus(uint32[] calldata _cmIds, uint16 _gamePair, bool _long, bool _bonus) external onlyAdmin() { //admin
+    for (uint256 i = 0; i < _cmIds.length; i++) {
+      gamePairsBonus[_gamePair][_long][_cmIds[i]] = _bonus;
+    }
+  }
+
   function setReviverRewards(uint32 _reward) external onlyAdmin() { //admin
     reviverReward = _reward;
   }
 
-  function setStatsDivMod(uint16 _atkDivMod, uint16 _defDivMod, uint16 _spdDivMod) external onlyAdmin() { //admin
+  function setStatsDivMod(uint16 _atkDivMod, uint16 _defDivMod, uint16 _spdDivMod, uint16 _xpMod) external onlyAdmin() { //admin
     atkDivMod = _atkDivMod;
     defDivMod = _defDivMod;
     spdDivMod = _spdDivMod;
+    xpMod = _xpMod;
   }
 
   function setPriceFeedContract(address _pfAddress) external onlyAdmin() { //admin

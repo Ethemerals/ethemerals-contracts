@@ -3,7 +3,7 @@ const { ethers } = require('hardhat');
 const { MeralsL1Data, minMaxAvg, getRandomInt, getIdFromType } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe.only('EternalBattle', function () {
+describe('EternalBattle', function () {
 	let merals;
 	let escrowL1;
 	let meralManager;
@@ -73,19 +73,30 @@ describe.only('EternalBattle', function () {
 		for (let i = 1; i <= 40; i++) {
 			let meralStats = allMeralStats[i];
 			if (i <= 10) {
-				await meralManager.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+				await meralManager.registerMeral(
+					merals.address,
+					i,
+					meralStats.cmId,
+					meralStats.rewards,
+					meralStats.score,
+					meralStats.atk,
+					meralStats.def,
+					meralStats.spd,
+					meralStats.element,
+					meralStats.subclass
+				);
 			} else if (i > 10 && i <= 20) {
 				await meralManager
 					.connect(player1)
-					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+					.registerMeral(merals.address, i, meralStats.cmId, meralStats.rewards, meralStats.score, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
 			} else if (i > 20 && i <= 30) {
 				await meralManager
 					.connect(player2)
-					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+					.registerMeral(merals.address, i, meralStats.cmId, meralStats.rewards, meralStats.score, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
 			} else if (i > 30) {
 				await meralManager
 					.connect(player3)
-					.registerMeral(merals.address, i, meralStats.score, meralStats.rewards, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
+					.registerMeral(merals.address, i, meralStats.cmId, meralStats.rewards, meralStats.score, meralStats.atk, meralStats.def, meralStats.spd, meralStats.element, meralStats.subclass);
 			}
 		}
 
@@ -112,7 +123,45 @@ describe.only('EternalBattle', function () {
 			expect(latestPrice.toNumber()).to.equal(mockPriceAnswer2);
 		});
 
-		it.only('should run for a long time on two price feeds', async () => {
+		it('assign bonus to CMIds', async () => {
+			let cmIds = [1, 825];
+			await battle.setCMIDBonus(cmIds, 1, false, true);
+
+			let value = await battle.getShouldBonus(1, 1, false);
+			expect(value).to.equal(true);
+			value = await battle.getShouldBonus(177, 1, true);
+			expect(value).to.equal(false);
+			value = await battle.getShouldBonus(177, 1, false);
+			expect(value).to.equal(false);
+
+			await priceFeedProvider.upsertFeed(1, aggregatorV3Mock.address);
+			let mockPrice1 = 6225287000000;
+			await aggregatorV3Mock.updateAnswer(mockPrice1);
+
+			let id = getIdFromType(1, 10);
+			let meral = await meralManager.getMeralById(id);
+			console.log(meral.cmId, meral.hp, meral.elf);
+
+			await battle.createStake(id, 1, 100, true);
+			mockPrice1 = parseInt(mockPrice1 * 1.1);
+			await aggregatorV3Mock.updateAnswer(mockPrice1);
+			await battle.cancelStake(id);
+
+			meral = await meralManager.getMeralById(id);
+			console.log(meral.cmId, meral.hp, meral.elf);
+
+			// SET BONUS
+			await battle.setCMIDBonus([meral.cmId], 1, true, true);
+			await battle.createStake(id, 1, 100, true);
+			mockPrice1 = parseInt(mockPrice1 * 1.1);
+			await aggregatorV3Mock.updateAnswer(mockPrice1);
+			await battle.cancelStake(id);
+
+			meral = await meralManager.getMeralById(id);
+			console.log(meral.cmId, meral.hp, meral.elf, meral.atk, meral.def, meral.spd);
+		});
+
+		it('should run for a long time on two price feeds', async () => {
 			await priceFeedProvider.upsertFeed(1, aggregatorV3Mock.address);
 
 			const AggregatorV3Mock2 = await ethers.getContractFactory('AggregatorV3Mock');
@@ -164,6 +213,9 @@ describe.only('EternalBattle', function () {
 				await aggregatorV3Mock.updateAnswer(price1);
 				await aggregatorV3Mock2.updateAnswer(price2);
 
+				await network.provider.send('evm_increaseTime', [day]);
+				await network.provider.send('evm_mine');
+
 				gamePair = await battle.getGamePair(1);
 				console.log('game1', gamePair.toString());
 				gamePair = await battle.getGamePair(2);
@@ -183,7 +235,7 @@ describe.only('EternalBattle', function () {
 					}
 
 					meral = await meralManager.getMeralById(id);
-					console.log(`token_${id}`, meral.toString());
+					console.log(`token_${id}`, meral.hp.toString(), meral.elf.toString(), meral.xp.toString());
 				}
 
 				console.log('run', run, 'stake', stake);
@@ -207,7 +259,7 @@ describe.only('EternalBattle', function () {
 
 			await priceFeedProvider.upsertFeed(1, aggregatorV3Mock.address);
 			await aggregatorV3Mock.updateAnswer(mockPrice);
-			await battle.connect(player1).createStake(token11, 1, 100, true);
+			await battle.connect(player1).createStake(token11, 1, 101, true);
 
 			await expect(battle.reviveToken(token11, token10 + 20)).to.be.revertedWith('only owner');
 			await expect(battle.reviveToken(token11 + 1, token10)).to.be.revertedWith('only staked');
@@ -217,23 +269,23 @@ describe.only('EternalBattle', function () {
 			await aggregatorV3Mock.updateAnswer(mockPrice * 0.1);
 
 			await meralManager.changeELF(token10, 1950, false);
-			await expect(battle.createStake(token10, 1, 100, true)).to.be.revertedWith('needs ELF');
+			await expect(battle.createStake(token10, 1, 101, true)).to.be.revertedWith('needs ELF');
 
 			await meralManager.changeELF(token10, 1950, true);
 
 			meral1 = await meralManager.getMeralById(token11);
 			meral2 = await meralManager.getMeralById(token1);
 
-			let m1v1 = parseInt(meral1[0].toString());
-			let m2v1 = parseInt(meral2[0].toString());
+			let m1v1 = parseInt(meral1.elf.toString());
+			let m2v1 = parseInt(meral2.elf.toString());
 			console.log(m1v1, m2v1);
 
 			await battle.reviveToken(token11, token1);
 			meral1 = await meralManager.getMeralById(token11);
 			meral2 = await meralManager.getMeralById(token1);
 
-			let m1v2 = parseInt(meral1[0].toString());
-			let m2v2 = parseInt(meral2[0].toString());
+			let m1v2 = parseInt(meral1.elf.toString());
+			let m2v2 = parseInt(meral2.elf.toString());
 
 			expect(m2v2).to.be.greaterThan(m2v1);
 			expect(m1v1).to.be.greaterThan(m1v2);
@@ -241,7 +293,7 @@ describe.only('EternalBattle', function () {
 			value = await meralManager.ownerOf(token11);
 			expect(value).to.equal(player1.address);
 
-			await battle.connect(player1).createStake(token11 + 1, 1, 100, true);
+			await battle.connect(player1).createStake(token11 + 1, 1, 101, true);
 			await battle.cancelStakeAdmin(token11 + 1);
 			value = await meralManager.ownerOf(token11 + 1);
 			expect(value).to.equal(player1.address);
