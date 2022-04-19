@@ -9,9 +9,9 @@ const getAddresses = (chain = 1) => {
 		merals: '0xeE8C0131aa6B66A2CE3cad6D2A039c1473a79a6d',
 		meralManager: '0xdfc671c7c8deb5d6e59bb94353d1babebb7f09da',
 		// ETERNAL BATTLE
-		priceFeedProvider: '0x170e41448a0a9116ef1d5f4da5801b5582183552',
+		priceFeedProvider: '0x3d7baf70d134f4e66ca08a5f5d1ad9d6aa5286a1',
 		eternalBattleL1: '0x169310e61e71ef5834ce5466c7155d8a90d15f1e',
-		eternalBattle: '0x0af057df19288ffddd4f5bb7eb882f93a172454b',
+		eternalBattle: '0x84029d941e3b8f72af91dda58bfa9502154a8402',
 		aggregatorMock1: '0x1483512B4988014DAa78af214F4A6100Ff7DE9b9',
 		aggregatorMock2: '0x770ecd2250fd089c91f57d781b47abd45b112e6a',
 		// WILDS
@@ -28,9 +28,9 @@ const getAddresses = (chain = 1) => {
 		addresses.meralManager = '0xdfc671c7c8deb5d6e59bb94353d1babebb7f09da';
 		addresses.onsen = '0xaa32171ce513fe878afb11563b5a72ed8067915c';
 		// ETERNAL BATTLE
-		addresses.priceFeedProvider = '0x170e41448a0a9116ef1d5f4da5801b5582183552';
+		addresses.priceFeedProvider = '0x3d7baf70d134f4e66ca08a5f5d1ad9d6aa5286a1';
 		addresses.eternalBattleL1 = '0x883170aaceb39a23642f5aaaab083f5684d3ffb1';
-		addresses.eternalBattle = '0x0af057df19288ffddd4f5bb7eb882f93a172454b';
+		addresses.eternalBattle = '0x84029d941e3b8f72af91dda58bfa9502154a8402';
 		addresses.aggregatorMock1 = '0x1483512B4988014DAa78af214F4A6100Ff7DE9b9';
 		addresses.aggregatorMock2 = '0x770ecd2250fd089c91f57d781b47abd45b112e6a';
 		// WILDS

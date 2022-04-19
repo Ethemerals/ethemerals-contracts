@@ -123,7 +123,7 @@ describe('EternalBattle', function () {
 			expect(latestPrice.toNumber()).to.equal(mockPriceAnswer2);
 		});
 
-		it('assign bonus to CMIds', async () => {
+		it.only('assign bonus to CMIds', async () => {
 			let cmIds = [1, 825];
 			await battle.setCMIDBonus(cmIds, 1, false, true);
 
@@ -142,8 +142,8 @@ describe('EternalBattle', function () {
 			let meral = await meralManager.getMeralById(id);
 			console.log(meral.cmId, meral.hp, meral.elf);
 
-			await battle.createStake(id, 1, 100, true);
-			mockPrice1 = parseInt(mockPrice1 * 1.1);
+			await battle.createStake(id, 1, 200, true);
+			mockPrice1 = parseInt(mockPrice1 * 0.9);
 			await aggregatorV3Mock.updateAnswer(mockPrice1);
 			await battle.cancelStake(id);
 
@@ -152,8 +152,8 @@ describe('EternalBattle', function () {
 
 			// SET BONUS
 			await battle.setCMIDBonus([meral.cmId], 1, true, true);
-			await battle.createStake(id, 1, 100, true);
-			mockPrice1 = parseInt(mockPrice1 * 1.1);
+			await battle.createStake(id, 1, 200, true);
+			mockPrice1 = parseInt(mockPrice1 * 0.9);
 			await aggregatorV3Mock.updateAnswer(mockPrice1);
 			await battle.cancelStake(id);
 

@@ -59,9 +59,9 @@ contract EternalBattle is ERC721Holder {
     admin = msg.sender;
     meralManager = IMeralManager(_meralManagerAddress);
     priceFeed = IPriceFeedProvider(_priceFeedAddress);
-    atkDivMod = 5000;
+    atkDivMod = 1200;
     defDivMod = 2000;
-    spdDivMod = 1000;
+    spdDivMod = 5000;
     xpMod = 3600;
   }
 
@@ -167,9 +167,9 @@ contract EternalBattle is ERC721Holder {
                   INTERNAL VIEW FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
-  function _calcBonus(uint _stat, uint denominator) internal pure returns (uint16) {
+  function _calcBonus(uint _stat) internal pure returns (uint16) {
     uint stat = _stat * 10000;
-    return uint16((stat + stat / denominator) / 10000);
+    return uint16((stat + stat / 2) / 10000);
   }
 
   function safeScale(uint num, uint inMax, uint outMin, uint outMax) internal pure returns(uint16) {
@@ -201,18 +201,22 @@ contract EternalBattle is ERC721Holder {
     uint16 def = _meral.def;
     uint16 spd = _meral.spd;
 
-    if(getShouldBonus(_stake.priceFeedId, _meral.cmId, _stake.long)) {
-      atk = _calcBonus(atk, 20); // 5%
-      def = _calcBonus(def, 20);
-      spd = _calcBonus(spd, 20);
-    }
 
     //scale stats
-    atk = safeScale(_meral.atk, 2000, 100, 1000);
-    def = safeScale(_meral.def, 2000, 200, 1600);
-    spd = safeScale(_meral.spd, 2000, 500, 2000);
+    if(getShouldBonus(_stake.priceFeedId, _meral.cmId, _stake.long)) {
+      atk = _calcBonus(atk);
+      def = _calcBonus(def);
+      spd = _calcBonus(spd);
+    }
+
+    atk = safeScale(atk, 2000, 100, 2000);
+    def = safeScale(def, 2000, 100, 2000);
+    spd = safeScale(spd, 2000, 100, 2000);
+
+    console.log(def);
 
     change = change / 1000;
+    console.log(change, 'change');
 
     if(win) {
       change = change * atk / atkDivMod + change;
@@ -230,10 +234,11 @@ contract EternalBattle is ERC721Holder {
       }
       counterTradeBonus = counterTradeBonus > 5 ? 5 : counterTradeBonus;
 
-      reward = change * spd / spdDivMod * counterTradeBonus + (change * 2);
+      reward = change * spd / spdDivMod * counterTradeBonus + change;
 
     } else {
-      change = change - (change * def / defDivMod);
+      uint subtract = change * def / defDivMod;
+      change = change > subtract ? change - subtract : 0;
     }
 
     return (change, reward, win);
