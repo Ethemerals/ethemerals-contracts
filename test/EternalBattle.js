@@ -3,7 +3,7 @@ const { ethers } = require('hardhat');
 const { MeralsL1Data, minMaxAvg, getRandomInt, getIdFromType } = require('./utils');
 const addressZero = '0x0000000000000000000000000000000000000000';
 
-describe('EternalBattle', function () {
+describe.only('EternalBattle', function () {
 	let merals;
 	let escrowL1;
 	let meralManager;
@@ -153,6 +153,8 @@ describe('EternalBattle', function () {
 			// SET BONUS
 			await battle.setCMIDBonus([meral.cmId], 1, true, true);
 			await battle.createStake(id, 1, 200, true);
+			value = await battle.getChange(id);
+			console.log(value);
 			mockPrice1 = parseInt(mockPrice1 * 0.9);
 			await aggregatorV3Mock.updateAnswer(mockPrice1);
 			await battle.cancelStake(id);

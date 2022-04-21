@@ -58,7 +58,7 @@ module.exports = {
 			accounts: [`0x${process.env.PRIV_KEY_MATIC}`],
 		},
 		matic: {
-			url: 'https://speedy-nodes-nyc.moralis.io/<YOUR_ID>/polygon/mainnet',
+			url: `https://polygon-mainnet.infura.io/v3/${process.env.INFURAID}`,
 			accounts: [`0x${process.env.PRIV_KEY_MATIC}`],
 		},
 	},

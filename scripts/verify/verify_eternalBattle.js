@@ -1,7 +1,5 @@
 const hre = require('hardhat');
-const { getAddresses } = require('../adminCalls/addresses');
-
-let chain = 4;
+const { getAddresses, currentChain } = require('../adminCalls/addresses');
 
 async function main() {
 	async function sleep(millis) {
@@ -16,10 +14,14 @@ async function main() {
 	// });
 
 	// await sleep(4000);
+	await hre.run('verify:verify', {
+		address: getAddresses(currentChain).priceFeedProvider,
+		constructorArguments: [],
+	});
 
 	await hre.run('verify:verify', {
-		address: getAddresses(chain).eternalBattle,
-		constructorArguments: [getAddresses(chain).meralManager, getAddresses(chain).priceFeedProvider],
+		address: getAddresses(currentChain).eternalBattle,
+		constructorArguments: [getAddresses(currentChain).meralManager, getAddresses(currentChain).priceFeedProvider],
 	});
 }
 

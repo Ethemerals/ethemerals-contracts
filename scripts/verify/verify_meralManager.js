@@ -1,14 +1,12 @@
 const hre = require('hardhat');
-const { getAddresses } = require('../adminCalls/addresses');
-
-let chain = 4;
+const { getAddresses, currentChain } = require('../adminCalls/addresses');
 
 async function main() {
 	let admin;
 	[admin, player1, player2, player3] = await ethers.getSigners();
 
 	await hre.run('verify:verify', {
-		address: getAddresses(chain).meralManager,
+		address: getAddresses(currentChain).meralManager,
 		constructorArguments: [],
 	});
 }

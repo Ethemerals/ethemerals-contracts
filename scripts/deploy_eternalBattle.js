@@ -1,7 +1,5 @@
 const hre = require('hardhat');
-const { getAddresses } = require('./adminCalls/addresses');
-
-let chain = 4;
+const { getAddresses, currentChain } = require('./adminCalls/addresses');
 
 async function main() {
 	async function sleep(millis) {
@@ -22,7 +20,7 @@ async function main() {
 	await sleep(10000);
 
 	const EternalBattle = await ethers.getContractFactory('EternalBattle');
-	battle = await EternalBattle.deploy(getAddresses(chain).meralManager, priceFeedProvider.address);
+	battle = await EternalBattle.deploy(getAddresses(currentChain).meralManager, priceFeedProvider.address);
 	await battle.deployed();
 
 	console.log('Battle deployed to:', battle.address);
@@ -35,17 +33,17 @@ async function main() {
 	console.log('reset game pair');
 
 	const MeralManager = await ethers.getContractFactory('MeralManager');
-	const meralManager = await MeralManager.attach(getAddresses(chain).meralManager);
+	const meralManager = await MeralManager.attach(getAddresses(currentChain).meralManager);
 
 	await meralManager.addGM(battle.address, true);
 	await sleep(10000);
 	console.log('added battle GM');
 
-	await priceFeedProvider.upsertFeed(1, getAddresses(chain).aggregatorMock1);
+	await priceFeedProvider.upsertFeed(1, getAddresses(currentChain).aggregatorMock1);
 	await sleep(10000);
 	console.log('added price feed');
 
-	await priceFeedProvider.upsertFeed(2, getAddresses(chain).aggregatorMock2);
+	await priceFeedProvider.upsertFeed(2, getAddresses(currentChain).aggregatorMock2);
 	await sleep(10000);
 	console.log('added price feed2');
 }

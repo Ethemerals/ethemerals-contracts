@@ -1,7 +1,5 @@
 const hre = require('hardhat');
-const { getAddresses } = require('./addresses');
-
-let chain = 4;
+const { getAddresses, currentChain } = require('./addresses');
 
 async function main() {
 	async function sleep(millis) {
@@ -13,15 +11,15 @@ async function main() {
 	console.log(admin.address);
 
 	const MeralManager = await ethers.getContractFactory('MeralManager');
-	const meralManager = await MeralManager.attach(getAddresses(chain).meralManager);
+	const meralManager = await MeralManager.attach(getAddresses(currentChain).meralManager);
 
 	await meralManager.addValidators(admin.address, true);
 	await sleep(10000);
-	await meralManager.addValidators(getAddresses(chain).bridgeGM1, true);
+	await meralManager.addValidators(getAddresses(currentChain).bridgeGM1, true);
 	await sleep(10000);
-	await meralManager.addValidators(getAddresses(chain).bridgeGM2, true);
+	await meralManager.addValidators(getAddresses(currentChain).bridgeGM2, true);
 	await sleep(10000);
-	await meralManager.addValidators(getAddresses(chain).bridgeGM3, true);
+	await meralManager.addValidators(getAddresses(currentChain).bridgeGM3, true);
 	await sleep(10000);
 
 	console.log('set validators');

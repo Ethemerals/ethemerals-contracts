@@ -2,13 +2,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.3;
 
-import "hardhat/console.sol";
-
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "./ERC721/ERC721B.sol";
 import "./Ownable.sol";
 import "../../utils/MeralParser.sol";
 
-contract MeralManager is ERC721, Ownable, MeralParser {
+contract MeralManager is ERC721B, Ownable, MeralParser {
 
   event ContractRegistered(address contractAddress, uint meralType);
   event ChangeHP(uint id, uint16 hp, bool add);
@@ -19,7 +17,7 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   event ChangeElement(uint id, uint8 element);
   event ChangeCMID(uint id, uint32 cmId);
   event InitMeral(uint meralType, uint tokenId, uint32 cmId, uint32 elf, uint16 hp, uint16 atk, uint16 def, uint16 spd, uint8 element, uint8 subclass, address owner);
-  event AuthChange(address auth, bool add);
+  event AuthChange(address auth, uint authType, bool add);
   event MeralStatusChange(uint id, uint8 status);
   event MeralOwnerChange(uint id, address newOwner);
 
@@ -56,6 +54,7 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   // contract address counter
   uint public typeCounter;
 
+
   // STATUS: 0=new, 1=pending, 2=approved
   struct Meral {
     uint32 cmId;
@@ -75,28 +74,30 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   /*///////////////////////////////////////////////////////////////
                   ADMIN FUNCTIONS
   //////////////////////////////////////////////////////////////*/
-  constructor() ERC721("Proxy Ethemerals", "MERALS") {}
-
-  function addGM(address _gm, bool add) external onlyOwner {
-    gmAddresses[_gm] = add;
-    emit AuthChange(_gm, add);
-  }
+  constructor() {}
 
   function addValidators(address _validators, bool add) external onlyOwner {
     validatorsAddresses[_validators] = add;
-    emit AuthChange(_validators, add);
+    emit AuthChange(_validators, 1, add);
   }
+
+  function addGM(address _gm, bool add) external onlyOwner {
+    gmAddresses[_gm] = add;
+    emit AuthChange(_gm, 2, add);
+  }
+
 
   /**
     * @dev User registers contract address
     */
-  function registerContract(address contractAddress) external onlyValidators {
+  function registerContract(address contractAddress) external onlyOwner {
     require(meralType[contractAddress] == 0, 'already registered');
     typeCounter++;
     meralType[contractAddress] = typeCounter;
     meralContracts[typeCounter] = contractAddress; // TODO maybe redundent
     emit ContractRegistered(contractAddress, typeCounter);
   }
+
 
   /*///////////////////////////////////////////////////////////////
                   VALIDATORS FUNCTIONS
@@ -270,7 +271,9 @@ contract MeralManager is ERC721, Ownable, MeralParser {
   function burn(uint256 _id) external {
     require(_isApprovedOrOwner(_msgSender(), _id), "not approved");
     allMerals[_id].status = 0;
+    meralOwners[_id] = address(0);
     _burn(_id);
+    emit MeralOwnerChange(_id, address(0));
   }
 
   /*///////////////////////////////////////////////////////////////
