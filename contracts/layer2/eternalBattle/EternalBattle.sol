@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.3;
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "./IPriceFeedProvider.sol";
@@ -28,8 +28,8 @@ contract EternalBattle is ERC721Holder {
 
   struct GamePair {
     bool active;
-    uint16 longs;
-    uint16 shorts;
+    uint longs;
+    uint shorts;
   }
 
   mapping(uint16 => mapping(uint32 => bool)) bonusLongs;
@@ -87,7 +87,7 @@ contract EternalBattle is ERC721Holder {
     meralManager.transfer(msg.sender, address(this), _tokenId);
     stakes[_tokenId] = Stake(block.timestamp, _priceFeedId, _positionSize, price, long);
 
-    _changeGamePair(_priceFeedId, long, true);
+    _changeGamePair(_priceFeedId, long, _positionSize, true);
     emit StakeCreated(_tokenId, _priceFeedId, _positionSize, price, long);
   }
 
@@ -110,7 +110,7 @@ contract EternalBattle is ERC721Holder {
       meralManager.changeELF(_tokenId, uint32(reward), true);
     }
 
-    _changeGamePair(stakes[_tokenId].priceFeedId, stakes[_tokenId].long, false);
+    _changeGamePair(stakes[_tokenId].priceFeedId, stakes[_tokenId].long, stakes[_tokenId].positionSize, false);
     emit StakeCanceled(_tokenId, change, reward, win);
   }
 
@@ -143,7 +143,7 @@ contract EternalBattle is ERC721Holder {
     meralManager.changeELF(_id1, reviverReward, true);
     meralManager.changeXP(_id0, uint32((block.timestamp - stakes[_id0].timestamp) / xpMod), true);
 
-    _changeGamePair(_stake.priceFeedId, _stake.long, false);
+    _changeGamePair(_stake.priceFeedId, _stake.long, _stake.positionSize, false);
     emit TokenRevived(_id0, _id1);
   }
 
@@ -153,12 +153,12 @@ contract EternalBattle is ERC721Holder {
     * adds / removes long shorts
     * does not check underflow should be fine
     */
-  function _changeGamePair(uint16 _priceFeedId, bool _long, bool _stake) internal {
+  function _changeGamePair(uint16 _priceFeedId, bool _long, uint _positionSize, bool _stake) internal {
     GamePair memory _gamePair  = gamePairs[_priceFeedId];
     if(_long) {
-      gamePairs[_priceFeedId].longs = _stake ? _gamePair.longs + 1 : _gamePair.longs -1;
+      gamePairs[_priceFeedId].longs = _stake ? _gamePair.longs + _positionSize : _gamePair.longs - _positionSize;
     } else {
-      gamePairs[_priceFeedId].shorts = _stake ? _gamePair.shorts + 1 : _gamePair.shorts -1;
+      gamePairs[_priceFeedId].shorts = _stake ? _gamePair.shorts + _positionSize : _gamePair.shorts - _positionSize;
     }
   }
 
@@ -217,8 +217,8 @@ contract EternalBattle is ERC721Holder {
 
     if(win) {
       // REWARDS
-      uint16 longs = gamePairs[_stake.priceFeedId].longs;
-      uint16 shorts = gamePairs[_stake.priceFeedId].shorts;
+      uint longs = gamePairs[_stake.priceFeedId].longs;
+      uint shorts = gamePairs[_stake.priceFeedId].shorts;
       uint counterTradeBonus = 1;
 
       if(!_stake.long && longs > shorts) {
@@ -227,7 +227,7 @@ contract EternalBattle is ERC721Holder {
       if(_stake.long && shorts > longs) {
         counterTradeBonus = shorts / longs;
       }
-      counterTradeBonus = counterTradeBonus > 5 ? 5 : counterTradeBonus;
+      counterTradeBonus = counterTradeBonus > 3 ? 3 : counterTradeBonus;
 
       reward = change * spd / spdDivMod * counterTradeBonus + change;
 
@@ -274,7 +274,7 @@ contract EternalBattle is ERC721Holder {
     address owner = meralManager.getVerifiedOwner(_tokenId);
     meralManager.transfer(address(this), owner, _tokenId);
 
-    _changeGamePair(stakes[_tokenId].priceFeedId, stakes[_tokenId].long, false);
+    _changeGamePair(stakes[_tokenId].priceFeedId, stakes[_tokenId].long, stakes[_tokenId].positionSize, false);
     emit StakeCanceled(_tokenId, 0, 0, false);
   }
 

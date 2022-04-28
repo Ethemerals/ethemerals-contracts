@@ -14,10 +14,10 @@ async function main() {
 	// });
 
 	// await sleep(4000);
-	await hre.run('verify:verify', {
-		address: getAddresses(currentChain).priceFeedProvider,
-		constructorArguments: [],
-	});
+	// await hre.run('verify:verify', {
+	// 	address: getAddresses(currentChain).priceFeedProvider,
+	// 	constructorArguments: [],
+	// });
 
 	await hre.run('verify:verify', {
 		address: getAddresses(currentChain).eternalBattle,

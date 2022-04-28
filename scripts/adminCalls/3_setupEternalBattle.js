@@ -1,8 +1,8 @@
 const { ethers } = require('hardhat');
 const hre = require('hardhat');
-const { getAddresses } = require('./addresses');
+const { getAddresses, currentChain } = require('./addresses');
 
-let chain = 4;
+currentChain;
 
 async function main() {
 	async function sleep(millis) {
@@ -14,12 +14,27 @@ async function main() {
 	console.log(admin.address);
 
 	const MeralManager = await ethers.getContractFactory('MeralManager');
-	const meralManager = await MeralManager.attach(getAddresses(chain).meralManager);
+	const meralManager = await MeralManager.attach(getAddresses(currentChain).meralManager);
 
 	const EternalBattle = await ethers.getContractFactory('EternalBattle');
-	const eternalBattle = await EternalBattle.attach(getAddresses(chain).eternalBattle);
+	const eternalBattle = await EternalBattle.attach(getAddresses(currentChain).eternalBattle);
 
-	console.log('set contract');
+	let cmIds = [1027];
+	await eternalBattle.setCMIDBonus(cmIds, 1, true, true);
+
+	await sleep(5000);
+	cmIds = [825, 3408, 4687, 7129, 2563, 4943];
+	await eternalBattle.setCMIDBonus(cmIds, 1, false, true);
+
+	await sleep(5000);
+	cmIds = [1, 3717, 4023];
+	await eternalBattle.setCMIDBonus(cmIds, 2, true, true);
+
+	await sleep(5000);
+	cmIds = [825, 3408, 4687, 7129, 2563, 4943];
+	await eternalBattle.setCMIDBonus(cmIds, 2, false, true);
+
+	console.log('set CMID');
 }
 
 main()

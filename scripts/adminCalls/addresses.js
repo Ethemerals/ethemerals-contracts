@@ -9,9 +9,9 @@ const getAddresses = (chain = 1) => {
 		merals: '0xeE8C0131aa6B66A2CE3cad6D2A039c1473a79a6d',
 		meralManager: '0x4aa85b6f9f1a0c08c7cdaea7712272b76c0e599b',
 		// ETERNAL BATTLE
-		priceFeedProvider: '0xf93404342eba65e721591f04cfc8ad9752a61b7e',
+		priceFeedProvider: '0xf4996e4254054097fc0e45ca7c2d13e2a357910c',
 		eternalBattleL1: '0x169310e61e71ef5834ce5466c7155d8a90d15f1e',
-		eternalBattle: '0xa9cf9e6daa70274ad3976c9a87bf8e80a4c4e8c6',
+		eternalBattle: '0x8ff56822dd0c291941aa3c1461752d96e690bd95',
 		aggregatorMock1: '0xf9680d99d6c9589e2a93a78a04a279e509205945',
 		aggregatorMock2: '0xc907e116054ad103354f2d350fd2514433d57f6f',
 		// WILDS
@@ -25,13 +25,12 @@ const getAddresses = (chain = 1) => {
 	if (chain === 4) {
 		addresses.ethemeralsBurner = '0x3b3D085078E3dAEad342A89bb2A3C2B45bC18828';
 		addresses.merals = '0xcdb47e685819638668ff736d1a2ae32b68e76ba5';
-		addresses.meralManager = '0x2B2Fe99AcFf4Aa9A382553166DC9243D36c2628e';
-		// addresses.meralManager = '0xb98f4fe8bb8d4cbc3bea5c8cfb3275ae83464672';
+		addresses.meralManager = '0xc992e5b95f27f7dbd4f0fc33ad399cd1224844b5';
 		addresses.onsen = '0xbb9edd32755e2b626441f0eb24ad44931589d7b5';
 		// ETERNAL BATTLE
-		addresses.priceFeedProvider = '0x0b19386c832ba5043a6b1779d62f022dd98f4d31';
+		addresses.priceFeedProvider = '0x9bc436a5e5bc09b109d4abb23f985a8054a899a4';
 		addresses.eternalBattleL1 = '0x883170aaceb39a23642f5aaaab083f5684d3ffb1';
-		addresses.eternalBattle = '0x4259580fb3adef3dda6d1c341279730c83afdc8c';
+		addresses.eternalBattle = '0x217a369731ea714bc7e8041153ed6f54a20fdbba';
 		addresses.aggregatorMock1 = '0x1483512B4988014DAa78af214F4A6100Ff7DE9b9';
 		addresses.aggregatorMock2 = '0x770ecd2250fd089c91f57d781b47abd45b112e6a';
 		// WILDS
@@ -40,7 +39,7 @@ const getAddresses = (chain = 1) => {
 	return addresses;
 };
 
-const currentChain = 1;
+const currentChain = 4;
 // aggV3Mock1 deployed to: 0x1483512B4988014DAa78af214F4A6100Ff7DE9b9
 // aggV3Mock2 deployed to: 0x770ecd2250fd089c91f57d781b47abd45b112e6a
 module.exports = { getAddresses, currentChain };

@@ -123,7 +123,7 @@ describe.only('EternalBattle', function () {
 			expect(latestPrice.toNumber()).to.equal(mockPriceAnswer2);
 		});
 
-		it.only('assign bonus to CMIds', async () => {
+		it('assign bonus to CMIds', async () => {
 			let cmIds = [1, 825];
 			await battle.setCMIDBonus(cmIds, 1, false, true);
 
